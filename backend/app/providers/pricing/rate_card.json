@@ -1,0 +1,90 @@
+{
+  "version": "colosseum-2026-06",
+  "source": "Seeded from superclaims-ai/backend/app/lang_graph/pricing/vertex_rate_card.json; extended multi-provider with thinking + cache_read rates.",
+  "notes": "Approximate list prices per 1M tokens in USD. Estimates from public prices + reported token counts, not provider invoices. Self-deploy models bill on VM uptime, not per-token (tracked separately).",
+  "region_multipliers": {
+    "default": 1.0,
+    "regional": 1.1
+  },
+  "models": {
+    "gemini-3.1-pro-preview": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 12.0,
+      "cache_read_usd_per_million": 0.2,
+      "thinking_usd_per_million": 12.0
+    },
+    "gemini-3-flash-preview": {
+      "input_usd_per_million": 0.5,
+      "output_usd_per_million": 3.0,
+      "cache_read_usd_per_million": 0.05,
+      "thinking_usd_per_million": 3.0
+    },
+    "gemini-3.1-flash-lite": {
+      "input_usd_per_million": 0.25,
+      "output_usd_per_million": 1.5,
+      "cache_read_usd_per_million": 0.025,
+      "thinking_usd_per_million": 1.5
+    },
+    "gemini-2.5-pro": {
+      "input_usd_per_million": 1.25,
+      "output_usd_per_million": 10.0,
+      "cache_read_usd_per_million": 0.13,
+      "thinking_usd_per_million": 10.0
+    },
+    "gemini-2.5-flash": {
+      "input_usd_per_million": 0.3,
+      "output_usd_per_million": 2.5,
+      "cache_read_usd_per_million": 0.03,
+      "thinking_usd_per_million": 2.5
+    },
+    "gemini-2.5-flash-lite": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.4,
+      "cache_read_usd_per_million": 0.01,
+      "thinking_usd_per_million": 0.4
+    },
+    "claude-sonnet-4-6": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "cache_read_usd_per_million": 0.3,
+      "thinking_usd_per_million": 15.0
+    },
+    "mistral-small": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.3,
+      "cache_read_usd_per_million": 0.1
+    },
+    "deepseek-r1": {
+      "input_usd_per_million": 0.55,
+      "output_usd_per_million": 2.19,
+      "cache_read_usd_per_million": 0.14,
+      "thinking_usd_per_million": 2.19
+    },
+    "qwen3": {
+      "input_usd_per_million": 0.2,
+      "output_usd_per_million": 0.6,
+      "cache_read_usd_per_million": 0.2
+    },
+    "grok-4": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "cache_read_usd_per_million": 0.75,
+      "thinking_usd_per_million": 15.0
+    },
+    "glm-5": {
+      "input_usd_per_million": 0.6,
+      "output_usd_per_million": 2.2,
+      "cache_read_usd_per_million": 0.11
+    },
+    "kimi-k2": {
+      "input_usd_per_million": 0.6,
+      "output_usd_per_million": 2.5,
+      "cache_read_usd_per_million": 0.15
+    }
+  },
+  "aliases": {
+    "gemini-3-flash": "gemini-3-flash-preview",
+    "gemini-3-pro": "gemini-3.1-pro-preview",
+    "gemini-2.5-flash-preview": "gemini-2.5-flash"
+  }
+}

@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: colosseum-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: colosseum
+      POSTGRES_PASSWORD: colosseum
+      POSTGRES_DB: colosseum
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U colosseum -d colosseum"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: colosseum-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Temporal is deferred to Phase 2 (orchestrator-agnostic runner; asyncio for local dev).
+
+volumes:
+  pgdata:
