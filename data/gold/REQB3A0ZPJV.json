@@ -1,0 +1,342 @@
+{
+  "document": "test-docs/REQB3A0ZPJV_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "itemized_bill",
+          "pages": "1-1"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "2-2"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-04-16",
+            "ip_number": "",
+            "net_amount": 97.48,
+            "page_number": 1,
+            "invoice_number": "TIM4004",
+            "total_discount": 10.83,
+            "facility_details": {
+              "name": "WELLNESS FOREVER CHEMISTS & LIFESTYLE STORE",
+              "registration_number": "20-MH-RZ1-556167"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "TELPRES 40MG 15TAB",
+              "brand_name": "TELPRES",
+              "is_returned": false,
+              "final_amount": 108.32
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "6dcf0a2677a9",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Medicines From Shop"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "NO CLAIM AMOUNT FOUND",
+      "fwa_flags": [
+        "FWA_PRICE_VARIANCE"
+      ],
+      "icd_codes": [
+        {
+          "code": "I10",
+          "name": "Essential (primary) hypertension",
+          "type": "primary",
+          "block": "I10-I15 Hypertensive diseases",
+          "source": "Bill - Telpres (Telmisartan) 40mg prescribed for hypertension management",
+          "chapter": "Chapter IX - Diseases of the circulatory system",
+          "diagnosis": "Hypertension"
+        }
+      ],
+      "bills_analyzed": 1,
+      "policy_remarks": "No policy violations found. The treatment date (2026-04-16) is within the policy period.",
+      "patches_applied": 5,
+      "duplicates_found": 0,
+      "policy_violations": [],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The bill net amount (₹97.48) matches the extracted data. The calculated total of items (₹108.32) represents the gross amount before the ₹10.83 discount. Patient details (Name, Mobile, Address) and Treating Doctor Name were missing in the summary and have been updated from the bill evidence. A price variance flag is noted for the medication Telpres 40mg.",
+      "medical_legibility": {
+        "summary": "The medication Telpres (Telmisartan) is a standard treatment for hypertension. While no prescription was provided, the bill identifies the treating doctor and the medication is consistent with chronic OPD management.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 97.48,
+      "bills_with_corrections": 0,
+      "updated_claimed_amount": 0.0,
+      "original_claimed_amount": 0.0,
+      "original_total_of_bills": 97.48,
+      "policy_violations_count": 0,
+      "medical_legibility_issues": 0,
+      "patches": []
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "Online Teleconsultation fees",
+        "Health foods",
+        "Dietary supplements",
+        "Membership fees (health/well-being apps, gym)",
+        "Thermometers",
+        "BP apparatus",
+        "CPAP/Bi-PAP machines",
+        "Ambulance charges",
+        "Caregiver/Nurse charges",
+        "Contraceptives",
+        "Soaps",
+        "Face wash",
+        "Moisturizers",
+        "Lotions/creams",
+        "Shampoos",
+        "Hair lotions",
+        "Protein powder",
+        "Baby food",
+        "Disposable & Routine Consumables",
+        "Injection & Infusion Related Consumables",
+        "Dressing & Wound Care Materials",
+        "Personal Comfort & Hygiene Items",
+        "Miscellaneous (Non-Medical / Daily-Use Items)"
+      ],
+      "policy_rules": [
+        "Policy covers only non-hospitalization expenses.",
+        "Consultancy, medicines, and medical tests are covered for Allopathy, Homeopathy, Physiotherapy, and Ayurvedic (AYUSH) treatments.",
+        "Vision-related expenses (spectacles/lenses) capped at INR 10,000 per employee/dependent per policy year.",
+        "Pre-natal outpatient care capped at INR 19,900 per instance.",
+        "Pre-natal benefit limited to a maximum of 2 instances of childbirth.",
+        "Submission of an EDD (Expected Date of Delivery) certificate is mandatory to unlock pre-natal benefits.",
+        "Pre-natal outpatient care limited to a maximum of 10 visits.",
+        "Fetal ultrasounds limited to a maximum of 5 total across all trimesters.",
+        "Dental coverage is restricted to non-cosmetic treatments such as dentures, cavity fillings, or non-gold metal caps.",
+        "Cancer screening frequency: Cervical (once a year), Breast (once in 2 years), Colorectal (once in 3 years).",
+        "Vaccination expenses can only be claimed under the specific vaccination benefit and not under other benefit heads.",
+        "Medical treatments conducted at home (e.g., peritoneal dialysis) are excluded.",
+        "Cosmetic treatments, weight management, and peeling procedures are excluded.",
+        "Consultations with nutritionists and dieticians are excluded, even if prescribed.",
+        "Infertility treatment or management is excluded.",
+        "Services must be availed within the policy period: 01 April 2026 to 31 March 2027."
+      ],
+      "extraction_ok": true
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "6dcf0a2677a9",
+            "bill_date": "2026-04-16",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 97.48,
+            "page_number": 1,
+            "invoice_number": "TIM4004",
+            "total_discount": 10.83,
+            "facility_details": {
+              "name": "WELLNESS FOREVER CHEMISTS & LIFESTYLE STORE",
+              "registration_number": "20-MH-RZ1-556167"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "TELPRES 40MG 15TAB",
+              "brand_name": "TELPRES",
+              "is_returned": false,
+              "final_amount": 108.32,
+              "generic_name": null,
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1351910,
+          "benefit_name": "Dental Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "x_ray",
+              "requirement_type": "conditional",
+              "condition_description": ""
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351913,
+          "benefit_name": "Eye Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351915,
+          "benefit_name": "Order Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351916,
+          "benefit_name": "Book Vaccinations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "vaccination_card",
+              "requirement_type": "conditional",
+              "condition_description": "Required only if the reimbursement claim is for a child’s vaccination."
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351925,
+          "benefit_name": "Prenatal Services",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351927,
+          "benefit_name": "Tobacco Cessation Program",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351931,
+          "benefit_name": "In-Clinic Consults",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351937,
+          "benefit_name": "Cancer Screening",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366494,
+          "benefit_name": "Diagnostics",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

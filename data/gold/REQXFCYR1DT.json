@@ -1,0 +1,541 @@
+{
+  "document": "test-docs/REQXFCYR1DT_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "prescription",
+          "pages": "1-1"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "2-4"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "5-5"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-06-06",
+            "ip_number": "",
+            "net_amount": 1.0,
+            "page_number": 2,
+            "invoice_number": "IIN10826A6911447",
+            "total_discount": 7.63,
+            "facility_details": {
+              "name": "Lenskart Solutions Limited",
+              "registration_number": "L33100DL2008PLC178355"
+            }
+          },
+          "items": [
+            {
+              "discount": 7.63,
+              "item_name": "Lenskart Carry Bag Blue - Product Id:208251",
+              "brand_name": "Lenskart",
+              "is_returned": false,
+              "final_amount": 1.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-06-08",
+            "ip_number": "",
+            "net_amount": 4262.98,
+            "page_number": 3,
+            "invoice_number": "IIN10826A7003736",
+            "total_discount": 4120.05,
+            "facility_details": {
+              "name": "Lenskart Solutions Limited",
+              "registration_number": "L33100DL2008PLC178355"
+            }
+          },
+          "items": [
+            {
+              "discount": 4120.05,
+              "item_name": "Pink Gold Pink Full Rim Cat Eye John Jacobs TR Flex JJ E14409-C6 Eyeglasses -Product Id: 217994, Inclusive of Lens Package: Lenskart BLU Normal Corridor Progressive",
+              "brand_name": "John Jacobs",
+              "is_returned": false,
+              "final_amount": 4173.95
+            },
+            {
+              "discount": 0.0,
+              "item_name": "Fitting / Convenience Fee",
+              "is_returned": false,
+              "final_amount": 89.03
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-06-10",
+            "ip_number": "",
+            "net_amount": 5266.02,
+            "page_number": 4,
+            "invoice_number": "IIN20626A4796401",
+            "total_discount": 4137.1,
+            "facility_details": {
+              "name": "Lenskart Solutions Limited",
+              "registration_number": "L33100DL2008PLC178355"
+            }
+          },
+          "items": [
+            {
+              "discount": 4137.1,
+              "item_name": "Gold Rimless Rectangle OWNDAYS Titanium OD E50031-C2 Eyeglasses Product Id:220625, Inclusive of Lens Package: Lenskart BLU Normal Corridor Progressive",
+              "brand_name": "OWNDAYS",
+              "is_returned": false,
+              "final_amount": 5156.05
+            },
+            {
+              "discount": 0.0,
+              "item_name": "Fitting / Convenience Fee",
+              "is_returned": false,
+              "final_amount": 109.97
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "2d712b5d5491",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Others"
+            }
+          ]
+        },
+        {
+          "bill_id": "02e8d614316f",
+          "categorized_items": [
+            {
+              "s.no.": 2,
+              "category": "Others"
+            },
+            {
+              "s.no.": 3,
+              "category": "Others"
+            }
+          ]
+        },
+        {
+          "bill_id": "0b8abb6e41b8",
+          "categorized_items": [
+            {
+              "s.no.": 4,
+              "category": "Others"
+            },
+            {
+              "s.no.": 5,
+              "category": "Others"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": [
+        {
+          "nme_item": {
+            "sr.no": 1,
+            "item_name": "Lenskart Carry Bag Blue - Product Id:208251",
+            "bill_amount": 1.0,
+            "deduction_reason": "Standard deductions from inpatient hospitalization"
+          }
+        },
+        {
+          "nme_item": {
+            "sr.no": 2,
+            "item_name": "Fitting / Convenience Fee",
+            "bill_amount": 89.03,
+            "deduction_reason": "Fitting charges"
+          }
+        },
+        {
+          "nme_item": {
+            "sr.no": 2,
+            "item_name": "Fitting / Convenience Fee",
+            "bill_amount": 109.97,
+            "deduction_reason": "Fitting charges"
+          }
+        }
+      ]
+    },
+    "audit": {
+      "status": "MATCH",
+      "fwa_flags": [],
+      "icd_codes": [
+        {
+          "code": "H52.4",
+          "name": "Presbyopia",
+          "type": "primary",
+          "block": "H52 Disorders of refraction and accommodation",
+          "source": "Prescription - Near Addition +1.50 for both eyes",
+          "chapter": "Chapter VII: Diseases of the eye and adnexa",
+          "diagnosis": "Near Addition +1.50 required"
+        }
+      ],
+      "bills_analyzed": 3,
+      "policy_remarks": "3 policy violations found: (1) Carry bag is a non-medical administrative charge. (2) Two 'Fitting / Convenience Fees' are non-medical administrative charges.",
+      "patches_applied": 6,
+      "duplicates_found": 0,
+      "policy_violations": [
+        {
+          "bill_id": "2d712b5d5491",
+          "item_name": "Lenskart Carry Bag Blue",
+          "item_s_no": 1,
+          "rule_name": "Common Non-Medical Administrative Charges",
+          "recommendation": "Reject",
+          "amount_impacted": 1.0,
+          "violation_details": "Carry bag is a non-medical administrative charge."
+        },
+        {
+          "bill_id": "02e8d614316f",
+          "item_name": "Fitting / Convenience Fee",
+          "item_s_no": 2,
+          "rule_name": "Common Non-Medical Administrative Charges",
+          "recommendation": "Reject",
+          "amount_impacted": 89.03,
+          "violation_details": "Convenience/Fitting fees are non-medical administrative charges."
+        },
+        {
+          "bill_id": "0b8abb6e41b8",
+          "item_name": "Fitting / Convenience Fee",
+          "item_s_no": 2,
+          "rule_name": "Common Non-Medical Administrative Charges",
+          "recommendation": "Reject",
+          "amount_impacted": 109.97,
+          "violation_details": "Convenience/Fitting fees are non-medical administrative charges."
+        }
+      ],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The total of extracted bills matches the sum of items. Claimed amount was updated to match the total of the three Lenskart invoices found in the PDF.",
+      "medical_legibility": {
+        "summary": "The prescription (Page 1) indicates a 'Regular visit' with a requirement for Near Addition (+1.50) in both eyes. The billed items (Progressive lenses) align with the clinical need for presbyopia correction.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 9529.999999999998,
+      "bills_with_corrections": 1,
+      "updated_claimed_amount": 9529.999999999998,
+      "original_claimed_amount": 0.0,
+      "original_total_of_bills": 9529.999999999998,
+      "policy_violations_count": 3,
+      "medical_legibility_issues": 0,
+      "patches": []
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "Food",
+        "Food Supplements",
+        "Dietary Pills (Horlicks, Glucose, Whey Protein)",
+        "Vitamins (unless prescribed)",
+        "Minerals (unless prescribed)",
+        "Organic substances (unless prescribed)",
+        "Wound cleaning fees",
+        "Dressing fees",
+        "OTC Medicines",
+        "Wigs",
+        "Toupees",
+        "Hearing aid",
+        "Cosmetic treatments (Chemical peel, Laser hair removal)",
+        "Standard deductions from inpatient hospitalization"
+      ],
+      "policy_rules": [
+        "Health Check limited to 1 per family with a cap of INR 1200.",
+        "In-Clinic Consultations capped at INR 6000.",
+        "Prescribed Diagnostics capped at INR 5000 and must be prescribed by an Allopathic practitioner.",
+        "Vaccination capped at INR 2500 for WHO-approved vaccinations.",
+        "Prescribed Pharmacy capped at INR 5000 and must be prescribed by an Allopathic practitioner.",
+        "Dental Wellness capped at INR 5000.",
+        "Vision Wellness capped at INR 5000.",
+        "Dermatology benefit capped at INR 1500.",
+        "Inpatient hospitalization and day-care treatments are excluded.",
+        "Procedure fees (e.g., wound dressing) during OP consultations are not covered.",
+        "Medicines and Diagnostic Tests require a valid doctor's prescription.",
+        "AYUSH and physiotherapy are excluded from consultation coverage.",
+        "Claims must be submitted within 45 days from the date of service.",
+        "Skin-related consultations are restricted to the Dermatology benefit limit."
+      ],
+      "extraction_ok": true
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "2d712b5d5491",
+            "bill_date": "2026-06-06",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 1.0,
+            "page_number": 2,
+            "invoice_number": "IIN10826A6911447",
+            "total_discount": 7.63,
+            "facility_details": {
+              "name": "Lenskart Solutions Limited",
+              "registration_number": "L33100DL2008PLC178355"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": true,
+              "item_id": "1",
+              "category": "Others",
+              "discount": 7.63,
+              "item_name": "Lenskart Carry Bag Blue - Product Id:208251",
+              "brand_name": "Lenskart",
+              "is_returned": false,
+              "final_amount": 1.0,
+              "generic_name": null,
+              "nme_item_name": "Lenskart Carry Bag Blue - Product Id:208251",
+              "nme_bill_amount": 1.0,
+              "deduction_reason": "Standard deductions from inpatient hospitalization",
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "02e8d614316f",
+            "bill_date": "2026-06-08",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 4262.98,
+            "page_number": 3,
+            "invoice_number": "IIN10826A7003736",
+            "total_discount": 4120.05,
+            "facility_details": {
+              "name": "Lenskart Solutions Limited",
+              "registration_number": "L33100DL2008PLC178355"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 2,
+              "is_nme": true,
+              "item_id": "1",
+              "category": "Others",
+              "discount": 4120.05,
+              "item_name": "Pink Gold Pink Full Rim Cat Eye John Jacobs TR Flex JJ E14409-C6 Eyeglasses -Product Id: 217994, Inclusive of Lens Package: Lenskart BLU Normal Corridor Progressive",
+              "brand_name": "John Jacobs",
+              "is_returned": false,
+              "final_amount": 4173.95,
+              "generic_name": null,
+              "nme_item_name": "Pink Gold Pink Full Rim Cat Eye John Jacobs TR Flex JJ E14409-C6 Eyeglasses -Product Id: 217994, Inclusive of Lens Package: Lenskart BLU Normal Corridor Progressive",
+              "nme_bill_amount": 4173.95,
+              "deduction_reason": "Hearing aid",
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 3,
+              "is_nme": true,
+              "item_id": "2",
+              "category": "Others",
+              "discount": 0.0,
+              "item_name": "Fitting / Convenience Fee",
+              "brand_name": null,
+              "is_returned": false,
+              "final_amount": 89.03,
+              "generic_name": null,
+              "nme_item_name": "Fitting / Convenience Fee",
+              "nme_bill_amount": 89.03,
+              "deduction_reason": "Hearing aid",
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "0b8abb6e41b8",
+            "bill_date": "2026-06-10",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 5266.02,
+            "page_number": 4,
+            "invoice_number": "IIN20626A4796401",
+            "total_discount": 4137.1,
+            "facility_details": {
+              "name": "Lenskart Solutions Limited",
+              "registration_number": "L33100DL2008PLC178355"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 4,
+              "is_nme": true,
+              "item_id": "1",
+              "category": "Others",
+              "discount": 4137.1,
+              "item_name": "Gold Rimless Rectangle OWNDAYS Titanium OD E50031-C2 Eyeglasses Product Id:220625, Inclusive of Lens Package: Lenskart BLU Normal Corridor Progressive",
+              "brand_name": "OWNDAYS",
+              "is_returned": false,
+              "final_amount": 5156.05,
+              "generic_name": null,
+              "nme_item_name": "Gold Rimless Rectangle OWNDAYS Titanium OD E50031-C2 Eyeglasses Product Id:220625, Inclusive of Lens Package: Lenskart BLU Normal Corridor Progressive",
+              "nme_bill_amount": 5156.05,
+              "deduction_reason": "Hearing aid",
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 5,
+              "is_nme": true,
+              "item_id": "2",
+              "category": "Others",
+              "discount": 0.0,
+              "item_name": "Fitting / Convenience Fee",
+              "brand_name": null,
+              "is_returned": false,
+              "final_amount": 109.97,
+              "generic_name": null,
+              "nme_item_name": "Fitting / Convenience Fee",
+              "nme_bill_amount": 109.97,
+              "deduction_reason": "Hearing aid",
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1366527,
+          "benefit_name": "Dermatology Consultations & Treatment",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366528,
+          "benefit_name": "WHO Approved Vaccinations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "vaccination_card",
+              "requirement_type": "conditional",
+              "condition_description": "Required only if the reimbursement claim is for a child’s vaccination."
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366531,
+          "benefit_name": "Dental",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "x_ray",
+              "requirement_type": "conditional",
+              "condition_description": ""
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366534,
+          "benefit_name": "Prescribed Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366543,
+          "benefit_name": "Inclinic consultations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366553,
+          "benefit_name": "Vision",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366556,
+          "benefit_name": "Prescribed Lab Tests",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

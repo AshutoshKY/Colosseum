@@ -1,0 +1,175 @@
+{
+  "document": "test-docs/26052729911-1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "claim_forms",
+          "pages": "1-3"
+        },
+        {
+          "document_type": "investigation_report",
+          "pages": "4-4,6-6"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "5-5"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2022-05-26",
+            "ip_number": "",
+            "net_amount": 1350.0,
+            "page_number": 5,
+            "invoice_number": "I-568868",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "CARE DIAGNOSTICS"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "USG TVS Pelvis",
+              "is_returned": false,
+              "final_amount": 1350.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "acc40e05f719",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Imageology"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "patches": [
+        {
+          "key": "patient_name",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Claim form (Page 1) shows 'self' for patient and 'SINGH ESHITA' as insured. Bill (Page 4) explicitly names the patient as 'Ms. Eshita Singh'. 'Belf' was an OCR misinterpretation of 'self'.",
+          "new_value": "Eshita Singh",
+          "old_value": "Belf",
+          "page_reference": "1, 4"
+        },
+        {
+          "key": "patient_gender",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Bill on page 4 explicitly states Sex: Female.",
+          "new_value": "Female",
+          "page_reference": "4"
+        },
+        {
+          "key": "hospital_pincode",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Pincode visible on claim form (Page 1) and bill (Page 4 - Bengaluru 100).",
+          "new_value": "560100",
+          "page_reference": "1, 4"
+        },
+        {
+          "key": "hospital_phone_number",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Phone number visible on bill header.",
+          "new_value": "9741558018",
+          "page_reference": "4"
+        },
+        {
+          "key": "hospital_email_id",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Email address visible on bill header.",
+          "new_value": "care2lab@gmail.com",
+          "page_reference": "4"
+        },
+        {
+          "key": "bill_date",
+          "type": "EDIT_BILL_DETAILS",
+          "impact": "Corrects bill metadata",
+          "reason": "Bill on page 4 shows date 22/05/26. Given the claim form is dated May 2026, the year is 2026. The original extraction misinterpreted the date format and year.",
+          "bill_id": "acc40e05f719",
+          "new_value": "2026-05-22",
+          "old_value": "2022-05-26",
+          "page_reference": "4",
+          "bill_invoice_number": "I-568868"
+        }
+      ],
+      "icd_codes": [
+        {
+          "code": "N83.20",
+          "type": "primary",
+          "source": "Diagnosis - Ovarian cyst documented in claim form",
+          "description": "Unspecified ovarian cyst"
+        }
+      ],
+      "bills_analyzed": 1,
+      "policy_remarks": "No policy violations detected. The billed service (USG TVS Pelvis) is a standard diagnostic procedure for the documented condition (Ovarian cyst).",
+      "patches_applied": 6,
+      "duplicates_found": 0,
+      "policy_violations": [],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The extracted bill amount matches the claimed amount. Corrections are needed for patient details and bill date based on document evidence.",
+      "medical_legibility": {
+        "summary": "The claim is for a USG TVS Pelvis scan, which is medically justified for the diagnosis of an Ovarian Cyst as documented in the claim form. The bill matches the requested investigation.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 1350.0,
+      "bills_with_corrections": 1,
+      "updated_claimed_amount": 1350.0,
+      "original_claimed_amount": 1350.0,
+      "original_total_of_bills": 1350.0,
+      "policy_violations_count": 0,
+      "medical_legibility_issues": 0
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "acc40e05f719",
+            "bill_date": "2022-05-26",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 1350.0,
+            "page_number": 5,
+            "invoice_number": "I-568868",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "CARE DIAGNOSTICS",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Imageology",
+              "discount": 0.0,
+              "item_name": "USG TVS Pelvis",
+              "is_returned": false,
+              "final_amount": 1350.0,
+              "categorization_source": "fuzzy"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

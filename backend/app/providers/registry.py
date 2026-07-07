@@ -1,197 +1,35 @@
-"""Model capability registry — generated to match ``docs/models-and-caveats.md``.
+"""Model capability registry — loaded from the data-driven catalog (``providers/catalog/``).
 
-Source of truth is the seed caveats table in that doc. Cells marked **(verify)** there are
-encoded conservatively here: the model ships ``enabled=False`` / ``verified=False`` and the
-risky capability (vision/pdf) is left off until confirmed live against provider docs.
+The catalog YAML files are the single source of truth and are kept in sync with
+``docs/models-and-caveats.md``. This module materializes them into ``ModelCapability`` objects
+and exposes lookup/listing helpers.
 
-**Verified for Phase 1 (June 2026):** only the Gemini family is confirmed and enabled. Per
-the build constraints, every other provider is stubbed as disabled so the plug-and-play seam
-exists without shipping unverified capability flags.
+**Availability gating (critical):** a model is ``enabled=True`` ONLY when the catalog marks it
+verified callable on this project's Vertex (or it has a working external key). Everything else
+is registered ``enabled=False, verified=False`` with a ``reason`` (folded into ``notes``). The
+live smoke (``runner.opd_smoke``) probes the gated-off Model-Garden models and, for any that
+actually answer, records a verification override so later runs can enable them — but we never
+ship an unverified capability flag as enabled by default.
+
+**Verified + enabled (June 2026):** only the Gemini family on ``vertex-internal-testing`` is
+confirmed callable. Every other family is registered disabled with the reason it is gated off
+(Model-Garden enablement unconfirmed without ``gcloud``, or no external API key).
 """
 
 from __future__ import annotations
 
-from app.providers.capabilities import (
-    Access,
-    Modality,
-    ModelCapability,
-    Provider,
-    StructuredMethod,
-)
+from collections import defaultdict
 
-# --- canonical modality sets ---
-_TEXT = frozenset({Modality.text})
-_TEXT_IMAGE = frozenset({Modality.text, Modality.image})
-_TEXT_IMAGE_PDF = frozenset({Modality.text, Modality.image, Modality.pdf})
+from app.providers.capabilities import ModelCapability, Provider
+from app.providers.catalog import load_catalog
 
-# Vertex cross-cutting payload cap (docs: 30 MB request payload).
-_VERTEX_PAYLOAD_MB = 30.0
+# model_id -> capability ; model_id -> grouping metadata (family/version/variant/reason)
+registry: dict[str, ModelCapability] = {}
+catalog_meta: dict[str, dict] = {}
 
-
-def _gemini(model_id: str, display_name: str, pricing_ref: str) -> ModelCapability:
-    """Gemini-on-Vertex profile. VERIFIED June 2026 against Vertex AI docs:
-    native PDF, vision, json_schema structured output, ~1M context, thinking + caching.
-    """
-    return ModelCapability(
-        model_id=model_id,
-        display_name=display_name,
-        provider=Provider.vertex_ai,
-        access=Access.maas,
-        modalities=_TEXT_IMAGE_PDF,
-        pdf_native=True,
-        vision=True,
-        max_payload_mb=_VERTEX_PAYLOAD_MB,
-        context_window=1_000_000,
-        structured_method=StructuredMethod.json_schema,
-        thinking=True,
-        caching=True,
-        batch=True,
-        pricing_ref=pricing_ref,
-        enabled=True,
-        verified=True,
-    )
-
-
-# =============================================================================
-# VERIFIED + ENABLED (Phase 1): Gemini on Vertex AI
-# =============================================================================
-_GEMINI: list[ModelCapability] = [
-    _gemini("vertex_ai/gemini-2.5-flash", "Gemini 2.5 Flash", "gemini-2.5-flash"),
-    _gemini("vertex_ai/gemini-2.5-pro", "Gemini 2.5 Pro", "gemini-2.5-pro"),
-    _gemini("vertex_ai/gemini-2.5-flash-lite", "Gemini 2.5 Flash-Lite", "gemini-2.5-flash-lite"),
-    _gemini("vertex_ai/gemini-3-flash-preview", "Gemini 3 Flash", "gemini-3-flash-preview"),
-    _gemini("vertex_ai/gemini-3.1-pro-preview", "Gemini 3.1 Pro", "gemini-3.1-pro-preview"),
-    _gemini("vertex_ai/gemini-3.1-flash-lite", "Gemini 3.1 Flash-Lite", "gemini-3.1-flash-lite"),
-]
-
-
-# =============================================================================
-# STUBBED (disabled until verified live) — Phase 2 enables these after verifying
-# each (verify) cell from docs/models-and-caveats.md against current provider docs.
-# Capabilities are encoded conservatively; the risky flag is OFF where the doc says (verify).
-# =============================================================================
-_STUBS: list[ModelCapability] = [
-    # Claude on Vertex (vertex_partner). Native PDF + vision + caching + tools; +10% regional
-    # premium recorded per-run via run_result.endpoint. Disabled until Phase 2 verifies.
-    ModelCapability(
-        model_id="vertex_ai/claude-sonnet-4-6",
-        display_name="Claude Sonnet 4.6 (Vertex)",
-        provider=Provider.vertex_partner,
-        modalities=_TEXT_IMAGE_PDF,
-        pdf_native=True,
-        vision=True,
-        max_payload_mb=_VERTEX_PAYLOAD_MB,
-        structured_method=StructuredMethod.tools,
-        thinking=True,
-        caching=True,
-        pricing_ref="claude-sonnet-4-6",
-        enabled=False,
-        verified=False,
-        notes="(verify) +10% regional/multi-region premium; record endpoint for fair cost compare.",
-    ),
-    # Mistral Small 3.1 — multimodal via image; SO method (verify).
-    ModelCapability(
-        model_id="vertex_ai/mistral-small-2503",
-        display_name="Mistral Small 3.1 (Vertex)",
-        provider=Provider.vertex_partner,
-        modalities=_TEXT_IMAGE,
-        pdf_native=False,
-        vision=True,
-        max_payload_mb=_VERTEX_PAYLOAD_MB,
-        structured_method=StructuredMethod.json_mode,
-        needs_repair_fallback=True,
-        pricing_ref="mistral-small",
-        enabled=False,
-        verified=False,
-        notes="(verify) structured-output method; PDF via rasterized images.",
-    ),
-    # DeepSeek R1 — TEXT ONLY. Capability gate must skip image/PDF tasks (record N/A).
-    ModelCapability(
-        model_id="vertex_ai/deepseek-r1",
-        display_name="DeepSeek R1 (Vertex)",
-        provider=Provider.vertex_partner,
-        modalities=_TEXT,
-        pdf_native=False,
-        vision=False,
-        structured_method=StructuredMethod.json_mode,
-        needs_repair_fallback=True,
-        thinking=True,
-        pricing_ref="deepseek-r1",
-        enabled=False,
-        verified=False,
-        notes="text-only: gate out of image/PDF tasks; (verify) json mode reliability.",
-    ),
-    # Qwen3 base — text-only; use the VL variant for vision. SO (verify).
-    ModelCapability(
-        model_id="vertex_ai/qwen3",
-        display_name="Qwen3 (Vertex)",
-        provider=Provider.vertex_partner,
-        modalities=_TEXT,
-        pdf_native=False,
-        vision=False,
-        structured_method=StructuredMethod.json_mode,
-        needs_repair_fallback=True,
-        pricing_ref="qwen3",
-        enabled=False,
-        verified=False,
-        notes="base Qwen3 text-only; use VL variant for vision. (verify) SO method.",
-    ),
-    # Grok 4.x (xAI). VISION caveats are HARD: base64 <=4 MB, <=33 MP, jpg/png only, tiled billing.
-    # PDFs MUST be rasterized per page. Disabled until Phase 2 verifies SO method live.
-    ModelCapability(
-        model_id="xai/grok-4",
-        display_name="Grok 4 (xAI)",
-        provider=Provider.xai,
-        modalities=_TEXT_IMAGE,
-        pdf_native=False,
-        vision=True,
-        max_image_mb=4.0,
-        max_image_megapixels=33.0,
-        image_formats=frozenset({"jpeg", "png"}),
-        structured_method=StructuredMethod.json_mode,
-        needs_repair_fallback=True,
-        thinking=True,
-        pricing_ref="grok-4",
-        enabled=False,
-        verified=False,
-        notes="base64 image <=4 MB, URL <=20 MB, <=33 MP, jpg/png only, tile-based billing. "
-        "(verify) structured-output method.",
-    ),
-    # GLM 5.x — VL only (verify); modality + SO unverified.
-    ModelCapability(
-        model_id="openai_compatible/glm-5",
-        display_name="GLM 5 (Zhipu)",
-        provider=Provider.openai_compatible,
-        modalities=_TEXT,
-        pdf_native=False,
-        vision=False,
-        structured_method=StructuredMethod.json_mode,
-        needs_repair_fallback=True,
-        pricing_ref="glm-5",
-        enabled=False,
-        verified=False,
-        notes="(verify) VL-only modality + SO reliability before enabling image tasks.",
-    ),
-    # Kimi K2.x — vision (verify); SO (verify).
-    ModelCapability(
-        model_id="openai_compatible/kimi-k2",
-        display_name="Kimi K2 (Moonshot)",
-        provider=Provider.openai_compatible,
-        modalities=_TEXT,
-        pdf_native=False,
-        vision=False,
-        structured_method=StructuredMethod.json_mode,
-        needs_repair_fallback=True,
-        pricing_ref="kimi-k2",
-        enabled=False,
-        verified=False,
-        notes="(verify) vision + SO reliability.",
-    ),
-]
-
-
-# id -> capability
-registry: dict[str, ModelCapability] = {c.model_id: c for c in (_GEMINI + _STUBS)}
+for _cap, _meta in load_catalog():
+    registry[_cap.model_id] = _cap
+    catalog_meta[_cap.model_id] = _meta
 
 
 def get_capability(model_id: str) -> ModelCapability:
@@ -201,7 +39,7 @@ def get_capability(model_id: str) -> ModelCapability:
     except KeyError as exc:  # noqa: TRY003
         raise KeyError(
             f"Model '{model_id}' is not in the registry. "
-            f"Add it to docs/models-and-caveats.md and registry.py first."
+            f"Add it to a providers/catalog/*.yaml file and docs/models-and-caveats.md first."
         ) from exc
 
 
@@ -209,8 +47,43 @@ def is_registered(model_id: str) -> bool:
     return model_id in registry
 
 
-def list_models(*, enabled_only: bool = False) -> list[ModelCapability]:
+def list_models(
+    *,
+    enabled_only: bool = False,
+    provider: Provider | None = None,
+    family: str | None = None,
+) -> list[ModelCapability]:
     caps = list(registry.values())
     if enabled_only:
         caps = [c for c in caps if c.enabled]
+    if provider is not None:
+        caps = [c for c in caps if c.provider == provider]
+    if family is not None:
+        caps = [c for c in caps if catalog_meta.get(c.model_id, {}).get("family") == family]
     return caps
+
+
+def families() -> dict[str, list[ModelCapability]]:
+    """Group registered capabilities by their catalog ``family``."""
+    out: dict[str, list[ModelCapability]] = defaultdict(list)
+    for cap in registry.values():
+        fam = catalog_meta.get(cap.model_id, {}).get("family", "unknown")
+        out[fam].append(cap)
+    return dict(out)
+
+
+def catalog_summary() -> dict[str, dict[str, int]]:
+    """Per-family counts: total / enabled / gated-off (for the Phase-2 report)."""
+    summary: dict[str, dict[str, int]] = {}
+    for fam, caps in families().items():
+        enabled = sum(1 for c in caps if c.enabled)
+        summary[fam] = {"total": len(caps), "enabled": enabled, "gated_off": len(caps) - enabled}
+    return summary
+
+
+def gate_reason(model_id: str) -> str | None:
+    """Why a model is gated off (``None`` if enabled)."""
+    cap = registry.get(model_id)
+    if cap is None or cap.enabled:
+        return None
+    return catalog_meta.get(model_id, {}).get("reason")

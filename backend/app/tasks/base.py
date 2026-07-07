@@ -32,6 +32,9 @@ class Task:
     # 1-based page ranges to send by default (None = all pages). Lets us honor payload caps.
     default_page_ranges: str | None = None
     document_types: frozenset[str] = field(default_factory=frozenset)
+    # Text-input tasks (items_categorisation, nme, policy_extraction, benefit_plan) consume a
+    # prior stage's JSON rendered into the instruction via ``.format(**context)`` — no document.
+    is_text_task: bool = False
 
     def build_input(self, document_path: str, *, page_ranges: str | None = None) -> TaskInput:
         return TaskInput(
@@ -43,3 +46,9 @@ class Task:
                 )
             ]
         )
+
+    def render_instruction(self, **context: object) -> str:
+        """Fill the instruction template for text tasks (e.g. ``{bills_json}``)."""
+        if not context:
+            return self.instruction
+        return self.instruction.format(**context)

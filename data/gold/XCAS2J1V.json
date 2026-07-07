@@ -1,0 +1,309 @@
+{
+  "document": "test-docs/XCAS2J1V_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "prescription",
+          "pages": "1-1,8-8"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "2-2"
+        },
+        {
+          "document_type": "investigation_report",
+          "pages": "3-7"
+        },
+        {
+          "document_type": "identity_document",
+          "pages": "9-9"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-05-26",
+            "ip_number": "",
+            "net_amount": 2650.0,
+            "page_number": 2,
+            "invoice_number": "605100657",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "C D Healthcare LLP (Concept Diagnostics)",
+              "registration_number": ""
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "CBC",
+              "is_returned": false,
+              "final_amount": 350.0
+            },
+            {
+              "discount": 0.0,
+              "item_name": "Urine Routine Examination",
+              "is_returned": false,
+              "final_amount": 250.0
+            },
+            {
+              "discount": 0.0,
+              "item_name": "Creatinine",
+              "is_returned": false,
+              "final_amount": 250.0
+            },
+            {
+              "discount": 0.0,
+              "item_name": "USG ABD+PELVIS",
+              "is_returned": false,
+              "final_amount": 1800.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "a7d8e5ac2873",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 2,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 3,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 4,
+              "category": "Imageology"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "fwa_flags": [],
+      "icd_codes": [
+        {
+          "code": "R10.9",
+          "name": "Unspecified abdominal pain",
+          "type": "primary",
+          "block": "R10-R19 Symptoms and signs involving the digestive system and abdomen",
+          "source": "Referral slip - USG Abdomen Pelvis advised",
+          "chapter": "Chapter XVIII",
+          "diagnosis": "Suspected abdominal/pelvic condition requiring USG"
+        },
+        {
+          "code": "R39.9",
+          "name": "Unspecified symptoms and signs involving the genitourinary system",
+          "type": "secondary",
+          "block": "R30-R39 Symptoms and signs involving the genitourinary system",
+          "source": "Referral slip - Urine and S. Creatinine advised",
+          "chapter": "Chapter XVIII",
+          "diagnosis": "Suspected urinary/renal condition requiring Urine and Creatinine tests"
+        }
+      ],
+      "bills_analyzed": 1,
+      "policy_remarks": "Crosspathy violation: All investigations were prescribed by a B.A.M.S. (Ayurvedic) doctor, which is excluded under policy rule 15.",
+      "patches_applied": 10,
+      "duplicates_found": 0,
+      "policy_violations": [
+        {
+          "bill_id": "a7d8e5ac2873",
+          "item_name": "CBC",
+          "item_s_no": 1,
+          "rule_name": "Crosspathy is excluded",
+          "recommendation": "Reject",
+          "amount_impacted": 350.0,
+          "violation_details": "Allopathic test prescribed by B.A.M.S. doctor"
+        },
+        {
+          "bill_id": "a7d8e5ac2873",
+          "item_name": "Urine Routine Examination",
+          "item_s_no": 2,
+          "rule_name": "Crosspathy is excluded",
+          "recommendation": "Reject",
+          "amount_impacted": 250.0,
+          "violation_details": "Allopathic test prescribed by B.A.M.S. doctor"
+        },
+        {
+          "bill_id": "a7d8e5ac2873",
+          "item_name": "Creatinine",
+          "item_s_no": 3,
+          "rule_name": "Crosspathy is excluded",
+          "recommendation": "Reject",
+          "amount_impacted": 250.0,
+          "violation_details": "Allopathic test prescribed by B.A.M.S. doctor"
+        },
+        {
+          "bill_id": "a7d8e5ac2873",
+          "item_name": "USG ABD+PELVIS",
+          "item_s_no": 4,
+          "rule_name": "Crosspathy is excluded",
+          "recommendation": "Reject",
+          "amount_impacted": 1800.0,
+          "violation_details": "Allopathic test prescribed by B.A.M.S. doctor"
+        }
+      ],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The extracted bill total matches the claimed amount. All billed investigations (CBC, Urine, Creatinine, USG) are supported by the referral slip from Dr. M. D. Trivedi. However, a policy violation for crosspathy is identified as the referring doctor holds a B.A.M.S. (Ayurveda) degree and has prescribed allopathic diagnostic tests.",
+      "medical_legibility": {
+        "summary": "All billed investigations are explicitly requested in the referral slip. The tests are clinically consistent with a general abdominal/pelvic evaluation.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 2650.0,
+      "bills_with_corrections": 0,
+      "updated_claimed_amount": 2650.0,
+      "original_claimed_amount": 2650.0,
+      "original_total_of_bills": 2650.0,
+      "policy_violations_count": 4,
+      "medical_legibility_issues": 0,
+      "patches": []
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "Cosmetic Lenses",
+        "Protein Shakes",
+        "Supplements",
+        "Hearing Aid",
+        "Over the Counter Medicines (OTC)",
+        "Sunglasses (powered or otherwise)",
+        "Frames without corrective lenses",
+        "Dental implants"
+      ],
+      "policy_rules": [
+        "Dental coverage is limited to Class 2 treatments (Basic Restorative and Periodontal).",
+        "Preventive and Cosmetic dental treatments are excluded.",
+        "Vision frames are subject to a cap.",
+        "Vaccines must be WHO approved for adults and children.",
+        "Annual Health Check-up is restricted to Employees only and must be within the OPD wallet.",
+        "Annual Health Check-up must be via Cashless mode using the Comprehensive package.",
+        "Physiotherapy must be prescribed and is capped per consultation.",
+        "Obesity, IVF, and Infertility related treatments are excluded.",
+        "Cataract and Lasik surgery are excluded.",
+        "Maternity related expenses are excluded.",
+        "Orthodontic treatment and routine dental check-ups are excluded.",
+        "Investigations or treatments without existence of disease, illness, signs, or symptoms are excluded.",
+        "Diagnostic tests and treatments must be advised by a Specialist Consultant and supported by a valid prescription.",
+        "Expenses in excess of the maximum Outpatient medical expenses limit are not payable.",
+        "Crosspathy is excluded.",
+        "Vision frames are only payable if they include corrective lenses."
+      ],
+      "extraction_ok": true
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "a7d8e5ac2873",
+            "bill_date": "2026-05-26",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 2650.0,
+            "page_number": 2,
+            "invoice_number": "605100657",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "C D Healthcare LLP (Concept Diagnostics)",
+              "registration_number": ""
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "discount": 0.0,
+              "item_name": "CBC",
+              "brand_name": null,
+              "is_returned": false,
+              "final_amount": 350.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "item_id": "2",
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "discount": 0.0,
+              "item_name": "Urine Routine Examination",
+              "brand_name": null,
+              "is_returned": false,
+              "final_amount": 250.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 3,
+              "is_nme": false,
+              "item_id": "3",
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "discount": 0.0,
+              "item_name": "Creatinine",
+              "brand_name": null,
+              "is_returned": false,
+              "final_amount": 250.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 4,
+              "is_nme": false,
+              "item_id": "4",
+              "category": "Imageology",
+              "discount": 0.0,
+              "item_name": "USG ABD+PELVIS",
+              "brand_name": null,
+              "is_returned": false,
+              "final_amount": 1800.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1361102,
+          "benefit_name": "Prescribed Diagnostics",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

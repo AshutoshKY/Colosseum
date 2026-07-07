@@ -1,0 +1,364 @@
+{
+  "document": "test-docs/REQRM38KJOF_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "prescription",
+          "pages": "1-1"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "2-3"
+        },
+        {
+          "document_type": "other",
+          "pages": "4-4"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "5-5"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-06-08",
+            "ip_number": "",
+            "net_amount": 2809.87,
+            "page_number": 2,
+            "invoice_number": "IIN10826A7053829",
+            "total_discount": 2619.05,
+            "facility_details": {
+              "name": "LENSKART SOLUTIONS LIMITED",
+              "registration_number": "08AACCV7324B1ZK"
+            }
+          },
+          "items": [
+            {
+              "discount": 2619.05,
+              "quantity": 1.0,
+              "item_name": "Blue Full Rim Rectangle Vincent Chase Classic Acetate VC E16689-C1 Eyeglasses - Owndays Japan BLU+ iShield",
+              "net_amount": 130.95,
+              "unit_price": 2750.0,
+              "is_returned": false,
+              "final_amount": 2750.0
+            },
+            {
+              "discount": 0.0,
+              "quantity": 1.0,
+              "item_name": "Fitting / Convenience Fee",
+              "net_amount": 59.87,
+              "unit_price": 59.87,
+              "is_returned": false,
+              "final_amount": 59.87
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "af33e4fc1582",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Others"
+            },
+            {
+              "s.no.": 2,
+              "category": "Others"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": [
+        {
+          "nme_item": {
+            "sr.no": 2,
+            "item_name": "Fitting / Convenience Fee",
+            "bill_amount": 59.87,
+            "deduction_reason": "Fitting charges"
+          }
+        }
+      ]
+    },
+    "audit": {
+      "status": "MATCH",
+      "fwa_flags": [],
+      "icd_codes": [
+        {
+          "code": "H52.4",
+          "name": "Presbyopia",
+          "type": "primary",
+          "block": "H52 Disorders of refraction and accommodation",
+          "source": "Product Recommendation Summary - Power details (+1.50 Add)",
+          "chapter": "Chapter VII - Diseases of the eye and adnexa",
+          "diagnosis": "Presbyopia"
+        }
+      ],
+      "bills_analyzed": 1,
+      "policy_remarks": "One policy violation found: Fitting / Convenience Fee (₹59.87) is a non-medical administrative charge excluded per policy.",
+      "patches_applied": 4,
+      "duplicates_found": 0,
+      "policy_violations": [
+        {
+          "bill_id": "af33e4fc1582",
+          "item_name": "Fitting / Convenience Fee",
+          "item_s_no": 2,
+          "rule_name": "Non-Medical Administrative Charges",
+          "recommendation": "Reject this item",
+          "amount_impacted": 59.87,
+          "violation_details": "Convenience/Administrative fees are generally excluded from medical coverage."
+        }
+      ],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The claimed amount was updated to match the invoice total of ₹2809.87 found on page 3. Patient name was corrected from the prescription (Manoj Kaushik) as the invoice is billed to Pransh Kaushik but the medical recommendation is for Manoj. A policy violation was flagged for the convenience fee.",
+      "medical_legibility": {
+        "summary": "The billed eyeglasses match the power recommendation (Presbyopia/Add Power +1.50) provided by the optometrist on page 1.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 2809.87,
+      "bills_with_corrections": 1,
+      "updated_claimed_amount": 2809.87,
+      "original_claimed_amount": 0.0,
+      "original_total_of_bills": 2809.87,
+      "policy_violations_count": 1,
+      "medical_legibility_issues": 0,
+      "patches": []
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "Food",
+        "Food Supplements",
+        "Dietary Pills (Horlicks, Glucose, Whey Protein)",
+        "Vitamins (unless prescribed)",
+        "Minerals (unless prescribed)",
+        "Organic substances (unless prescribed)",
+        "Wound cleaning fees",
+        "Dressing fees",
+        "OTC Medicines",
+        "Wigs",
+        "Toupees",
+        "Hearing aid",
+        "Cosmetic treatments (Chemical peel, Laser hair removal)",
+        "Standard deductions from inpatient hospitalization"
+      ],
+      "policy_rules": [
+        "Health Check limited to 1 per family with a cap of INR 1200.",
+        "In-Clinic Consultations capped at INR 6000.",
+        "Prescribed Diagnostics capped at INR 5000 and must be prescribed by an Allopathic practitioner.",
+        "Vaccination capped at INR 2500 for WHO-approved vaccinations.",
+        "Prescribed Pharmacy capped at INR 5000 and must be prescribed by an Allopathic practitioner.",
+        "Dental Wellness capped at INR 5000.",
+        "Vision Wellness capped at INR 5000.",
+        "Dermatology benefit capped at INR 1500.",
+        "Inpatient hospitalization and day-care treatments are excluded.",
+        "Procedure fees (e.g., wound dressing) during OP consultations are not covered.",
+        "Medicines and Diagnostic Tests require a valid doctor's prescription.",
+        "AYUSH and physiotherapy are excluded from consultation coverage.",
+        "Claims must be submitted within 45 days from the date of service.",
+        "Skin-related consultations are restricted to the Dermatology benefit limit."
+      ],
+      "extraction_ok": true
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "af33e4fc1582",
+            "bill_date": "2026-06-08",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 2809.87,
+            "page_number": 2,
+            "invoice_number": "IIN10826A7053829",
+            "total_discount": 2619.05,
+            "facility_details": {
+              "name": "LENSKART SOLUTIONS LIMITED",
+              "registration_number": "08AACCV7324B1ZK"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": true,
+              "item_id": "1",
+              "category": "Others",
+              "discount": 2619.05,
+              "quantity": 1.0,
+              "item_name": "Blue Full Rim Rectangle Vincent Chase Classic Acetate VC E16689-C1 Eyeglasses - Owndays Japan BLU+ iShield",
+              "brand_name": null,
+              "net_amount": 130.95,
+              "unit_price": 2750.0,
+              "is_returned": false,
+              "final_amount": 2750.0,
+              "generic_name": null,
+              "nme_item_name": "Blue Full Rim Rectangle Vincent Chase Classic Acetate VC E16689-C1 Eyeglasses - Owndays Japan BLU+ iShield",
+              "nme_bill_amount": 2750.0,
+              "deduction_reason": "Hearing aid",
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 2,
+              "is_nme": true,
+              "item_id": "2",
+              "category": "Others",
+              "discount": 0.0,
+              "quantity": 1.0,
+              "item_name": "Fitting / Convenience Fee",
+              "brand_name": null,
+              "net_amount": 59.87,
+              "unit_price": 59.87,
+              "is_returned": false,
+              "final_amount": 59.87,
+              "generic_name": null,
+              "nme_item_name": "Fitting / Convenience Fee",
+              "nme_bill_amount": 59.87,
+              "deduction_reason": "Hearing aid",
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1366527,
+          "benefit_name": "Dermatology Consultations & Treatment",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366528,
+          "benefit_name": "WHO Approved Vaccinations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "vaccination_card",
+              "requirement_type": "conditional",
+              "condition_description": "Required only if the reimbursement claim is for a child’s vaccination."
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366531,
+          "benefit_name": "Dental",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "x_ray",
+              "requirement_type": "conditional",
+              "condition_description": ""
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366534,
+          "benefit_name": "Prescribed Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366543,
+          "benefit_name": "Inclinic consultations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366553,
+          "benefit_name": "Vision",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366556,
+          "benefit_name": "Prescribed Lab Tests",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

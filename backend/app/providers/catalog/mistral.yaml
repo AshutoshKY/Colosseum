@@ -1,0 +1,61 @@
+# Mistral on Vertex AI Model Garden (vertex_partner / MaaS).
+# Small 3.1 / Medium 3 are multimodal (vision via images); Large / Nemo / Codestral are
+# text-only; Mistral OCR is a dedicated document-OCR (vision) model. PDF via rasterized
+# images (not native). json_mode + repair ladder.
+#
+# GATED OFF: not verified callable on vertex-internal-testing (no gcloud).
+
+family: mistral
+provider: vertex_partner
+access: maas
+defaults:
+  modalities: [text]
+  pdf_native: false
+  vision: false
+  structured_method: json_mode
+  needs_repair_fallback: true
+  thinking: false
+  context_window: 128000
+  enabled: false
+  verified: false
+  reason: "not verified callable on project (Mistral Model Garden enablement unconfirmed; no gcloud)"
+  notes: "PDF via rasterized images for vision members; json_mode + repair."
+
+models:
+  - model_id: vertex_ai/mistral-small-2503
+    display_name: Mistral Small 3.1 (Vertex)
+    version: "small-2503"
+    variant: vision
+    modalities: [text, image]
+    vision: true
+    pricing_ref: mistral-small
+  - model_id: vertex_ai/mistral-medium-3
+    display_name: Mistral Medium 3 (Vertex)
+    version: "medium-3"
+    variant: vision
+    modalities: [text, image]
+    vision: true
+    pricing_ref: mistral-medium
+  - model_id: vertex_ai/mistral-large-2411
+    display_name: Mistral Large (2411, Vertex)
+    version: "large-2411"
+    variant: text
+    pricing_ref: mistral-large
+  - model_id: vertex_ai/mistral-nemo@2407
+    display_name: Mistral Nemo (Vertex)
+    version: "nemo-2407"
+    variant: text
+    pricing_ref: mistral-nemo
+  - model_id: vertex_ai/mistralai/codestral-2@001
+    display_name: Codestral 2 (Vertex)
+    version: "codestral-2"
+    variant: text
+    pricing_ref: mistral-small
+  - model_id: vertex_ai/mistral-ocr-2505
+    display_name: Mistral OCR (2505, Vertex)
+    version: "ocr-2505"
+    variant: vision
+    modalities: [text, image]
+    vision: true
+    pricing_ref: mistral-small
+    notes: "dedicated document OCR (vision); PDF via rasterized images."

@@ -1,0 +1,498 @@
+{
+  "document": "test-docs/REQW3D6S728_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "prescription",
+          "pages": "1-2"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "3-3"
+        },
+        {
+          "document_type": "other",
+          "pages": "4-4"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "5-5"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-06-12",
+            "ip_number": "",
+            "net_amount": 2017.66,
+            "page_number": 3,
+            "invoice_number": "S19941526A447396",
+            "total_discount": 217.46,
+            "facility_details": {
+              "name": "VENTURA TRADING PRIVATE LIMITED"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "quantity": 1.0,
+              "item_name": "ZEEBEE BOTTLE OF",
+              "brand_name": "ZEEBEE",
+              "unit_price": 19.12,
+              "is_returned": false,
+              "final_amount": 19.12
+            },
+            {
+              "discount": 2.25,
+              "quantity": 1.0,
+              "item_name": "CROCIN 650MG STRIP",
+              "brand_name": "CROCIN",
+              "unit_price": 29.88,
+              "is_returned": false,
+              "final_amount": 32.13
+            },
+            {
+              "discount": 7.48,
+              "quantity": 1.0,
+              "item_name": "HIFENAC P STRIP OF 15",
+              "brand_name": "HIFENAC P",
+              "unit_price": 99.4,
+              "is_returned": false,
+              "final_amount": 106.88
+            },
+            {
+              "discount": 24.19,
+              "quantity": 7.0,
+              "item_name": "ESOGRESS HP STRIP OF 6",
+              "brand_name": "ESOGRESS",
+              "unit_price": 217.68,
+              "is_returned": false,
+              "final_amount": 241.87
+            },
+            {
+              "discount": 19.2,
+              "quantity": 2.0,
+              "item_name": "NEXPRO RD 40MG STRIP",
+              "brand_name": "NEXPRO RD",
+              "unit_price": 172.75,
+              "is_returned": false,
+              "final_amount": 191.95
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "1dd49f789a4a",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 2,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 3,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 4,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 5,
+              "category": "Medicines From Shop"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "fwa_flags": [],
+      "icd_codes": [
+        {
+          "code": "B98.0",
+          "name": "Helicobacter pylori [H. pylori] as the cause of diseases classified to other chapters",
+          "type": "primary",
+          "block": "B95-B98 Bacterial, viral and other infectious agents",
+          "source": "Prescription - Diagnosis and Lab findings",
+          "chapter": "Chapter I",
+          "diagnosis": "IgA H. Pylori Positive"
+        },
+        {
+          "code": "L29.9",
+          "name": "Pruritus, unspecified",
+          "type": "secondary",
+          "block": "L20-L30 Dermatitis and eczema",
+          "source": "Prescription - Chief Complaints",
+          "chapter": "Chapter XII",
+          "diagnosis": "Itchy Allergic rashes"
+        },
+        {
+          "code": "I10",
+          "name": "Essential (primary) hypertension",
+          "type": "secondary",
+          "block": "I10-I15 Hypertensive diseases",
+          "source": "Prescription - History of past illness",
+          "chapter": "Chapter IX",
+          "diagnosis": "HTN X 2.5 years"
+        }
+      ],
+      "bills_analyzed": 1,
+      "patches_applied": 8,
+      "duplicates_found": 0,
+      "policy_violations": [],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The extracted bill total matches the PDF. Claimed amount updated from 0 to the invoice total found on page 3. Two items (Zeebee and Hifenac P) are flagged as they are not mentioned in the prescription.",
+      "medical_legibility": {
+        "summary": "The primary medications (Esogress HP, Nexpro RD) match the prescription for H. Pylori and GI issues. However, Zeebee and Hifenac P are not documented in the provided prescription.",
+        "flagged_items": [
+          {
+            "bill_id": "1dd49f789a4a",
+            "item_name": "ZEEBEE BOTTLE OF",
+            "flag_reason": "Not in prescription",
+            "recommendation": "Mark as non-admissible"
+          },
+          {
+            "bill_id": "1dd49f789a4a",
+            "item_name": "HIFENAC P STRIP OF 15",
+            "flag_reason": "Not in prescription",
+            "recommendation": "Mark as non-admissible"
+          }
+        ],
+        "prescription_bill_match": false,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 2017.66,
+      "bills_with_corrections": 1,
+      "updated_claimed_amount": 2017.66,
+      "original_claimed_amount": 0.0,
+      "original_total_of_bills": 2017.66,
+      "policy_violations_count": 0,
+      "medical_legibility_issues": 2,
+      "patches": []
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "Online Teleconsultation fees",
+        "Health foods",
+        "Dietary supplements",
+        "Membership fees (health/well-being apps, gym)",
+        "Thermometers",
+        "BP apparatus",
+        "CPAP/Bi-PAP machines",
+        "Ambulance charges",
+        "Caregiver/Nurse charges",
+        "Contraceptives",
+        "Soaps",
+        "Face wash",
+        "Moisturizers",
+        "Lotions/creams",
+        "Shampoos",
+        "Hair lotions",
+        "Protein powder",
+        "Baby food",
+        "Disposable & Routine Consumables",
+        "Injection & Infusion Related Consumables",
+        "Dressing & Wound Care Materials",
+        "Personal Comfort & Hygiene Items",
+        "Miscellaneous (Non-Medical / Daily-Use Items)"
+      ],
+      "policy_rules": [
+        "Policy covers only non-hospitalization expenses.",
+        "Consultancy, medicines, and medical tests are covered for Allopathy, Homeopathy, Physiotherapy, and Ayurvedic (AYUSH) treatments.",
+        "Vision-related expenses (spectacles/lenses) capped at INR 10,000 per employee/dependent per policy year.",
+        "Pre-natal outpatient care capped at INR 19,900 per instance.",
+        "Pre-natal benefit limited to a maximum of 2 instances of childbirth.",
+        "Submission of an EDD (Expected Date of Delivery) certificate is mandatory to unlock pre-natal benefits.",
+        "Pre-natal outpatient care limited to a maximum of 10 visits.",
+        "Fetal ultrasounds limited to a maximum of 5 total across all trimesters.",
+        "Dental coverage is restricted to non-cosmetic treatments such as dentures, cavity fillings, or non-gold metal caps.",
+        "Cancer screening frequency: Cervical (once a year), Breast (once in 2 years), Colorectal (once in 3 years).",
+        "Vaccination expenses can only be claimed under the specific vaccination benefit and not under other benefit heads.",
+        "Medical treatments conducted at home (e.g., peritoneal dialysis) are excluded.",
+        "Cosmetic treatments, weight management, and peeling procedures are excluded.",
+        "Consultations with nutritionists and dieticians are excluded, even if prescribed.",
+        "Infertility treatment or management is excluded.",
+        "Services must be availed within the policy period: 01 April 2026 to 31 March 2027."
+      ],
+      "extraction_ok": true
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "1dd49f789a4a",
+            "bill_date": "2026-06-12",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 2017.66,
+            "page_number": 3,
+            "invoice_number": "S19941526A447396",
+            "total_discount": 217.46,
+            "facility_details": {
+              "name": "VENTURA TRADING PRIVATE LIMITED",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "quantity": 1.0,
+              "item_name": "ZEEBEE BOTTLE OF",
+              "brand_name": "ZEEBEE",
+              "net_amount": null,
+              "unit_price": 19.12,
+              "is_returned": false,
+              "final_amount": 19.12,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "item_id": "2",
+              "category": "Medicines From Shop",
+              "discount": 2.25,
+              "quantity": 1.0,
+              "item_name": "CROCIN 650MG STRIP",
+              "brand_name": "CROCIN",
+              "net_amount": null,
+              "unit_price": 29.88,
+              "is_returned": false,
+              "final_amount": 32.13,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 3,
+              "is_nme": false,
+              "item_id": "3",
+              "category": "Medicines From Shop",
+              "discount": 7.48,
+              "quantity": 1.0,
+              "item_name": "HIFENAC P STRIP OF 15",
+              "brand_name": "HIFENAC P",
+              "net_amount": null,
+              "unit_price": 99.4,
+              "is_returned": false,
+              "final_amount": 106.88,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 4,
+              "is_nme": false,
+              "item_id": "4",
+              "category": "Medicines From Shop",
+              "discount": 24.19,
+              "quantity": 7.0,
+              "item_name": "ESOGRESS HP STRIP OF 6",
+              "brand_name": "ESOGRESS",
+              "net_amount": null,
+              "unit_price": 217.68,
+              "is_returned": false,
+              "final_amount": 241.87,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 5,
+              "is_nme": false,
+              "item_id": "5",
+              "category": "Medicines From Shop",
+              "discount": 19.2,
+              "quantity": 2.0,
+              "item_name": "NEXPRO RD 40MG STRIP",
+              "brand_name": "NEXPRO RD",
+              "net_amount": null,
+              "unit_price": 172.75,
+              "is_returned": false,
+              "final_amount": 191.95,
+              "generic_name": null,
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1351910,
+          "benefit_name": "Dental Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "x_ray",
+              "requirement_type": "conditional",
+              "condition_description": ""
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351913,
+          "benefit_name": "Eye Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351915,
+          "benefit_name": "Order Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351916,
+          "benefit_name": "Book Vaccinations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "vaccination_card",
+              "requirement_type": "conditional",
+              "condition_description": "Required only if the reimbursement claim is for a child’s vaccination."
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351925,
+          "benefit_name": "Prenatal Services",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351927,
+          "benefit_name": "Tobacco Cessation Program",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351931,
+          "benefit_name": "In-Clinic Consults",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351937,
+          "benefit_name": "Cancer Screening",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366494,
+          "benefit_name": "Diagnostics",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

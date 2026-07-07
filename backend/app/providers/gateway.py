@@ -68,14 +68,23 @@ class GatewayResult:
     skipped: bool = False
     skip_reason: str | None = None
     adapter_notes: dict[str, Any] = field(default_factory=dict)
+    # What was actually sent to the model (persisted for full reproducibility).
+    prompt_system: str | None = None
+    prompt_instruction: str | None = None
+    document_count: int = 0
 
 
 class ModelGateway:
     """Provider-agnostic gateway. One instance is reusable across calls."""
 
-    def __init__(self, *, region: str | None = None) -> None:
+    def __init__(self, *, region: str | None = None, trace: bool = True) -> None:
         self.settings = get_settings()
         self.region = region
+        if trace:
+            # Idempotent; no-op when Langfuse keys are absent.
+            from app.observability import enable_langfuse
+
+            enable_langfuse()
 
     # ------------------------------------------------------------------ public
     async def structured(
@@ -111,6 +120,9 @@ class ModelGateway:
                 skipped=True,
                 skip_reason=gate.reason,
                 structured_method=capability.structured_method.value,
+                prompt_system=system,
+                prompt_instruction=instruction,
+                document_count=len(documents),
             )
 
         messages = [
@@ -118,21 +130,45 @@ class ModelGateway:
             {"role": "user", "content": normalized.content},
         ]
 
-        # 2. structured call (+ repair ladder for weak models).
-        start = time.perf_counter()
-        result = await self._call_with_fallback(
-            capability=capability,
-            messages=messages,
-            schema=schema,
-            config=config,
-        )
-        latency_ms = int((time.perf_counter() - start) * 1000)
+        # 2. structured call (+ repair ladder for weak models), traced by Langfuse.
+        from app.observability import trace_call
 
-        # 3. usage + cost.
-        usage = normalize_usage(result.usage_raw)
-        cost = estimate_cost(
-            pricing_ref=capability.pricing_ref, usage=usage, region=self.region
-        )
+        start = time.perf_counter()
+        with trace_call(
+            f"gateway.structured:{schema.__name__}",
+            model=model_id,
+            metadata={"schema": schema.__name__, "documents": len(documents)},
+        ) as span:
+            result = await self._call_with_fallback(
+                capability=capability,
+                messages=messages,
+                schema=schema,
+                config=config,
+            )
+            latency_ms = int((time.perf_counter() - start) * 1000)
+
+            # 3. usage + cost.
+            usage = normalize_usage(result.usage_raw)
+            cost = estimate_cost(
+                pricing_ref=capability.pricing_ref, usage=usage, region=self.region
+            )
+            if span is not None:
+                try:
+                    span.update(
+                        usage_details={
+                            "input": usage.input_tokens,
+                            "output": usage.output_tokens,
+                            "total": usage.total_tokens,
+                        },
+                        metadata={
+                            "valid": result.parsed is not None,
+                            "cost_usd": float(cost.total_usd),
+                            "latency_ms": latency_ms,
+                            "retries": result.retries,
+                        },
+                    )
+                except Exception:  # noqa: BLE001 — never let tracing break the call
+                    pass
 
         return GatewayResult(
             model_id=model_id,
@@ -148,6 +184,9 @@ class ModelGateway:
             structured_method=capability.structured_method.value,
             endpoint=self.region or "default",
             adapter_notes=normalized.notes,
+            prompt_system=normalized.system,
+            prompt_instruction=instruction,
+            document_count=len(documents),
         )
 
     # ------------------------------------------------------------------ internals
@@ -255,12 +294,17 @@ class ModelGateway:
         return text, _completion_to_dict(completion), getattr(completion, "usage", None)
 
     def _provider_kwargs(self, capability: ModelCapability, config: dict[str, Any]) -> dict[str, Any]:
-        """Provider-specific kwargs (Vertex creds, temperature, thinking)."""
+        """Provider-specific kwargs (Vertex creds, xAI/openai-compat keys, temperature, thinking)."""
         kwargs: dict[str, Any] = {"temperature": config.get("temperature", 0.0)}
         if (mot := config.get("max_output_tokens")) is not None:
             kwargs["max_tokens"] = mot
 
-        if capability.provider.value == "vertex_ai":
+        provider = capability.provider.value
+
+        # Vertex AI + Vertex Model Garden partners both route through the vertex_ai transport
+        # using the same service-account credentials. (Partner model ids carry the publisher
+        # prefix, e.g. vertex_ai/zai-org/glm-5-maas, and LiteLLM dispatches them as partner.)
+        if provider in ("vertex_ai", "vertex_partner"):
             creds = (
                 os.environ.get("GOOGLE_CLOUD_CREDENTIALS_JSON")
                 or os.environ.get("SUPERCLAIMS_GOOGLE_CREDENTIALS_JSON")
@@ -274,7 +318,24 @@ class ModelGateway:
                 kwargs["vertex_credentials"] = creds
             if project:
                 kwargs["vertex_project"] = project
-            kwargs["vertex_location"] = self.settings.vertexai_location
+            kwargs["vertex_location"] = self.region or self.settings.vertexai_location
+
+        elif provider == "xai":
+            if key := os.environ.get("XAI_API_KEY"):
+                kwargs["api_key"] = key
+
+        elif provider == "openai_compatible":
+            # External OpenAI-compatible endpoints (z.ai GLM, Moonshot Kimi). Resolve a key +
+            # base_url from env by family; absent -> the call fails and the model stays gated.
+            if key := os.environ.get("OPENAI_COMPATIBLE_API_KEY"):
+                kwargs["api_key"] = key
+            if base := os.environ.get("OPENAI_COMPATIBLE_BASE_URL"):
+                kwargs["api_base"] = base
+
+        # Reasoning/thinking budget (provider-agnostic LiteLLM param) when requested + supported.
+        if capability.thinking and (budget := config.get("thinking_budget")) is not None:
+            kwargs["thinking"] = {"type": "enabled", "budget_tokens": int(budget)}
+
         return kwargs
 
 

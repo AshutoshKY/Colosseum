@@ -1,0 +1,96 @@
+# Gemini on Vertex AI (vertex_ai / MaaS) — the only VERIFIED + ENABLED family for this
+# project's Vertex (vertex-internal-testing). Native PDF, vision, json_schema structured
+# output, ~1M context, thinking levels/budget + context caching. 30 MB Vertex payload cap.
+#
+# Schema notes (shared by every catalog file):
+#   family/version/variant   -> grouping keys (variant captures thinking vs non-thinking etc.)
+#   provider                 -> vertex_ai | vertex_partner | xai | openai_compatible
+#   access                   -> maas | self_deploy
+#   modalities               -> text/image/pdf/audio/video
+#   pdf_native, vision       -> document handling
+#   structured_method        -> json_schema | json_mode | tools
+#   thinking                 -> reasoning budget/level supported (billed)
+#   enabled / verified       -> enabled ONLY if verified callable on THIS project (or has a key)
+#   reason                   -> why a model is gated off (enabled=false)
+#   pricing_ref              -> key into providers/pricing/rate_card.json
+
+family: gemini
+provider: vertex_ai
+access: maas
+defaults:
+  modalities: [text, image, pdf]
+  pdf_native: true
+  vision: true
+  max_payload_mb: 30.0
+  context_window: 1000000
+  structured_method: json_schema
+  thinking: true
+  caching: true
+  batch: true
+  enabled: true
+  verified: true
+  notes: "VERIFIED June 2026 on vertex-internal-testing: native PDF, vision, json_schema, thinking, caching. 30 MB payload cap."
+
+models:
+  # --- Gemini 2.5 ---
+  - model_id: vertex_ai/gemini-2.5-flash
+    display_name: Gemini 2.5 Flash
+    version: "2.5"
+    variant: flash
+    pricing_ref: gemini-2.5-flash
+  - model_id: vertex_ai/gemini-2.5-pro
+    display_name: Gemini 2.5 Pro
+    version: "2.5"
+    variant: pro
+    pricing_ref: gemini-2.5-pro
+  - model_id: vertex_ai/gemini-2.5-flash-lite
+    display_name: Gemini 2.5 Flash-Lite
+    version: "2.5"
+    variant: flash-lite
+    pricing_ref: gemini-2.5-flash-lite
+
+  # --- Gemini 3.x ---
+  # Phase 2.5 live probe (June 19 2026) on vertex-internal-testing: every gemini-3.x id below
+  # returns litellm.NotFoundError (Vertex 404 — model not available on this project/region).
+  # Gated off until the project is granted access. Only Gemini 2.5 (flash/pro/flash-lite) is
+  # verified callable here.
+  - model_id: vertex_ai/gemini-3-flash-preview
+    display_name: Gemini 3 Flash
+    version: "3"
+    variant: flash
+    pricing_ref: gemini-3-flash-preview
+    enabled: false
+    verified: false
+    reason: "Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026)."
+  - model_id: vertex_ai/gemini-3-pro-preview
+    display_name: Gemini 3 Pro
+    version: "3"
+    variant: pro
+    pricing_ref: gemini-3.1-pro-preview
+    enabled: false
+    verified: false
+    reason: "Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026)."
+  - model_id: vertex_ai/gemini-3.1-pro-preview
+    display_name: Gemini 3.1 Pro
+    version: "3.1"
+    variant: pro
+    pricing_ref: gemini-3.1-pro-preview
+    enabled: false
+    verified: false
+    reason: "Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026)."
+  - model_id: vertex_ai/gemini-3.1-flash-lite
+    display_name: Gemini 3.1 Flash-Lite
+    version: "3.1"
+    variant: flash-lite
+    pricing_ref: gemini-3.1-flash-lite
+    enabled: false
+    verified: false
+    reason: "Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026)."
+  - model_id: vertex_ai/gemini-3.5-flash
+    display_name: Gemini 3.5 Flash
+    version: "3.5"
+    variant: flash
+    pricing_ref: gemini-3-flash-preview
+    enabled: false
+    verified: false
+    reason: "Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026); pricing approximated to gemini-3-flash."

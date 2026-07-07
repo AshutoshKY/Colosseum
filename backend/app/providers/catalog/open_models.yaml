@@ -1,0 +1,128 @@
+# Open-weight & misc partner models on Vertex AI Model Garden.
+#  - Gemma 4 (26B MoE) is available as MaaS (vertex_partner) AND self-deploy. Gemma 3 is
+#    self-deploy only (GPU/TPU endpoint: cold-start 429, VM-uptime billing).
+#  - gpt-oss (OpenAI open-weight) 20b/120b are MaaS.
+#  - MiniMax M2, AI21 Jamba 1.5 are MaaS partner models.
+# Structured output is json_mode + repair ladder for these (weaker SO reliability).
+#
+# GATED OFF: not verified callable on vertex-internal-testing (no gcloud). Self-deploy
+# members are additionally flagged as VM-uptime priced (not per-token).
+
+family: open_models
+
+groups:
+  # ---- Gemma (Google open) ----
+  - provider: vertex_partner
+    access: maas
+    defaults:
+      modalities: [text, image]
+      pdf_native: false
+      vision: true
+      structured_method: json_mode
+      needs_repair_fallback: true
+      thinking: false
+      context_window: 128000
+      enabled: false
+      verified: false
+      reason: "not verified callable on project (Gemma MaaS enablement unconfirmed; no gcloud)"
+      notes: "Gemma 4 26B MoE multimodal MaaS; weak SO -> repair ladder; PDF via images."
+    models:
+      - model_id: vertex_ai/google/gemma-4-26b-a4b-it-maas
+        display_name: Gemma 4 26B A4B IT (Vertex MaaS)
+        version: "4-26b"
+        variant: vision
+        pricing_ref: gemma
+
+  # ---- Gemma 3 (self-deploy only) ----
+  - provider: vertex_partner
+    access: self_deploy
+    defaults:
+      modalities: [text, image]
+      pdf_native: false
+      vision: true
+      structured_method: json_mode
+      needs_repair_fallback: true
+      thinking: false
+      context_window: 128000
+      enabled: false
+      verified: false
+      reason: "self-deploy endpoint not provisioned (cold-start 429; VM-uptime billing)"
+      notes: "self-deploy: cost is VM-uptime, NOT per-token; cold-start 429 on first call."
+    models:
+      - model_id: vertex_ai/google/gemma-3-27b-it
+        display_name: Gemma 3 27B IT (self-deploy)
+        version: "3-27b"
+        variant: vision
+        pricing_ref: gemma-self-deploy
+      - model_id: vertex_ai/google/gemma-3-12b-it
+        display_name: Gemma 3 12B IT (self-deploy)
+        version: "3-12b"
+        variant: vision
+        pricing_ref: gemma-self-deploy
+      - model_id: vertex_ai/google/gemma-3-4b-it
+        display_name: Gemma 3 4B IT (self-deploy)
+        version: "3-4b"
+        variant: vision
+        pricing_ref: gemma-self-deploy
+
+  # ---- gpt-oss (OpenAI open weights) ----
+  - provider: vertex_partner
+    access: maas
+    defaults:
+      modalities: [text]
+      pdf_native: false
+      vision: false
+      structured_method: json_mode
+      needs_repair_fallback: true
+      thinking: true
+      context_window: 131072
+      enabled: false
+      verified: false
+      reason: "not verified callable on project (gpt-oss MaaS enablement unconfirmed; no gcloud)"
+      notes: "text-only open-weight reasoning; gate out of image/PDF tasks."
+    models:
+      - model_id: vertex_ai/openai/gpt-oss-120b-maas
+        display_name: gpt-oss 120B (Vertex MaaS)
+        version: "120b"
+        variant: thinking
+        pricing_ref: gpt-oss-120b
+      - model_id: vertex_ai/openai/gpt-oss-20b-maas
+        display_name: gpt-oss 20B (Vertex MaaS)
+        version: "20b"
+        variant: thinking
+        pricing_ref: gpt-oss-20b
+
+  # ---- MiniMax / AI21 Jamba ----
+  - provider: vertex_partner
+    access: maas
+    defaults:
+      modalities: [text]
+      pdf_native: false
+      vision: false
+      structured_method: json_mode
+      needs_repair_fallback: true
+      thinking: false
+      context_window: 256000
+      enabled: false
+      verified: false
+      reason: "not verified callable on project (partner MaaS enablement unconfirmed; no gcloud)"
+      notes: "text-only partner model; gate out of image/PDF tasks."
+    models:
+      - model_id: vertex_ai/minimaxai/minimax-m2-maas
+        display_name: MiniMax M2 (Vertex MaaS)
+        version: "m2"
+        variant: thinking
+        thinking: true
+        pricing_ref: minimax-m2
+      - model_id: vertex_ai/jamba-1.5-large@001
+        display_name: AI21 Jamba 1.5 Large (Vertex)
+        version: "1.5-large"
+        variant: text
+        context_window: 256000
+        pricing_ref: jamba-1.5-large
+      - model_id: vertex_ai/jamba-1.5-mini@001
+        display_name: AI21 Jamba 1.5 Mini (Vertex)
+        version: "1.5-mini"
+        variant: text
+        context_window: 256000
+        pricing_ref: jamba-1.5-mini

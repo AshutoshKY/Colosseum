@@ -1,0 +1,250 @@
+{
+  "document": "test-docs/REQWJ74XVTG_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "itemized_bill",
+          "pages": "1-1"
+        },
+        {
+          "document_type": "prescription",
+          "pages": "2-2"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "3-30"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-06-09",
+            "ip_number": "",
+            "net_amount": 507.3,
+            "page_number": 1,
+            "invoice_number": "14228CC01202661",
+            "total_discount": 26.7,
+            "facility_details": {
+              "name": "Apollo Pharmacy- JUBILEEHILLS OP PHARMACY",
+              "registration_number": "13623011000630"
+            }
+          },
+          "items": [
+            {
+              "discount": 26.7,
+              "quantity": 20.0,
+              "item_name": "SOMPRAZ IT CAP 10'S",
+              "brand_name": "SOMPRAZ IT CAP 10'S",
+              "net_amount": 507.3,
+              "unit_price": 26.7,
+              "is_returned": false,
+              "final_amount": 534.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "bbf9064afc8f",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Medicines From Shop"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "UNDERCLAIMED",
+      "fwa_flags": [],
+      "icd_codes": [
+        {
+          "code": "R14.0",
+          "name": "Abdominal distension (gaseous)",
+          "type": "primary",
+          "block": "R10-R19 Symptoms and signs involving the digestive system and abdomen",
+          "source": "Prescription - Chief Complaints",
+          "chapter": "Symptoms, signs and abnormal clinical and laboratory findings",
+          "diagnosis": "abdominal bloating"
+        },
+        {
+          "code": "K30",
+          "name": "Functional dyspepsia",
+          "type": "secondary",
+          "block": "K20-K31 Diseases of esophagus, stomach and duodenum",
+          "source": "Prescription - Chief Complaints",
+          "chapter": "Diseases of the digestive system",
+          "diagnosis": "post prandial discomfort"
+        }
+      ],
+      "bills_analyzed": 1,
+      "policy_remarks": "No policy violations found. Allopathic medicine from a registered pharmacy.",
+      "patches_applied": 5,
+      "duplicates_found": 0,
+      "policy_violations": [],
+      "discrepancy_amount": 26.7,
+      "discrepancy_reason": "The claimed amount was updated to ₹507.30 based on the 'Paid Amount' visible on the Apollo Pharmacy bill (Page 1). The total bill value is ₹534.00 (MRP), but the patient paid ₹507.30 after a discount of ₹26.70. One medical legibility issue was identified: the medicine 'SOMPRAZ IT' is billed but not explicitly listed in the provided prescription advice section.",
+      "medical_legibility": {
+        "summary": "The medicine billed (Sompraz IT) is a standard treatment for the symptoms described (abdominal bloating/discomfort), but the provided prescription page does not list any medications in the advice section, only 'follow up'.",
+        "flagged_items": [
+          {
+            "bill_id": "bbf9064afc8f",
+            "item_name": "SOMPRAZ IT CAP 10'S",
+            "flag_reason": "Not in prescription",
+            "recommendation": "Check for missing prescription pages; Sompraz IT (Pantoprazole + Itopride) is clinically consistent with 'abdominal bloating' but not written in the advice section."
+          }
+        ],
+        "prescription_bill_match": false,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 534.0,
+      "bills_with_corrections": 1,
+      "updated_claimed_amount": 507.3,
+      "original_claimed_amount": 0.0,
+      "original_total_of_bills": 534.0,
+      "policy_violations_count": 0,
+      "medical_legibility_issues": 1,
+      "patches": []
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "Food supplements (Horlicks, Glucose, Whey Protein, etc.)",
+        "Dietary supplements (Vitamins, minerals, organic substances)",
+        "Wigs or toupees",
+        "Disposable consumables",
+        "Routine consumables",
+        "Injection & Infusion Related Consumables",
+        "Dressing & Wound Care Materials",
+        "Personal Comfort & Hygiene Items",
+        "Miscellaneous Non-Medical / Daily-Use Items"
+      ],
+      "policy_rules": [
+        "Coverage is limited to allopathic GP specialties and super specialties.",
+        "Pharmacy claims must be for allopathic medicines prescribed by a registered medical practitioner.",
+        "Tele-consultations are unlimited.",
+        "Dietician and Nutritionist fees are not payable.",
+        "Non-medical expenses or standard deductions from inpatient or day-care treatments are excluded from the OPD policy.",
+        "Any ailment with a sublimit in the Group Medical Plan cannot be claimed under the OPD Policy.",
+        "Mental health, developmental disorders, and psychiatric/psychosomatic treatments are excluded.",
+        "Procedure fees (e.g., wound cleaning, dressings, burn care, saline drips) incurred during OP consultations are not covered.",
+        "Over the counter (OTC) medicines and medicines purchased without a doctor's prescription are not covered.",
+        "Diagnostics and investigations require a valid doctor's prescription.",
+        "Cosmetic treatments, surgeries, and related consultations (e.g., chemical peels, laser hair removal) are excluded.",
+        "Pre-natal, post-natal, and maternity-related expenses are not covered.",
+        "Naturopathy and treatments at health hydros, spas, or nature cure clinics are excluded.",
+        "Treatments for alopecia, hair fall, acne, and vitiligo are not covered.",
+        "Prescriptions for chronic ailments are valid for a maximum of 6 months.",
+        "Pre and Post-hospitalization expenses are excluded.",
+        "High-end diagnostics (CT, MRI, PET, Biopsy, Bone Densitometry, Genetic screenings) are not covered.",
+        "Invasive procedures (e.g., Angiography, Scopies) are not covered.",
+        "Dental scaling and polishing are excluded unless treating a documented abnormality (e.g., bleeding gums, bone loss).",
+        "Sexually transmitted diseases are not covered."
+      ],
+      "extraction_ok": true
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "bbf9064afc8f",
+            "bill_date": "2026-06-09",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 507.3,
+            "page_number": 1,
+            "invoice_number": "14228CC01202661",
+            "total_discount": 26.7,
+            "facility_details": {
+              "name": "Apollo Pharmacy- JUBILEEHILLS OP PHARMACY",
+              "registration_number": "13623011000630"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Medicines From Shop",
+              "discount": 26.7,
+              "quantity": 20.0,
+              "item_name": "SOMPRAZ IT CAP 10'S",
+              "brand_name": "SOMPRAZ IT CAP 10'S",
+              "net_amount": 507.3,
+              "unit_price": 26.7,
+              "is_returned": false,
+              "final_amount": 534.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1353025,
+          "benefit_name": "Order Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1353027,
+          "benefit_name": "Prescribed Diagnostics",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1353028,
+          "benefit_name": "In-Clinic Consults",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

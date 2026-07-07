@@ -65,6 +65,9 @@ def persist_cell_result(
 
     row = RunResult(
         cell_id=cell.id,
+        prompt_system=result.prompt_system,
+        prompt_instruction=result.prompt_instruction,
+        document_count=result.document_count,
         raw_response=result.raw_response,
         parsed_output=parsed_json,
         valid=result.valid,

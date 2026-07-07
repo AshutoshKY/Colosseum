@@ -1,0 +1,51 @@
+# Qwen3 on Vertex AI Model Garden (vertex_partner / MaaS).
+# The MaaS members listed in Model Garden are TEXT-ONLY (instruct / thinking / coder); the
+# VL (vision-language) variants are self-deploy only and not exposed as MaaS here. So the
+# Vertex Qwen members are gated out of image/PDF tasks by the capability gate. Thinking vs
+# non-thinking are FIRST-CLASS separate configs (qwen3-next exposes both).
+#
+# GATED OFF: not verified callable on vertex-internal-testing (no gcloud).
+
+family: qwen
+provider: vertex_partner
+access: maas
+defaults:
+  modalities: [text]
+  pdf_native: false
+  vision: false
+  structured_method: json_mode
+  needs_repair_fallback: true
+  thinking: false
+  context_window: 262144
+  enabled: false
+  verified: false
+  reason: "not verified callable on project (Qwen Model Garden enablement unconfirmed; no gcloud)"
+  notes: "Vertex Qwen3 MaaS members are text-only; VL variants are self-deploy. Gate out of image tasks."
+
+models:
+  - model_id: vertex_ai/qwen/qwen3-235b-a22b-instruct-2507-maas
+    display_name: Qwen3 235B A22B Instruct (Vertex)
+    version: "3-235b"
+    variant: instruct
+    pricing_ref: qwen3
+    enabled: true
+    verified: true
+    reason: null
+    notes: "VERIFIED callable on vertex-internal-testing (Phase 2.5 live probe, June 2026). Text-only: gated out of image/PDF tasks; json_mode + repair ladder."
+  - model_id: vertex_ai/qwen/qwen3-coder-480b-a35b-instruct-maas
+    display_name: Qwen3 Coder 480B A35B (Vertex)
+    version: "3-coder-480b"
+    variant: instruct
+    pricing_ref: qwen3-coder
+  - model_id: vertex_ai/qwen/qwen3-next-80b-a3b-instruct-maas
+    display_name: Qwen3 Next 80B A3B Instruct (Vertex)
+    version: "3-next-80b"
+    variant: instruct
+    pricing_ref: qwen3
+  # thinking variant of the same base — first-class separate config.
+  - model_id: vertex_ai/qwen/qwen3-next-80b-a3b-thinking-maas
+    display_name: Qwen3 Next 80B A3B Thinking (Vertex)
+    version: "3-next-80b"
+    variant: thinking
+    thinking: true
+    pricing_ref: qwen3

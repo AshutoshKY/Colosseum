@@ -86,22 +86,44 @@ class ProviderAdapter:
         return extract_pages_as_base64(doc.path, doc.page_ranges)
 
 
-def get_adapter(capability: ModelCapability) -> ProviderAdapter:
-    """Return the adapter for a model's provider.
+class TextOnlyAdapter(ProviderAdapter):
+    """Adapter for text-input tasks (no documents): items_categorisation, nme, policy, etc.
 
-    Phase 1 implements only the Gemini-Vertex (PDF-native) path. Non-native providers
-    (rasterization) arrive in Phase 2 via the openai-compat / xai adapters.
+    Passes the instruction through as a single text block. If documents ARE supplied to a
+    text-only model the shared ``gate`` raises ``CapabilityGateError`` (recorded "not
+    applicable"), so this only ever runs the no-document path.
+    """
+
+    def normalize(
+        self, *, system: str, instruction: str, documents: list[DocumentInput]
+    ) -> NormalizedContent:
+        self.gate(documents)
+        return NormalizedContent(
+            system=system,
+            content=[{"type": "text", "text": instruction}],
+            transport="text_only",
+        )
+
+
+def get_adapter(capability: ModelCapability) -> ProviderAdapter:
+    """Return the right adapter for a model's provider + document handling.
+
+    Selection is by *capability*, not just provider, because a single provider hosts both
+    PDF-native models (Claude on ``vertex_partner``) and vision-only models (Grok on
+    ``vertex_partner``):
+
+    * ``pdf_native``           -> ``GeminiVertexAdapter`` (PDF file pass-through).
+    * ``vision`` (not native)  -> ``RasterizingAdapter`` (PDF pages -> compliant images).
+    * text-only                -> ``TextOnlyAdapter`` (gates out of document tasks).
     """
     from app.providers.adapters.gemini_vertex import GeminiVertexAdapter
-    from app.providers.capabilities import Provider
+    from app.providers.adapters.rasterizing import RasterizingAdapter
 
-    if capability.provider == Provider.vertex_ai:
+    if capability.pdf_native:
         return GeminiVertexAdapter(capability)
-    # Phase 2: vertex_partner / xai / openai_compatible rasterizing adapters.
-    raise NotImplementedError(
-        f"No adapter implemented yet for provider '{capability.provider.value}' "
-        f"(model {capability.model_id}). Phase 1 ships the Gemini-Vertex adapter only."
-    )
+    if capability.vision:
+        return RasterizingAdapter(capability)
+    return TextOnlyAdapter(capability)
 
 
 def _assert_exists(path: str) -> None:

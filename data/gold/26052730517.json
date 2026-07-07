@@ -1,0 +1,556 @@
+{
+  "document": "test-docs/26052730517-1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "other",
+          "pages": "1-1"
+        },
+        {
+          "document_type": "claim_forms",
+          "pages": "2-3"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "4-7,8-8,9-10"
+        },
+        {
+          "document_type": "cash_receipt",
+          "pages": "8-8"
+        },
+        {
+          "document_type": "investigation_report",
+          "pages": "11-16"
+        },
+        {
+          "document_type": "prescription",
+          "pages": "17-19"
+        },
+        {
+          "document_type": "identity_document",
+          "pages": "20-22"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "23-23"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-05-08",
+            "ip_number": "",
+            "net_amount": 800.0,
+            "page_number": 4,
+            "invoice_number": "371",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Dr. K. Desmukhya",
+              "registration_number": "423/1"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "professional services / operative procedure performed",
+              "is_returned": false,
+              "final_amount": 800.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-05-12",
+            "ip_number": "",
+            "net_amount": 800.0,
+            "page_number": 5,
+            "invoice_number": "004",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Dr. K. Desmukhya",
+              "registration_number": "42371"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "professional services / operative procedure performed",
+              "is_returned": false,
+              "final_amount": 800.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-05-02",
+            "ip_number": "",
+            "net_amount": 800.0,
+            "page_number": 6,
+            "invoice_number": "58097",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Dr. DEBMALYA SANYAL",
+              "registration_number": "54795"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "Medical Consultancy",
+              "is_returned": false,
+              "final_amount": 800.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-05-18",
+            "ip_number": "",
+            "net_amount": 360.0,
+            "page_number": 7,
+            "invoice_number": "03026E180023",
+            "total_discount": 40.0,
+            "facility_details": {
+              "name": "Quadra Medical Services Pvt. Ltd.",
+              "registration_number": "U85195WB1998PTC086391"
+            }
+          },
+          "items": [
+            {
+              "discount": 40.0,
+              "item_name": "ECG",
+              "is_returned": false,
+              "final_amount": 360.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-05-18",
+            "ip_number": "",
+            "net_amount": 360.0,
+            "page_number": 8,
+            "invoice_number": "000145",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "QUADRA MEDICAL SERVICES PVT LTD"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "UPI Payment",
+              "is_returned": false,
+              "final_amount": 360.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-05-19",
+            "ip_number": "",
+            "net_amount": 800.0,
+            "page_number": 9,
+            "invoice_number": "A313801779172837811",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Thyrocare",
+              "registration_number": "L85110MH2000PLC123882"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "HBA, FBS, PPBS, USTSH",
+              "is_returned": false,
+              "final_amount": 800.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-05-22",
+            "ip_number": "",
+            "net_amount": 800.0,
+            "page_number": 10,
+            "invoice_number": "OP/2600083503",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "SRI AUROBINDO SEVA KENDRA",
+              "registration_number": "U74140WB1971NPL028179"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "DOCTOR CONSULTATION",
+              "is_returned": false,
+              "final_amount": 800.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "ff75be0be6ee",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Procedures"
+            }
+          ]
+        },
+        {
+          "bill_id": "ff3cab6d4a39",
+          "categorized_items": [
+            {
+              "s.no.": 2,
+              "category": "Procedures"
+            }
+          ]
+        },
+        {
+          "bill_id": "b8df0bd93b31",
+          "categorized_items": [
+            {
+              "s.no.": 3,
+              "category": "Consultation"
+            }
+          ]
+        },
+        {
+          "bill_id": "03e79e739cc6",
+          "categorized_items": [
+            {
+              "s.no.": 4,
+              "category": "Imageology"
+            }
+          ]
+        },
+        {
+          "bill_id": "666c6ea5c483",
+          "categorized_items": [
+            {
+              "s.no.": 5,
+              "category": "Others"
+            }
+          ]
+        },
+        {
+          "bill_id": "6e20cca27cae",
+          "categorized_items": [
+            {
+              "s.no.": 6,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            }
+          ]
+        },
+        {
+          "bill_id": "ef9e984d2114",
+          "categorized_items": [
+            {
+              "s.no.": 7,
+              "category": "Consultation"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "patches": [
+        {
+          "type": "DELETE_BILL",
+          "impact": "Reduces total by ₹360.00",
+          "reason": "Duplicate of itemized bill 03Q26E180023 from Quadra Medical Services. This is a UPI payment receipt for the same transaction.",
+          "bill_id": "666c6ea5c483",
+          "bill_net_amount": 360.0,
+          "bill_invoice_number": "000145"
+        },
+        {
+          "key": "patient_name",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Claim form and identity documents show full name as Shukla Gupta.",
+          "new_value": "Shukla Gupta",
+          "old_value": "S. Gupta",
+          "page_reference": "1"
+        },
+        {
+          "key": "patient_dob",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "DOB found on PAN and Aadhaar cards.",
+          "new_value": "1960-12-20",
+          "page_reference": "15"
+        },
+        {
+          "key": "patient_age",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Age documented in claim form and prescriptions.",
+          "new_value": 65,
+          "page_reference": "1"
+        }
+      ],
+      "icd_codes": [
+        {
+          "code": "E11.9",
+          "type": "primary",
+          "source": "Diagnosis - T2DM-4yrs documented in Dr. Sanyal's prescription",
+          "description": "Type 2 diabetes mellitus without complications"
+        },
+        {
+          "code": "E03.9",
+          "type": "secondary",
+          "source": "Diagnosis - Primary Hypothyroid documented; Thyroxine prescribed",
+          "description": "Hypothyroidism, unspecified"
+        },
+        {
+          "code": "I10",
+          "type": "secondary",
+          "source": "Diagnosis - HTN documented; Telmisartan prescribed",
+          "description": "Essential (primary) hypertension"
+        },
+        {
+          "code": "E78.5",
+          "type": "secondary",
+          "source": "Diagnosis - Dyslipidemia documented; Lipaglyn prescribed",
+          "description": "Hyperlipidemia, unspecified"
+        }
+      ],
+      "bills_analyzed": 7,
+      "policy_remarks": "No policy violations found. All billed items align with prescriptions and diagnosis.",
+      "patches_applied": 4,
+      "duplicates_found": 1,
+      "policy_violations": [],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The original total of bills (4720) included a duplicate UPI payment receipt (360) which was already captured as an itemized bill from Quadra Medical Services. After deleting the duplicate, the true total of bills matches the claimed amount of 4360.",
+      "medical_legibility": {
+        "summary": "All billed consultations and investigations (ECG, HbA1c, FBS, PPBS, TSH) are directly supported by prescriptions from Dr. K. Desmukhya, Dr. Debmalya Sanyal, and Dr. Saumitra Ray for conditions including T2DM, Hypothyroidism, and HTN.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 4360.0,
+      "bills_with_corrections": 2,
+      "updated_claimed_amount": 4360.0,
+      "original_claimed_amount": 4360.0,
+      "original_total_of_bills": 4720.0,
+      "policy_violations_count": 0,
+      "medical_legibility_issues": 0
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "ff75be0be6ee",
+            "bill_date": "2026-05-08",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 800.0,
+            "page_number": 4,
+            "invoice_number": "371",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Dr. K. Desmukhya",
+              "registration_number": "423/1"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Procedures",
+              "discount": 0.0,
+              "item_name": "professional services / operative procedure performed",
+              "is_returned": false,
+              "final_amount": 800.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "ff3cab6d4a39",
+            "bill_date": "2026-05-12",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 800.0,
+            "page_number": 5,
+            "invoice_number": "004",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Dr. K. Desmukhya",
+              "registration_number": "42371"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Procedures",
+              "discount": 0.0,
+              "item_name": "professional services / operative procedure performed",
+              "is_returned": false,
+              "final_amount": 800.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "b8df0bd93b31",
+            "bill_date": "2026-05-02",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 800.0,
+            "page_number": 6,
+            "invoice_number": "58097",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Dr. DEBMALYA SANYAL",
+              "registration_number": "54795"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 3,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Consultation",
+              "discount": 0.0,
+              "item_name": "Medical Consultancy",
+              "is_returned": false,
+              "final_amount": 800.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "03e79e739cc6",
+            "bill_date": "2026-05-18",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 360.0,
+            "page_number": 7,
+            "invoice_number": "03026E180023",
+            "total_discount": 40.0,
+            "facility_details": {
+              "name": "Quadra Medical Services Pvt. Ltd.",
+              "registration_number": "U85195WB1998PTC086391"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 4,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Imageology",
+              "discount": 40.0,
+              "item_name": "ECG",
+              "is_returned": false,
+              "final_amount": 360.0,
+              "categorization_source": "fuzzy"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "666c6ea5c483",
+            "bill_date": "2026-05-18",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 360.0,
+            "page_number": 8,
+            "invoice_number": "000145",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "QUADRA MEDICAL SERVICES PVT LTD",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 5,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Others",
+              "discount": 0.0,
+              "item_name": "UPI Payment",
+              "is_returned": false,
+              "final_amount": 360.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "6e20cca27cae",
+            "bill_date": "2026-05-19",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 800.0,
+            "page_number": 9,
+            "invoice_number": "A313801779172837811",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Thyrocare",
+              "registration_number": "L85110MH2000PLC123882"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 6,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "discount": 0.0,
+              "item_name": "HBA, FBS, PPBS, USTSH",
+              "is_returned": false,
+              "final_amount": 800.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "ef9e984d2114",
+            "bill_date": "2026-05-22",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 800.0,
+            "page_number": 10,
+            "invoice_number": "OP/2600083503",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "SRI AUROBINDO SEVA KENDRA",
+              "registration_number": "U74140WB1971NPL028179"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 7,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Consultation",
+              "discount": 0.0,
+              "item_name": "DOCTOR CONSULTATION",
+              "is_returned": false,
+              "final_amount": 800.0,
+              "categorization_source": "fuzzy"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

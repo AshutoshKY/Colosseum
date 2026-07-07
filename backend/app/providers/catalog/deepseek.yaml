@@ -1,0 +1,56 @@
+# DeepSeek on Vertex AI Model Garden (vertex_partner / MaaS).
+# R1 / V3.x are TEXT-ONLY reasoning models -> the capability gate SKIPS them for image/PDF
+# tasks (recorded "not applicable", never failed). deepseek-ocr is the only vision-capable
+# member (document OCR). json_mode + repair-fallback ladder for structured output.
+#
+# GATED OFF: not verified callable on vertex-internal-testing (Model Garden enablement
+# unconfirmed; no gcloud). The live smoke flips verified for any that answer.
+
+family: deepseek
+provider: vertex_partner
+access: maas
+defaults:
+  modalities: [text]
+  pdf_native: false
+  vision: false
+  structured_method: json_mode
+  needs_repair_fallback: true
+  thinking: true
+  context_window: 163840
+  enabled: false
+  verified: false
+  reason: "not verified callable on project (DeepSeek Model Garden enablement unconfirmed; no gcloud)"
+  notes: "text-only reasoning: gate out of image/PDF tasks; json_mode + repair ladder."
+
+models:
+  - model_id: vertex_ai/deepseek-ai/deepseek-r1-0528-maas
+    display_name: DeepSeek R1 (0528, Vertex)
+    version: "r1-0528"
+    variant: thinking
+    pricing_ref: deepseek-r1
+    enabled: true
+    verified: true
+    reason: null
+    notes: "VERIFIED callable on vertex-internal-testing (Phase 2.5 live probe, June 2026). Text-only: gated out of image/PDF tasks; json_mode + repair ladder."
+  - model_id: vertex_ai/deepseek-ai/deepseek-v3.1-maas
+    display_name: DeepSeek V3.1 (Vertex)
+    version: "v3.1"
+    variant: instruct
+    thinking: false
+    pricing_ref: deepseek-v3
+  - model_id: vertex_ai/deepseek-ai/deepseek-v3.2-maas
+    display_name: DeepSeek V3.2 (Vertex)
+    version: "v3.2"
+    variant: instruct
+    thinking: false
+    pricing_ref: deepseek-v3
+  # OCR member is vision-capable (document images) — the exception to text-only.
+  - model_id: vertex_ai/deepseek-ai/deepseek-ocr-maas
+    display_name: DeepSeek OCR (Vertex)
+    version: "ocr"
+    variant: vision
+    modalities: [text, image]
+    vision: true
+    thinking: false
+    pricing_ref: deepseek-v3
+    notes: "vision OCR member; PDF via rasterized images. Still gated off until verified."

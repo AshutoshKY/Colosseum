@@ -1,0 +1,138 @@
+{
+  "document": "test-docs/26052730065-1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "claim_forms",
+          "pages": "1-1"
+        },
+        {
+          "document_type": "other",
+          "pages": "2-2"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "3-3"
+        },
+        {
+          "document_type": "prescription",
+          "pages": "4-4"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-05-21",
+            "ip_number": "",
+            "net_amount": 5000.0,
+            "page_number": 3,
+            "invoice_number": "234",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Saanvi Dental Care",
+              "registration_number": "A-15195"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "Root canal treatment done.",
+              "is_returned": false,
+              "final_amount": 5000.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "d4fb39aac56b",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Procedures"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "patches": [],
+      "icd_codes": [
+        {
+          "code": "K04.01",
+          "type": "primary",
+          "source": "Prescription - Pain in 17; Advice for Root Canal Treatment",
+          "description": "Reversible pulpitis"
+        },
+        {
+          "code": "K04.1",
+          "type": "secondary",
+          "source": "Prescription - Advice for Root Canal Treatment",
+          "description": "Necrosis of pulp"
+        }
+      ],
+      "bills_analyzed": 1,
+      "policy_remarks": "Root canal treatment is explicitly covered under OPD as per the provided policy rules for MYLAN renewal discussions. No violations found.",
+      "patches_applied": 0,
+      "duplicates_found": 0,
+      "policy_violations": [],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The claimed amount matches the total of the extracted bill. The bill for Root Canal Treatment (₹5000) is supported by the prescription and claim form.",
+      "medical_legibility": {
+        "summary": "The billed procedure (Root Canal Treatment) matches the clinical advice in the prescription dated 21/05/2026 for pain in tooth 17. The treatment is consistent with the diagnosis.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 5000.0,
+      "bills_with_corrections": 0,
+      "updated_claimed_amount": 5000.0,
+      "original_claimed_amount": 5000.0,
+      "original_total_of_bills": 5000.0,
+      "policy_violations_count": 0,
+      "medical_legibility_issues": 0
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "d4fb39aac56b",
+            "bill_date": "2026-05-21",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 5000.0,
+            "page_number": 3,
+            "invoice_number": "234",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Saanvi Dental Care",
+              "registration_number": "A-15195"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Procedures",
+              "discount": 0.0,
+              "item_name": "Root canal treatment done.",
+              "is_returned": false,
+              "final_amount": 5000.0,
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

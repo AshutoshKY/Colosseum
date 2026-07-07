@@ -35,6 +35,10 @@ dependencies = [
     # --- misc ---
     "tenacity>=9.0",
     "redis>=5.2",
+    # data-driven model catalog (providers/catalog/*.yaml)
+    "pyyaml>=6.0",
+    # observability
+    "langfuse>=2.0",
 ]
 
 [project.optional-dependencies]

@@ -1,0 +1,225 @@
+{
+  "document": "test-docs/REQSG1CBFKW_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "prescription",
+          "pages": "1-2"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "2-2"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "3-3"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-06-09",
+            "ip_number": "",
+            "net_amount": 1000.0,
+            "page_number": 2,
+            "invoice_number": "4668",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "The Center for KNEE & HIP Care"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "OPD",
+              "is_returned": false,
+              "final_amount": 1000.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "fc853d92057a",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Registration"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "fwa_flags": [],
+      "icd_codes": [
+        {
+          "code": "S42.002A",
+          "name": "Fracture of unspecified part of left clavicle, initial encounter for closed fracture",
+          "type": "primary",
+          "block": "S40-S49 Injuries to the shoulder and upper arm",
+          "source": "Prescription Page 1 - Diagnosis: Fx clavicle",
+          "chapter": "Chapter XIX: Injury, poisoning and certain other consequences of external causes",
+          "diagnosis": "Fracture clavicle"
+        },
+        {
+          "code": "M25.512",
+          "name": "Pain in left shoulder",
+          "type": "secondary",
+          "block": "M20-M25 Other joint disorders",
+          "source": "Prescription Page 1 - Chief Complaint: Pain (L) Shoulder",
+          "chapter": "Chapter XIII: Diseases of the musculoskeletal system and connective tissue",
+          "diagnosis": "Pain (L) Shoulder"
+        }
+      ],
+      "bills_analyzed": 1,
+      "policy_remarks": "No policy violations found. The OPD charge is treated as a consultation fee which is supported by a valid prescription and receipt.",
+      "patches_applied": 4,
+      "duplicates_found": 0,
+      "policy_violations": [],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The claimed amount was updated to ₹1000.0 based on the receipt found on page 2. The bill total matches the updated claimed amount.",
+      "medical_legibility": {
+        "summary": "The consultation (OPD) charge is supported by a prescription dated 2026-05-30 and a follow-up note on 2026-06-09. The diagnosis of 'Fracture clavicle' is consistent with the prescribed X-ray, sling, and medications.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 1000.0,
+      "bills_with_corrections": 1,
+      "updated_claimed_amount": 1000.0,
+      "original_claimed_amount": 0.0,
+      "original_total_of_bills": 1000.0,
+      "policy_violations_count": 0,
+      "medical_legibility_issues": 0,
+      "patches": []
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "OTC medicines",
+        "Food items",
+        "Dietary supplements",
+        "Protein powders",
+        "Vitamins",
+        "Minerals",
+        "Cosmetic medicines",
+        "Cosmetic diagnostics",
+        "Chemical peel",
+        "Laser hair removal",
+        "Wigs",
+        "Toupees",
+        "Dressing",
+        "Wound cleaning",
+        "Burn care",
+        "Saline drips",
+        "Hearing aids",
+        "Cosmetic lenses",
+        "Spa",
+        "Health hydros"
+      ],
+      "policy_rules": [
+        "Pharmacy claims must be supported by a valid doctor prescription and invoice.",
+        "Diagnostics require an invoice, prescription, and test report.",
+        "Hospitalization, IPD, day-care, and pre/post-hospitalization expenses are excluded from OPD coverage.",
+        "Medicines, diagnostics, or investigations without a valid doctor prescription are not covered.",
+        "Cosmetic treatments (e.g., chemical peels, laser hair removal) are excluded unless explicitly included.",
+        "Maternity, infertility, IVF, and related treatments are excluded unless explicitly included.",
+        "Obesity, weight-loss, hair fall, and related treatments are excluded unless explicitly included.",
+        "Procedure fees during OP consultation (e.g., dressing, minor procedures) are excluded unless specifically included.",
+        "Mental health, psychiatric, and developmental disorder treatments are excluded unless specifically included.",
+        "Naturopathy, experimental treatments, and non-medical consultations are not covered.",
+        "Treatment for substance abuse, STDs, hazardous sports, or criminal intent is excluded.",
+        "Consultation claims require an invoice and prescription or OP notes.",
+        "Vaccination claims require an invoice and prescription or recommendation.",
+        "Dental, Vision, and Dermatology claims require an invoice and prescription or treatment note.",
+        "Alternative medicines, physiotherapy, and dietician consultations are covered only if specifically enabled."
+      ],
+      "extraction_ok": true
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "fc853d92057a",
+            "bill_date": "2026-06-09",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 1000.0,
+            "page_number": 2,
+            "invoice_number": "4668",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "The Center for KNEE & HIP Care",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Registration",
+              "discount": 0.0,
+              "item_name": "OPD",
+              "brand_name": null,
+              "is_returned": false,
+              "final_amount": 1000.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1357867,
+          "benefit_name": "Prescribed Diagnostics",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1357868,
+          "benefit_name": "In-Clinic Consults",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

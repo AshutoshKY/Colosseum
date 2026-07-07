@@ -12,6 +12,13 @@ venv/
 *.env
 !.env.example
 
+# Local secrets (service-account JSON, etc.) — never commit
+secrets/
+*-sa.json
+*.credentials.json
+opd_smoke.db*
+slice.db*
+
 # Tooling caches
 .pytest_cache/
 .ruff_cache/

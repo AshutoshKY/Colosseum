@@ -1,0 +1,245 @@
+{
+  "document": "test-docs/26052730195-1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "itemized_bill",
+          "pages": "1-1"
+        },
+        {
+          "document_type": "investigation_report",
+          "pages": "2-6"
+        },
+        {
+          "document_type": "claim_forms",
+          "pages": "7-7"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-05-14",
+            "ip_number": "",
+            "net_amount": 3800.0,
+            "page_number": 1,
+            "invoice_number": "13179",
+            "total_discount": 600.0,
+            "facility_details": {
+              "name": "Bhor Diagnostic Centre"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "Pap Smear - Liquid Based (LBC)",
+              "is_returned": false,
+              "final_amount": 1200.0
+            },
+            {
+              "discount": 600.0,
+              "item_name": "Human Papilloma Virus, Real Time PCR",
+              "is_returned": false,
+              "final_amount": 2600.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "577f599fbd50",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 2,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "patches": [
+        {
+          "type": "EDIT_CLAIMED_AMOUNT",
+          "impact": "Updates claimed amount to match bill total",
+          "reason": "Found explicit claim amount on Page 2: OPD Claim Form shows Claim Amount: 3800",
+          "new_amount": 3800.0,
+          "old_amount": 0.0,
+          "page_reference": "2"
+        },
+        {
+          "key": "treating_doctor_name",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Bill on page 1 identifies Dr. Mangla Dogra as the referring/treating doctor.",
+          "new_value": "Dr. Mangla Dogra",
+          "page_reference": "1"
+        },
+        {
+          "type": "FLAG_ITEM",
+          "reason": "[POLICY VIOLATION: GST registration mandatory] - Bill from Bhor Diagnostic Centre does not display a GST registration number.",
+          "bill_id": "577f599fbd50",
+          "flag_type": "POLICY_VIOLATION",
+          "item_s_no": 1,
+          "recommendation": "Verify facility GST status or mark as non-admissible per policy"
+        },
+        {
+          "type": "FLAG_ITEM",
+          "reason": "[OPD FLAG: Investigation not justified] - Pap Smear is a screening test; no diagnosis or prescription provided to justify it as diagnostic.",
+          "bill_id": "577f599fbd50",
+          "flag_type": "OPD_LEGIBILITY",
+          "item_s_no": 1,
+          "recommendation": "Verify if part of a routine health check-up (excluded) or diagnostic"
+        },
+        {
+          "type": "FLAG_ITEM",
+          "reason": "[OPD FLAG: Investigation not justified] - HPV PCR is a screening test; no diagnosis or prescription provided to justify it as diagnostic.",
+          "bill_id": "577f599fbd50",
+          "flag_type": "OPD_LEGIBILITY",
+          "item_s_no": 2,
+          "recommendation": "Verify if part of a routine health check-up (excluded) or diagnostic"
+        },
+        {
+          "type": "FLAG_ITEM",
+          "reason": "[POLICY VIOLATION: Health check-up not covered] - Pap Smear is typically a screening/health check-up item.",
+          "bill_id": "577f599fbd50",
+          "flag_type": "POLICY_VIOLATION",
+          "item_s_no": 1,
+          "recommendation": "Reject if confirmed as routine screening"
+        },
+        {
+          "type": "FLAG_ITEM",
+          "reason": "[POLICY VIOLATION: Health check-up not covered] - HPV PCR is typically a screening/health check-up item.",
+          "bill_id": "577f599fbd50",
+          "flag_type": "POLICY_VIOLATION",
+          "item_s_no": 2,
+          "recommendation": "Reject if confirmed as routine screening"
+        }
+      ],
+      "icd_codes": [
+        {
+          "code": "Z12.4",
+          "type": "primary",
+          "source": "Investigations - Pap Smear and HPV PCR are primary screening tools for cervical cancer",
+          "description": "Encounter for screening for malignant neoplasm of cervix"
+        }
+      ],
+      "bills_analyzed": 1,
+      "policy_remarks": "The bill lacks a mandatory GST registration number. Additionally, the billed investigations (Pap Smear and HPV PCR) are screening tests which may fall under the 'Health check-up' exclusion if not justified by a specific clinical diagnosis.",
+      "patches_applied": 7,
+      "duplicates_found": 0,
+      "policy_violations": [
+        {
+          "bill_id": "577f599fbd50",
+          "item_name": "Multiple Items",
+          "item_s_no": 1,
+          "rule_name": "GST registration number mandatory",
+          "recommendation": "Verify GST registration",
+          "amount_impacted": 3800.0,
+          "violation_details": "Bill 13179 lacks a GST registration number."
+        },
+        {
+          "bill_id": "577f599fbd50",
+          "item_name": "Pap Smear - Liquid Based (LBC)",
+          "item_s_no": 1,
+          "rule_name": "Health check-up not covered",
+          "recommendation": "Reject as health check-up",
+          "amount_impacted": 1200.0,
+          "violation_details": "Screening test billed without diagnostic justification."
+        },
+        {
+          "bill_id": "577f599fbd50",
+          "item_name": "Human Papilloma Virus, Real Time PCR",
+          "item_s_no": 2,
+          "rule_name": "Health check-up not covered",
+          "recommendation": "Reject as health check-up",
+          "amount_impacted": 2600.0,
+          "violation_details": "Screening test billed without diagnostic justification."
+        }
+      ],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The claimed amount was updated to ₹3,800 based on the OPD Claim Form on page 2, which matches the total of the extracted bill. No mathematical discrepancies were found in the bill items.",
+      "medical_legibility": {
+        "summary": "The claim lacks a prescription and a documented diagnosis. The billed items are screening tests for cervical cancer, which are often excluded as 'health check-ups' unless performed for diagnostic purposes following symptoms.",
+        "flagged_items": [
+          {
+            "bill_id": "577f599fbd50",
+            "item_name": "Pap Smear - Liquid Based (LBC)",
+            "flag_reason": "Not in prescription | Potential screening/health check-up item",
+            "recommendation": "Verify clinical indication"
+          },
+          {
+            "bill_id": "577f599fbd50",
+            "item_name": "Human Papilloma Virus, Real Time PCR",
+            "flag_reason": "Not in prescription | Potential screening/health check-up item",
+            "recommendation": "Verify clinical indication"
+          }
+        ],
+        "prescription_bill_match": false,
+        "diagnosis_treatment_consistent": false
+      },
+      "true_total_of_bills": 3800.0,
+      "bills_with_corrections": 0,
+      "updated_claimed_amount": 3800.0,
+      "original_claimed_amount": 0.0,
+      "original_total_of_bills": 3800.0,
+      "policy_violations_count": 3,
+      "medical_legibility_issues": 2
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "577f599fbd50",
+            "bill_date": "2026-05-14",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 3800.0,
+            "page_number": 1,
+            "invoice_number": "13179",
+            "total_discount": 600.0,
+            "facility_details": {
+              "name": "Bhor Diagnostic Centre",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "discount": 0.0,
+              "item_name": "Pap Smear - Liquid Based (LBC)",
+              "is_returned": false,
+              "final_amount": 1200.0,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "item_id": "2",
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "discount": 600.0,
+              "item_name": "Human Papilloma Virus, Real Time PCR",
+              "is_returned": false,
+              "final_amount": 2600.0,
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

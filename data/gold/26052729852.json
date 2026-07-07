@@ -1,0 +1,391 @@
+{
+  "document": "test-docs/26052729852-1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "other",
+          "pages": "1-1,14-14"
+        },
+        {
+          "document_type": "claim_forms",
+          "pages": "2-4"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "5-7"
+        },
+        {
+          "document_type": "investigation_report",
+          "pages": "8-10,13-13"
+        },
+        {
+          "document_type": "prescription",
+          "pages": "11-12"
+        },
+        {
+          "document_type": "identity_document",
+          "pages": "15-15"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-01-16",
+            "ip_number": "",
+            "net_amount": 400.0,
+            "page_number": 5,
+            "invoice_number": "16019",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "RAJASTHAN SEVA SADAN"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "OPD Registration Fee",
+              "is_returned": false,
+              "final_amount": 400.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-04-21",
+            "ip_number": "",
+            "net_amount": 400.0,
+            "page_number": 6,
+            "invoice_number": "1153",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "RAJASTHAN SEVA SADAN"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "OPD Registration Fee",
+              "is_returned": false,
+              "final_amount": 400.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-04-09",
+            "ip_number": "",
+            "net_amount": 1145.0,
+            "page_number": 7,
+            "invoice_number": "15152659942026182",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Apna Medical, Jamshedpur",
+              "registration_number": "APN7831017"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "Hemoglobin",
+              "is_returned": false,
+              "final_amount": 180.0
+            },
+            {
+              "discount": 0.0,
+              "item_name": "Serum Creatinine",
+              "is_returned": false,
+              "final_amount": 180.0
+            },
+            {
+              "discount": 0.0,
+              "item_name": "Sugar (Glucose) Fasting",
+              "is_returned": false,
+              "final_amount": 70.0
+            },
+            {
+              "discount": 0.0,
+              "item_name": "Lipid Profile",
+              "is_returned": false,
+              "final_amount": 715.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "4b5cda7d3c12",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Registration"
+            }
+          ]
+        },
+        {
+          "bill_id": "3c657b113350",
+          "categorized_items": [
+            {
+              "s.no.": 2,
+              "category": "Registration"
+            }
+          ]
+        },
+        {
+          "bill_id": "b52e17beadab",
+          "categorized_items": [
+            {
+              "s.no.": 3,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 4,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 5,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 6,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "patches": [
+        {
+          "type": "EDIT_CLAIMED_AMOUNT",
+          "impact": "Updates claimed amount",
+          "reason": "Found explicit claim amount on Page 2: 'Details of Bills Enclosed' table shows Total: 1945",
+          "new_amount": 1945.0,
+          "old_amount": 0.0,
+          "page_reference": "2"
+        },
+        {
+          "key": "patient_name",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Patient name found on Claim Form (Page 1) and Aadhaar Card (Page 9).",
+          "new_value": "SUDHANSHU KUMAR DUTTA",
+          "page_reference": "1"
+        },
+        {
+          "key": "patient_age",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Patient age '73 Years' found on bills (Pages 4, 5, 6) and prescription (Page 7).",
+          "new_value": 73,
+          "page_reference": "4"
+        },
+        {
+          "key": "patient_gender",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Patient gender 'Male' found on bills (Pages 4, 5, 6) and Aadhaar Card (Page 9).",
+          "new_value": "Male",
+          "page_reference": "4"
+        },
+        {
+          "key": "patient_dob",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Date of birth found on Aadhaar Card (Page 9).",
+          "new_value": "1953-12-25",
+          "page_reference": "9"
+        },
+        {
+          "key": "patient_bank_account_no",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Bank account number found in the Payee Details section of the claim form. Note: No cancelled cheque/statement provided, but this is the only source available.",
+          "new_value": "10519839454",
+          "page_reference": "3"
+        },
+        {
+          "key": "patient_bank_name",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Bank name found on claim form (Page 3).",
+          "new_value": "STATE BANK OF INDIA",
+          "page_reference": "3"
+        },
+        {
+          "key": "patient_bank_ifsc_code",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "IFSC code found on claim form (Page 3).",
+          "new_value": "SBIN0014665",
+          "page_reference": "3"
+        }
+      ],
+      "icd_codes": [
+        {
+          "code": "I10",
+          "type": "primary",
+          "source": "Diagnosis - HT (Hypertension) documented on prescription and claim form",
+          "description": "Essential (primary) hypertension"
+        },
+        {
+          "code": "M47.812",
+          "type": "secondary",
+          "source": "Diagnosis - Cervical Spondylosis documented on prescription and claim form",
+          "description": "Spondylosis without myelopathy or radiculopathy, cervical region"
+        },
+        {
+          "code": "E78.5",
+          "type": "secondary",
+          "source": "Prescription - Lipid Profile ordered; Atorvastatin (Storvas) prescribed",
+          "description": "Hyperlipidemia, unspecified"
+        }
+      ],
+      "bills_analyzed": 3,
+      "policy_remarks": "No policy violations found. All billed items (Registration fees and Lab tests) are standard OPD expenses and correlate with the prescriptions.",
+      "patches_applied": 8,
+      "duplicates_found": 0,
+      "policy_violations": [],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The claimed amount was originally 0 in the JSON, but the claim form on page 2 explicitly lists a total of ₹1945.00, which matches the sum of the extracted bills.",
+      "medical_legibility": {
+        "summary": "The billed items are consistent with the medical records. Registration fees match the consultation dates (16-Jan and 21-Apr). Lab tests (Hemoglobin, Creatinine, Sugar, Lipid Profile) were specifically advised in the prescription dated 16-Jan-2026 (Page 8) for a patient with Hypertension and Cervical Spondylosis.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 1945.0,
+      "bills_with_corrections": 0,
+      "updated_claimed_amount": 1945.0,
+      "original_claimed_amount": 0.0,
+      "original_total_of_bills": 1945.0,
+      "policy_violations_count": 0,
+      "medical_legibility_issues": 0
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "4b5cda7d3c12",
+            "bill_date": "2026-01-16",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 400.0,
+            "page_number": 5,
+            "invoice_number": "16019",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "RAJASTHAN SEVA SADAN",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Registration",
+              "discount": 0.0,
+              "item_name": "OPD Registration Fee",
+              "is_returned": false,
+              "final_amount": 400.0,
+              "categorization_source": "fuzzy"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "3c657b113350",
+            "bill_date": "2026-04-21",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 400.0,
+            "page_number": 6,
+            "invoice_number": "1153",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "RAJASTHAN SEVA SADAN",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Registration",
+              "discount": 0.0,
+              "item_name": "OPD Registration Fee",
+              "is_returned": false,
+              "final_amount": 400.0,
+              "categorization_source": "fuzzy"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "b52e17beadab",
+            "bill_date": "2026-04-09",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 1145.0,
+            "page_number": 7,
+            "invoice_number": "15152659942026182",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Apna Medical, Jamshedpur",
+              "registration_number": "APN7831017"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 3,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "discount": 0.0,
+              "item_name": "Hemoglobin",
+              "is_returned": false,
+              "final_amount": 180.0,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 4,
+              "is_nme": false,
+              "item_id": "2",
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "discount": 0.0,
+              "item_name": "Serum Creatinine",
+              "is_returned": false,
+              "final_amount": 180.0,
+              "categorization_source": "fuzzy"
+            },
+            {
+              "s.no.": 5,
+              "is_nme": false,
+              "item_id": "3",
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "discount": 0.0,
+              "item_name": "Sugar (Glucose) Fasting",
+              "is_returned": false,
+              "final_amount": 70.0,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 6,
+              "is_nme": false,
+              "item_id": "4",
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "discount": 0.0,
+              "item_name": "Lipid Profile",
+              "is_returned": false,
+              "final_amount": 715.0,
+              "categorization_source": "fuzzy"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

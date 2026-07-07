@@ -1,0 +1,122 @@
+# Grok (xAI) — on Vertex Model Garden MaaS (vertex_partner) AND the external xAI API.
+# THINKING vs NON-THINKING are FIRST-CLASS separate configs (Vertex exposes
+# *-reasoning / *-non-reasoning; xAI exposes -reasoning / -non-reasoning).
+#
+# HARD vision caveats (xAI base64 path): image <=4 MB base64 (URL <=20 MB), <=33 MP, jpg/png
+# only, tile-based image token billing. PDFs MUST be rasterized to images per page and each
+# page kept under the cap. Vertex MaaS Grok routes the multimodal payload through Vertex
+# (30 MB payload cap) but we keep the 4 MB per-image guard for the xAI-direct path.
+
+family: grok
+
+groups:
+  # ---- Vertex Model Garden MaaS (routes via existing Vertex creds) ----
+  - provider: vertex_partner
+    access: maas
+    defaults:
+      modalities: [text, image]
+      pdf_native: false
+      vision: true
+      max_image_mb: 4.0
+      max_image_megapixels: 33.0
+      image_formats: [jpeg, png]
+      max_payload_mb: 30.0
+      structured_method: json_mode
+      needs_repair_fallback: true
+      context_window: 2000000
+      enabled: false
+      verified: false
+      reason: "not verified callable on project (xAI Model Garden enablement unconfirmed; no gcloud)"
+      notes: "PDF -> rasterized images; 4 MB per-image base64 guard, <=33 MP, jpg/png only."
+    models:
+      - model_id: vertex_ai/xai/grok-4.20-reasoning
+        display_name: Grok 4.20 Reasoning (Vertex)
+        version: "4.20"
+        variant: reasoning
+        thinking: true
+        pricing_ref: grok-4
+      - model_id: vertex_ai/xai/grok-4.20-non-reasoning
+        display_name: Grok 4.20 Non-Reasoning (Vertex)
+        version: "4.20"
+        variant: non-reasoning
+        thinking: false
+        pricing_ref: grok-4
+      - model_id: vertex_ai/xai/grok-4.1-fast-reasoning
+        display_name: Grok 4.1 Fast Reasoning (Vertex)
+        version: "4.1-fast"
+        variant: reasoning
+        thinking: true
+        pricing_ref: grok-4-fast
+      - model_id: vertex_ai/xai/grok-4.1-fast-non-reasoning
+        display_name: Grok 4.1 Fast Non-Reasoning (Vertex)
+        version: "4.1-fast"
+        variant: non-reasoning
+        thinking: false
+        pricing_ref: grok-4-fast
+
+  # ---- External xAI API (no key yet) ----
+  - provider: xai
+    access: maas
+    defaults:
+      modalities: [text, image]
+      pdf_native: false
+      vision: true
+      max_image_mb: 4.0
+      max_image_megapixels: 33.0
+      image_formats: [jpeg, png]
+      structured_method: json_mode
+      needs_repair_fallback: true
+      context_window: 2000000
+      enabled: false
+      verified: false
+      reason: "no XAI_API_KEY (only Vertex + Langfuse creds present)"
+      notes: "base64 image <=4 MB, URL <=20 MB, <=33 MP, jpg/png only, tile-based billing."
+    models:
+      - model_id: xai/grok-4.3
+        display_name: Grok 4.3 (xAI)
+        version: "4.3"
+        variant: reasoning
+        thinking: true
+        pricing_ref: grok-4
+      - model_id: xai/grok-4.20-0309-reasoning
+        display_name: Grok 4.20 Reasoning (xAI)
+        version: "4.20"
+        variant: reasoning
+        thinking: true
+        pricing_ref: grok-4
+      - model_id: xai/grok-4.20-beta-0309-non-reasoning
+        display_name: Grok 4.20 Non-Reasoning (xAI)
+        version: "4.20"
+        variant: non-reasoning
+        thinking: false
+        pricing_ref: grok-4
+      - model_id: xai/grok-4-fast-reasoning
+        display_name: Grok 4 Fast Reasoning (xAI)
+        version: "4-fast"
+        variant: reasoning
+        thinking: true
+        pricing_ref: grok-4-fast
+      - model_id: xai/grok-4-fast-non-reasoning
+        display_name: Grok 4 Fast Non-Reasoning (xAI)
+        version: "4-fast"
+        variant: non-reasoning
+        thinking: false
+        pricing_ref: grok-4-fast
+      - model_id: xai/grok-4-0709
+        display_name: Grok 4 (xAI)
+        version: "4"
+        variant: reasoning
+        thinking: true
+        pricing_ref: grok-4
+      - model_id: xai/grok-3
+        display_name: Grok 3 (xAI)
+        version: "3"
+        variant: reasoning
+        thinking: true
+        pricing_ref: grok-3
+      - model_id: xai/grok-3-mini
+        display_name: Grok 3 Mini (xAI)
+        version: "3-mini"
+        variant: reasoning
+        thinking: true
+        pricing_ref: grok-3-mini

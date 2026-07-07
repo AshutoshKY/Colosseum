@@ -1,0 +1,62 @@
+# Kimi (Moonshot AI) — on Vertex Model Garden MaaS (kimi-k2-thinking) AND external Moonshot
+# OpenAI-compatible API. K2 is a large-context reasoning model. Treated text-only here for
+# the document tasks (K2 base is text; vision support unverified) -> gated out of image/PDF
+# until verified. json_mode + repair ladder.
+
+family: kimi
+
+groups:
+  # ---- Vertex Model Garden MaaS ----
+  - provider: vertex_partner
+    access: maas
+    defaults:
+      modalities: [text]
+      pdf_native: false
+      vision: false
+      structured_method: json_mode
+      needs_repair_fallback: true
+      thinking: true
+      context_window: 262144
+      enabled: false
+      verified: false
+      reason: "not verified callable on project (Kimi Model Garden enablement unconfirmed; no gcloud)"
+      notes: "Kimi K2 thinking; text-only for document tasks (vision unverified)."
+    models:
+      - model_id: vertex_ai/moonshotai/kimi-k2-thinking-maas
+        display_name: Kimi K2 Thinking (Vertex)
+        version: "k2"
+        variant: thinking
+        pricing_ref: kimi-k2
+
+  # ---- External Moonshot OpenAI-compatible (no key yet) ----
+  - provider: openai_compatible
+    access: maas
+    defaults:
+      modalities: [text]
+      pdf_native: false
+      vision: false
+      structured_method: json_mode
+      needs_repair_fallback: true
+      thinking: true
+      context_window: 262144
+      enabled: false
+      verified: false
+      reason: "no API key for Moonshot external endpoint (only Vertex + Langfuse creds present)"
+    models:
+      - model_id: openai_compatible/moonshot/kimi-k2-thinking
+        display_name: Kimi K2 Thinking (Moonshot)
+        version: "k2"
+        variant: thinking
+        pricing_ref: kimi-k2
+      - model_id: openai_compatible/moonshot/kimi-k2
+        display_name: Kimi K2 Instruct (Moonshot)
+        version: "k2"
+        variant: instruct
+        thinking: false
+        pricing_ref: kimi-k2
+      - model_id: openai_compatible/moonshot/kimi-k2.5
+        display_name: Kimi K2.5 (Moonshot)
+        version: "k2.5"
+        variant: instruct
+        thinking: false
+        pricing_ref: kimi-k2

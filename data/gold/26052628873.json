@@ -1,0 +1,760 @@
+{
+  "document": "test-docs/26052628873-1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "other",
+          "pages": "1-4,16-18"
+        },
+        {
+          "document_type": "claim_forms",
+          "pages": "5-7"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "8-8,9-10"
+        },
+        {
+          "document_type": "prescription",
+          "pages": "11-13"
+        },
+        {
+          "document_type": "identity_document",
+          "pages": "14-15,19-20"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "21-21"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-01-06",
+            "ip_number": "",
+            "net_amount": 150.0,
+            "page_number": 8,
+            "invoice_number": "1839",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "ADARSH CLINIC",
+              "registration_number": "82673"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "Payment Receipt",
+              "is_returned": false,
+              "final_amount": 150.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-02-19",
+            "ip_number": "",
+            "net_amount": 200.0,
+            "page_number": 8,
+            "invoice_number": "2005/08/3299",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "समर्थ हॉस्पीटल",
+              "registration_number": "08"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "OPD-Bil",
+              "is_returned": false,
+              "final_amount": 200.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-03-20",
+            "ip_number": "",
+            "net_amount": 200.0,
+            "page_number": 8,
+            "invoice_number": "2005/3299",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "समर्थ हॉस्पीटल",
+              "registration_number": "08"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "OPD-Bil",
+              "is_returned": false,
+              "final_amount": 200.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-01-06",
+            "ip_number": "",
+            "net_amount": 288.85,
+            "page_number": 9,
+            "invoice_number": "A004816",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "SARTHAK MEDICAL & GENERAL STORES"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "GLENMA & AZIFINE 200 SYP",
+              "is_returned": false,
+              "final_amount": 58.11
+            },
+            {
+              "discount": 0.0,
+              "item_name": "WALLA & FUDILD DS SYP",
+              "is_returned": false,
+              "final_amount": 105.09
+            },
+            {
+              "discount": 0.0,
+              "item_name": "ZUMENT 6 SOVENTUS JR SYP",
+              "is_returned": false,
+              "final_amount": 125.65
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-02-19",
+            "ip_number": "",
+            "net_amount": 780.0,
+            "page_number": 9,
+            "invoice_number": "CASH00905",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "SAMARTH MEDICAL AND GENERAL STORES"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "WIKORYL AF DROPS",
+              "is_returned": false,
+              "final_amount": 91.87
+            },
+            {
+              "discount": 0.0,
+              "item_name": "MEFTAL SPAS SUSP",
+              "is_returned": false,
+              "final_amount": 93.75
+            },
+            {
+              "discount": 0.0,
+              "item_name": "EMESET SYRUP",
+              "is_returned": false,
+              "final_amount": 43.0
+            },
+            {
+              "discount": 0.0,
+              "item_name": "PECEF 100MG SYRUP",
+              "is_returned": false,
+              "final_amount": 249.44
+            },
+            {
+              "discount": 0.0,
+              "item_name": "Z & D DS 20 SYRUP",
+              "is_returned": false,
+              "final_amount": 141.87
+            },
+            {
+              "discount": 0.0,
+              "item_name": "MACPLACTIN PLUS",
+              "is_returned": false,
+              "final_amount": 160.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-02-19",
+            "ip_number": "",
+            "net_amount": 90.0,
+            "page_number": 9,
+            "invoice_number": "CASH00931",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "SAMARTH MEDICAL AND GENERAL STORES"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "TUNIM COLD PLUS SUSP",
+              "is_returned": false,
+              "final_amount": 90.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-03-20",
+            "ip_number": "",
+            "net_amount": 500.0,
+            "page_number": 10,
+            "invoice_number": "CASH00985",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "SAMARTH MEDICAL AND GENERAL STORES"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "NEW GERMINA SUS",
+              "is_returned": false,
+              "final_amount": 200.0
+            },
+            {
+              "discount": 0.0,
+              "item_name": "TAXIM O FORT DRY SYP",
+              "is_returned": false,
+              "final_amount": 76.53
+            },
+            {
+              "discount": 0.0,
+              "item_name": "RANTAC SYRUB",
+              "is_returned": false,
+              "final_amount": 178.11
+            },
+            {
+              "discount": 0.0,
+              "item_name": "DOLO 250MG SYP",
+              "is_returned": false,
+              "final_amount": 45.69
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "886d0012ff4c",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Others"
+            }
+          ]
+        },
+        {
+          "bill_id": "c4d3374c8e0a",
+          "categorized_items": [
+            {
+              "s.no.": 2,
+              "category": "Registration"
+            }
+          ]
+        },
+        {
+          "bill_id": "8911e7fa8d16",
+          "categorized_items": [
+            {
+              "s.no.": 3,
+              "category": "Registration"
+            }
+          ]
+        },
+        {
+          "bill_id": "e2042bf33ef5",
+          "categorized_items": [
+            {
+              "s.no.": 4,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 5,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 6,
+              "category": "Medicines From Shop"
+            }
+          ]
+        },
+        {
+          "bill_id": "911ead3ebca6",
+          "categorized_items": [
+            {
+              "s.no.": 7,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 8,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 9,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 10,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 11,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 12,
+              "category": "Medicines From Shop"
+            }
+          ]
+        },
+        {
+          "bill_id": "b5ed982cbb4d",
+          "categorized_items": [
+            {
+              "s.no.": 13,
+              "category": "Medicines From Shop"
+            }
+          ]
+        },
+        {
+          "bill_id": "b96a4cfd0f1f",
+          "categorized_items": [
+            {
+              "s.no.": 14,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 15,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 16,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 17,
+              "category": "Medicines"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "patches": [
+        {
+          "type": "FLAG_ITEM",
+          "reason": "[POLICY VIOLATION: Health supplements not covered] - Macplactin Plus (₹160.00) is a nutritional supplement excluded per policy.",
+          "bill_id": "911ead3ebca6",
+          "flag_type": "POLICY_VIOLATION",
+          "item_s_no": 12,
+          "recommendation": "Mark as non-admissible"
+        },
+        {
+          "type": "FLAG_ITEM",
+          "reason": "[OPD FLAG: Medicine not in prescription] - New Germina Sus (₹200.00) is billed but not explicitly listed in the prescription dated 20-03-2026 (Rx shows Taxim O, Rantac, Dolo, Z&D).",
+          "bill_id": "b96a4cfd0f1f",
+          "flag_type": "OPD_LEGIBILITY",
+          "item_s_no": 14,
+          "recommendation": "Verify with treating doctor or mark as non-admissible"
+        },
+        {
+          "key": "patient_aadhar_no",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "PDF page 11 shows full Aadhaar number for patient Shreyansh Nikam.",
+          "new_value": "562580295802",
+          "old_value": "5625802",
+          "page_reference": "11"
+        }
+      ],
+      "icd_codes": [
+        {
+          "code": "A09.9",
+          "type": "primary",
+          "source": "Diagnosis - Acute Gastroenteritis AGE documented on page 8",
+          "description": "Gastroenteritis and colitis of unspecified origin"
+        },
+        {
+          "code": "R50.9",
+          "type": "secondary",
+          "source": "Chief complaint - Fever documented on page 7; Dolo prescribed",
+          "description": "Fever, unspecified"
+        },
+        {
+          "code": "R11.10",
+          "type": "secondary",
+          "source": "Chief complaint - Vomiting documented on page 7; Emeset prescribed",
+          "description": "Vomiting, unspecified"
+        }
+      ],
+      "bills_analyzed": 7,
+      "policy_remarks": "One policy violation found: Macplactin Plus (₹160.00) is a health supplement which is excluded under the policy rules.",
+      "patches_applied": 3,
+      "duplicates_found": 0,
+      "policy_violations": [
+        {
+          "bill_id": "911ead3ebca6",
+          "item_name": "MACPLACTIN PLUS",
+          "item_s_no": 12,
+          "rule_name": "Health supplements not covered",
+          "recommendation": "Reject item",
+          "amount_impacted": 160.0,
+          "violation_details": "Item is a nutritional supplement (Carica Papaya extract), which is excluded under the policy."
+        }
+      ],
+      "discrepancy_amount": 0.26,
+      "discrepancy_reason": "The calculated total of bills (₹2209.11) matches the claimed amount (₹2208.85) within the decimal tolerance of < ₹1.00. The minor difference is due to rounding in the pharmacy bills.",
+      "medical_legibility": {
+        "summary": "Most medications (Antibiotics like Taxim/Pecef, Antipyretics like Dolo, and Zinc supplements) align with the diagnosis of Acute Gastroenteritis. However, New Germina Sus is billed without a corresponding entry in the prescription.",
+        "flagged_items": [
+          {
+            "bill_id": "b96a4cfd0f1f",
+            "item_name": "NEW GERMINA SUS",
+            "flag_reason": "Not in prescription",
+            "recommendation": "Verify if verbally prescribed for Acute Gastroenteritis"
+          }
+        ],
+        "prescription_bill_match": false,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 2209.11,
+      "bills_with_corrections": 0,
+      "updated_claimed_amount": 2208.85,
+      "original_claimed_amount": 2208.85,
+      "original_total_of_bills": 2209.11,
+      "policy_violations_count": 1,
+      "medical_legibility_issues": 1
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "886d0012ff4c",
+            "bill_date": "2026-01-06",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 150.0,
+            "page_number": 8,
+            "invoice_number": "1839",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "ADARSH CLINIC",
+              "registration_number": "82673"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Others",
+              "discount": 0.0,
+              "item_name": "Payment Receipt",
+              "is_returned": false,
+              "final_amount": 150.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "c4d3374c8e0a",
+            "bill_date": "2026-02-19",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 200.0,
+            "page_number": 8,
+            "invoice_number": "2005/08/3299",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "समर्थ हॉस्पीटल",
+              "registration_number": "08"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Registration",
+              "discount": 0.0,
+              "item_name": "OPD-Bil",
+              "is_returned": false,
+              "final_amount": 200.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "8911e7fa8d16",
+            "bill_date": "2026-03-20",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 200.0,
+            "page_number": 8,
+            "invoice_number": "2005/3299",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "समर्थ हॉस्पीटल",
+              "registration_number": "08"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 3,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Registration",
+              "discount": 0.0,
+              "item_name": "OPD-Bil",
+              "is_returned": false,
+              "final_amount": 200.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "e2042bf33ef5",
+            "bill_date": "2026-01-06",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 288.85,
+            "page_number": 9,
+            "invoice_number": "A004816",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "SARTHAK MEDICAL & GENERAL STORES",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 4,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "GLENMA & AZIFINE 200 SYP",
+              "is_returned": false,
+              "final_amount": 58.11,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 5,
+              "is_nme": false,
+              "item_id": "2",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "WALLA & FUDILD DS SYP",
+              "is_returned": false,
+              "final_amount": 105.09,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 6,
+              "is_nme": false,
+              "item_id": "3",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "ZUMENT 6 SOVENTUS JR SYP",
+              "is_returned": false,
+              "final_amount": 125.65,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "911ead3ebca6",
+            "bill_date": "2026-02-19",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 780.0,
+            "page_number": 9,
+            "invoice_number": "CASH00905",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "SAMARTH MEDICAL AND GENERAL STORES",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 7,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "WIKORYL AF DROPS",
+              "is_returned": false,
+              "final_amount": 91.87,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 8,
+              "is_nme": false,
+              "item_id": "2",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "MEFTAL SPAS SUSP",
+              "is_returned": false,
+              "final_amount": 93.75,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 9,
+              "is_nme": false,
+              "item_id": "3",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "EMESET SYRUP",
+              "is_returned": false,
+              "final_amount": 43.0,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 10,
+              "is_nme": false,
+              "item_id": "4",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "PECEF 100MG SYRUP",
+              "is_returned": false,
+              "final_amount": 249.44,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 11,
+              "is_nme": false,
+              "item_id": "5",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "Z & D DS 20 SYRUP",
+              "is_returned": false,
+              "final_amount": 141.87,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 12,
+              "is_nme": false,
+              "item_id": "6",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "MACPLACTIN PLUS",
+              "is_returned": false,
+              "final_amount": 160.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "b5ed982cbb4d",
+            "bill_date": "2026-02-19",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 90.0,
+            "page_number": 9,
+            "invoice_number": "CASH00931",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "SAMARTH MEDICAL AND GENERAL STORES",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 13,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "TUNIM COLD PLUS SUSP",
+              "is_returned": false,
+              "final_amount": 90.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "b96a4cfd0f1f",
+            "bill_date": "2026-03-20",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 500.0,
+            "page_number": 10,
+            "invoice_number": "CASH00985",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "SAMARTH MEDICAL AND GENERAL STORES",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 14,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "NEW GERMINA SUS",
+              "is_returned": false,
+              "final_amount": 200.0,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 15,
+              "is_nme": false,
+              "item_id": "2",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "TAXIM O FORT DRY SYP",
+              "is_returned": false,
+              "final_amount": 76.53,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 16,
+              "is_nme": false,
+              "item_id": "3",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "RANTAC SYRUB",
+              "is_returned": false,
+              "final_amount": 178.11,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 17,
+              "is_nme": false,
+              "item_id": "4",
+              "category": "Medicines",
+              "discount": 0.0,
+              "item_name": "DOLO 250MG SYP",
+              "is_returned": false,
+              "final_amount": 45.69,
+              "categorization_source": "fuzzy"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

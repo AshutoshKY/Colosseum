@@ -57,6 +57,11 @@ class RunResult(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     cell_id: int = Field(foreign_key="run_cell.id", index=True)
 
+    # --- input (store everything: exact prompt + structured input sent to the model) ---
+    prompt_system: str | None = Field(default=None)
+    prompt_instruction: str | None = Field(default=None)
+    document_count: int = Field(default=0)
+
     # --- output ---
     raw_response: dict[str, Any] | None = Field(default=None, sa_column=Column(JSONB_VARIANT))
     parsed_output: dict[str, Any] | None = Field(default=None, sa_column=Column(JSONB_VARIANT))

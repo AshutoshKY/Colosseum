@@ -1,0 +1,623 @@
+{
+  "document": "test-docs/REQN4LFJ5QW_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "prescription",
+          "pages": "1-1"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "2-2"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "3-3"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2025-10-16",
+            "ip_number": "OP/2025/10/5044",
+            "net_amount": 2229.0,
+            "page_number": 2,
+            "invoice_number": "S9040",
+            "total_discount": 247.68,
+            "facility_details": {
+              "name": "MAS MEDICAL CENTER"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "ATORNIZ 10 GOLD ITAB",
+              "brand_name": "ATORNIZ 10 GOLD",
+              "net_amount": 379.8,
+              "unit_price": 12.66,
+              "is_returned": false,
+              "final_amount": 379.8
+            },
+            {
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "CTD 125 MG TABLET",
+              "brand_name": "CTD 125 MG",
+              "net_amount": 290.1,
+              "unit_price": 9.67,
+              "is_returned": false,
+              "final_amount": 290.1
+            },
+            {
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "CILNIGREAT 10MG TABLET",
+              "brand_name": "CILNIGREAT 10MG",
+              "net_amount": 387.0,
+              "unit_price": 12.9,
+              "is_returned": false,
+              "final_amount": 387.0
+            },
+            {
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "GOLINA'S TAB",
+              "brand_name": "GOLINA'S",
+              "net_amount": 270.0,
+              "unit_price": 9.0,
+              "is_returned": false,
+              "final_amount": 270.0
+            },
+            {
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "IMEGLYN 500 (TABLET)",
+              "brand_name": "IMEGLYN 500",
+              "net_amount": 249.3,
+              "unit_price": 8.31,
+              "is_returned": false,
+              "final_amount": 249.3
+            },
+            {
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "RENIGUARD [TABLET]",
+              "brand_name": "RENIGUARD",
+              "net_amount": 297.0,
+              "unit_price": 9.9,
+              "is_returned": false,
+              "final_amount": 297.0
+            },
+            {
+              "discount": 0.0,
+              "quantity": 5.0,
+              "item_name": "BIDUM 500 ITABLET",
+              "brand_name": "BIDUM 500",
+              "net_amount": 19.0,
+              "unit_price": 3.8,
+              "is_returned": false,
+              "final_amount": 19.0
+            },
+            {
+              "discount": 0.0,
+              "quantity": 25.0,
+              "item_name": "BIDUM-500",
+              "brand_name": "BIDUM-500",
+              "net_amount": 95.0,
+              "unit_price": 3.8,
+              "is_returned": false,
+              "final_amount": 95.0
+            },
+            {
+              "discount": 0.0,
+              "quantity": 20.0,
+              "item_name": "RABESEL 20MG [TABLET]",
+              "brand_name": "RABESEL 20MG",
+              "net_amount": 216.0,
+              "unit_price": 10.8,
+              "is_returned": false,
+              "final_amount": 216.0
+            },
+            {
+              "discount": 0.0,
+              "quantity": 2.0,
+              "item_name": "SUCRAZ O SYP [SYRUP]",
+              "brand_name": "SUCRAZ O SYP",
+              "net_amount": 273.76,
+              "unit_price": 136.88,
+              "is_returned": false,
+              "final_amount": 273.76
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "6e7fa2d04c74",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 2,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 3,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 4,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 5,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 6,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 7,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 8,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 9,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 10,
+              "category": "Medicines Supplied By Hospital"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "OVERCLAIMED",
+      "fwa_flags": [],
+      "icd_codes": [
+        {
+          "code": "R50.9",
+          "name": "Fever, unspecified",
+          "type": "primary",
+          "block": "General symptoms and signs",
+          "source": "diagnostics",
+          "chapter": "Chapter 18 – Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified (R00-R99)",
+          "diagnosis": "Fever, unspecified"
+        },
+        {
+          "code": "I10",
+          "name": "Essential (primary) hypertension",
+          "type": "secondary",
+          "block": "Hypertensive diseases",
+          "source": "diagnostics",
+          "chapter": "Chapter 9 – Diseases of the circulatory system (I00-I99)",
+          "diagnosis": "Essential (primary) hypertension"
+        },
+        {
+          "code": "E11.9",
+          "name": "Type 2 diabetes mellitus without complications",
+          "type": "secondary",
+          "block": "Diabetes mellitus",
+          "source": "diagnostics",
+          "chapter": "Chapter 4 – Endocrine, nutritional and metabolic diseases (E00-E89)",
+          "diagnosis": "Type 2 diabetes mellitus without complications"
+        }
+      ],
+      "bills_analyzed": 1,
+      "policy_remarks": "No policy violations detected. All billed medicines align with the prescription.",
+      "patches_applied": 5,
+      "duplicates_found": 0,
+      "policy_violations": [],
+      "discrepancy_amount": 247.78,
+      "discrepancy_reason": "The bill S9040 has a gross amount of ₹2476.78 and a net amount of ₹2229.00 after a discount of ₹247.68. The extracted JSON total (2476.96) had a minor rounding discrepancy of ₹0.18 compared to the PDF gross (2476.78). The claimed amount is updated to the net payable amount of ₹2229.00 as seen on page 2.",
+      "medical_legibility": {
+        "summary": "All medicines billed are present in the prescription dated 16/10/25. However, Sucra-O syrup is billed for 2 units while the prescription indicates 1 bottle (10ml dose).",
+        "flagged_items": [
+          {
+            "bill_id": "6e7fa2d04c74",
+            "item_name": "SUCRAZ O SYP [SYRUP]",
+            "flag_reason": "Quantity mismatch: Billed 2, Prescribed 1",
+            "recommendation": "Check for additional prescription or restrict to 1 unit."
+          }
+        ],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 2476.78,
+      "bills_with_corrections": 1,
+      "updated_claimed_amount": 2229.0,
+      "original_claimed_amount": 0.0,
+      "original_total_of_bills": 2476.96,
+      "policy_violations_count": 0,
+      "medical_legibility_issues": 1,
+      "patches": []
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "Food",
+        "Food Supplements (e.g., Horlicks, Glucose, Whey Protein)",
+        "Dietary Pills",
+        "Vitamins and minerals (unless prescribed)",
+        "Organic substances (unless prescribed)",
+        "Disposable Consumables",
+        "Routine Consumables",
+        "Injection & Infusion Related Consumables",
+        "Dressing & Wound Care Materials",
+        "Personal Comfort & Hygiene Items",
+        "Miscellaneous Non-Medical / Daily-Use Items",
+        "Wigs",
+        "Toupees",
+        "Protein shakes",
+        "Hearing Aid"
+      ],
+      "policy_rules": [
+        "Dietician and Nutritionist fees are not payable.",
+        "Non-medical expenses or standard deductions incurred during inpatient or day-care treatments are not covered under the OPD Policy.",
+        "Any ailment with a sublimit in the Group medical plan cannot be claimed under the OPD Policy.",
+        "Mental health, development disorders, and psychiatric/psychosomatic treatments (including consultations, medicines, and counseling) are excluded unless specifically included.",
+        "Procedure fees (e.g., wound cleaning, dressings, burn care, saline drips) incurred during an OP consultation are not covered.",
+        "Over the counter (OTC) medicines and medicines purchased without a doctor’s prescription are not covered.",
+        "Diagnostics or investigations performed without a doctor’s prescription are not covered.",
+        "Cosmetic consultations, diagnostics, medicines, and surgeries (e.g., chemical peels, laser hair removal) are excluded unless specifically included.",
+        "Pre-natal, post-natal, and maternity-related expenses are not covered.",
+        "Naturopathy and related treatments are excluded.",
+        "Treatment for alopecia, hair fall, greying of hair, baldness, acne, and vitiligo is not covered.",
+        "Expenses related to participation in hazardous or adventure sports are not covered.",
+        "Sexually transmitted diseases (STDs) are excluded (HIV/AIDS covered only if in inclusions).",
+        "Obesity-related consultations and treatments are excluded.",
+        "IVF and infertility-related treatments are excluded.",
+        "Cataract or Lasix surgery is excluded.",
+        "Day care treatments listed under IPD cover are excluded from OPD coverage.",
+        "Management of menopausal symptoms (hormone therapy, counseling) is covered up to the Sum Insured (SI) on an OPD basis.",
+        "Alternative medicines including Homeopathy and Ayurveda are covered."
+      ],
+      "extraction_ok": true
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "6e7fa2d04c74",
+            "bill_date": "2025-10-16",
+            "bill_type": "itemized_bill",
+            "ip_number": "OP/2025/10/5044",
+            "net_amount": 2229.0,
+            "page_number": 2,
+            "invoice_number": "S9040",
+            "total_discount": 247.68,
+            "facility_details": {
+              "name": "MAS MEDICAL CENTER",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "ATORNIZ 10 GOLD ITAB",
+              "brand_name": "ATORNIZ 10 GOLD",
+              "net_amount": 379.8,
+              "unit_price": 12.66,
+              "is_returned": false,
+              "final_amount": 379.8,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "item_id": "2",
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "CTD 125 MG TABLET",
+              "brand_name": "CTD 125 MG",
+              "net_amount": 290.1,
+              "unit_price": 9.67,
+              "is_returned": false,
+              "final_amount": 290.1,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 3,
+              "is_nme": false,
+              "item_id": "3",
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "CILNIGREAT 10MG TABLET",
+              "brand_name": "CILNIGREAT 10MG",
+              "net_amount": 387.0,
+              "unit_price": 12.9,
+              "is_returned": false,
+              "final_amount": 387.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 4,
+              "is_nme": false,
+              "item_id": "4",
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "GOLINA'S TAB",
+              "brand_name": "GOLINA'S",
+              "net_amount": 270.0,
+              "unit_price": 9.0,
+              "is_returned": false,
+              "final_amount": 270.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 5,
+              "is_nme": false,
+              "item_id": "5",
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "IMEGLYN 500 (TABLET)",
+              "brand_name": "IMEGLYN 500",
+              "net_amount": 249.3,
+              "unit_price": 8.31,
+              "is_returned": false,
+              "final_amount": 249.3,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 6,
+              "is_nme": false,
+              "item_id": "6",
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 30.0,
+              "item_name": "RENIGUARD [TABLET]",
+              "brand_name": "RENIGUARD",
+              "net_amount": 297.0,
+              "unit_price": 9.9,
+              "is_returned": false,
+              "final_amount": 297.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 7,
+              "is_nme": false,
+              "item_id": "7",
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 5.0,
+              "item_name": "BIDUM 500 ITABLET",
+              "brand_name": "BIDUM 500",
+              "net_amount": 19.0,
+              "unit_price": 3.8,
+              "is_returned": false,
+              "final_amount": 19.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 8,
+              "is_nme": false,
+              "item_id": "8",
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 25.0,
+              "item_name": "BIDUM-500",
+              "brand_name": "BIDUM-500",
+              "net_amount": 95.0,
+              "unit_price": 3.8,
+              "is_returned": false,
+              "final_amount": 95.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 9,
+              "is_nme": false,
+              "item_id": "9",
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 20.0,
+              "item_name": "RABESEL 20MG [TABLET]",
+              "brand_name": "RABESEL 20MG",
+              "net_amount": 216.0,
+              "unit_price": 10.8,
+              "is_returned": false,
+              "final_amount": 216.0,
+              "generic_name": null,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 10,
+              "is_nme": false,
+              "item_id": "10",
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 2.0,
+              "item_name": "SUCRAZ O SYP [SYRUP]",
+              "brand_name": "SUCRAZ O SYP",
+              "net_amount": 273.76,
+              "unit_price": 136.88,
+              "is_returned": false,
+              "final_amount": 273.76,
+              "generic_name": null,
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1352921,
+          "benefit_name": "Dental Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "x_ray",
+              "requirement_type": "conditional",
+              "condition_description": ""
+            }
+          ]
+        },
+        {
+          "benefit_id": 1352922,
+          "benefit_name": "Eye Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1352923,
+          "benefit_name": "Order Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1352924,
+          "benefit_name": "Book Vaccinations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "vaccination_card",
+              "requirement_type": "conditional",
+              "condition_description": "Required only if the reimbursement claim is for a child’s vaccination."
+            }
+          ]
+        },
+        {
+          "benefit_id": 1352926,
+          "benefit_name": "In-Clinic Consults",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1352948,
+          "benefit_name": "Ayurveda",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1352955,
+          "benefit_name": "Menopausal",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1353205,
+          "benefit_name": "Prescribed Diagnostics",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

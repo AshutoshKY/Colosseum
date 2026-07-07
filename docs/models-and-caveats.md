@@ -86,10 +86,115 @@ cost is VM-uptime-based, not per-token — track separately.
 
 ## How to extend this catalog
 
-1. Add a row here with the model's provider, access pattern, and caveats (mark unknowns
-   **(verify)**).
-2. Verify each **(verify)** cell live against the provider's current docs.
-3. Add/seed the pricing entry in the rate card.
-4. Regenerate / update the in-code capability registry to match this row.
+1. Add the model to the right `backend/app/providers/catalog/<family>.yaml` (grouped
+   `family -> version -> variant`), with its provider, access pattern, capability flags, and
+   `enabled`/`verified`/`reason`.
+2. Verify availability **live** before flipping `enabled=true` (callable on this project's
+   Vertex, or a working external key). Until then it ships `enabled=false` with a `reason`.
+3. Add/seed the pricing entry in `providers/pricing/rate_card.json` (input/output/cache/thinking
+   per 1M; mark unknowns; bump `pricing_version`).
+4. The registry (`registry.py`) loads the catalog automatically — no code change needed.
 5. The runner appends **measured** facts (observed token classes, structured-output success
-   rate, failures, real latency) back here so the catalog reflects reality, not just docs.
+   rate, failures, real latency) so the catalog reflects reality, not just docs.
+
+---
+
+# Phase 2 — Exhaustive, versioned Model Garden catalog
+
+The capability registry is now **data-driven**: `backend/app/providers/catalog/*.yaml`
+(one file per family, grouped `family -> version -> variant`) is the single source loaded by
+`providers/registry.py`. Thinking vs non-thinking are **first-class separate configs** (e.g.
+`grok-4.20-reasoning` vs `grok-4.20-non-reasoning`, `qwen3-next-...-thinking` vs `...-instruct`).
+
+**Enumeration sources (June 2026):** LiteLLM's `vertex_ai` / `vertex_partner` provider model
+lists (authoritative for what routes through the Vertex transport), the xAI provider list, and
+the external z.ai / Moonshot catalogs — cross-checked per family. `gcloud ai model-garden
+models list` was **not available** in this environment (no `gcloud`), so Model-Garden
+*enablement* on this project could not be confirmed from the CLI; consequently **every
+partner/external model ships `enabled=false, verified=false` with a `reason`** and is only
+flipped on after a live call succeeds.
+
+## Availability gating (what is enabled vs gated off)
+
+Updated by the **Phase 2.5 live probe** (June 19 2026) on `vertex-internal-testing`.
+
+- **ENABLED + VERIFIED (5 models, all live-probed callable):**
+  - **Gemini 2.5** — `gemini-2.5-flash`, `gemini-2.5-pro`, `gemini-2.5-flash-lite` (native PDF,
+    vision, `json_schema`, thinking, caching; 30 MB payload cap).
+  - **DeepSeek R1** — `deepseek-ai/deepseek-r1-0528-maas` (Vertex MaaS, **text-only** reasoning;
+    `json_mode` + repair ladder; gated out of image/PDF tasks by the capability gate).
+  - **Qwen3** — `qwen/qwen3-235b-a22b-instruct-2507-maas` (Vertex MaaS, **text-only**;
+    `json_mode` + repair ladder; gated out of image/PDF tasks).
+- **GATED OFF (`enabled=false`):** everything else, each with a `reason`:
+  - **Gemini 3.x** (`gemini-3-flash/pro-preview`, `gemini-3.1-pro/flash-lite`, `gemini-3.5-flash`):
+    *"Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026)."*
+  - Other Vertex Model Garden partners (Claude, other DeepSeek/Qwen variants, GLM, Kimi, Grok,
+    Mistral, Llama, Gemma, gpt-oss, MiniMax, Jamba): *"not verified callable on project (Model
+    Garden enablement unconfirmed; no gcloud)"*. `gpt-oss-120b` answers but its free-text did not
+    parse to schema on probe (callable but weak structured output). They route via
+    `vertex_partner` using the **existing Vertex creds**, so re-probing can flip those that answer.
+  - External-only endpoints (z.ai GLM, Moonshot Kimi, xAI Grok direct): *"no API key (only
+    Vertex + Langfuse creds present)"* — registered under `openai_compatible` / `xai`,
+    disabled until a key is supplied.
+  - Self-deploy (Gemma 3): *"self-deploy endpoint not provisioned"* — **VM-uptime priced**, not
+    per-token; cold-start 429 on first call.
+
+## Families & versions registered (counts)
+
+| Family | Provider route | Versions / variants registered | Enabled |
+|---|---|---|---|
+| **gemini** | `vertex_ai` (MaaS) | 2.5 (flash/pro/flash-lite), 3 (flash/pro), 3.1 (pro/flash-lite), 3.5 (flash) | **3 (2.5 only; 3.x gated, Vertex 404)** |
+| **claude** | `vertex_partner` (MaaS) | Opus 4/4.1/4.5/4.6/4.7/4.8, Sonnet 4/4.5/4.6, Haiku 4.5, 3.7/3.5 Sonnet, 3.5 Haiku | 0 (gated) |
+| **deepseek** | `vertex_partner` (MaaS) | R1-0528 (thinking), V3.1, V3.2, OCR (vision) | **1 (R1-0528 verified)** |
+| **qwen** | `vertex_partner` (MaaS) | 3-235B, 3-coder-480B, 3-next-80B **instruct + thinking** | **1 (3-235B verified)** |
+| **kimi** | `vertex_partner` + `openai_compatible` | K2 thinking (Vertex), K2/K2.5/K2-thinking (Moonshot) | 0 (gated) |
+| **glm** | `vertex_partner` + `openai_compatible` | GLM-5, GLM-4.7 (Vertex); GLM-5/4.7/4.6/4.6V (z.ai) | 0 (gated) |
+| **grok** | `vertex_partner` + `xai` | 4.20 / 4.1-fast **reasoning + non-reasoning** (Vertex); 4.3, 4.20, 4-fast (r/nr), 4, 3, 3-mini (xAI) | 0 (gated) |
+| **mistral** | `vertex_partner` (MaaS) | Small 3.1, Medium 3, Large, Nemo, Codestral 2, OCR | 0 (gated) |
+| **llama** | `vertex_partner` (MaaS) | 4 Scout/Maverick (16E/128E), 3.2-90B-Vision, 3.1 (405B/70B/8B), 3 (405B/70B/8B) | 0 (gated) |
+| **open_models** | `vertex_partner` (MaaS + self_deploy) | Gemma 4 26B (MaaS), Gemma 3 27B/12B/4B (self-deploy), gpt-oss 120B/20B, MiniMax M2, Jamba 1.5 large/mini | 0 (gated) |
+
+**Total registered: 77 models; 5 enabled (verified callable: Gemini 2.5 flash/pro/flash-lite +
+DeepSeek R1 + Qwen3-235B), 72 gated off with reasons.** Run
+`python -c "from app.providers.registry import catalog_summary; print(catalog_summary())"`
+for the live per-family counts.
+
+## Per-family caveats (verified against current provider docs)
+
+- **Claude (vertex_partner):** native PDF + vision + prompt caching + tool-use; structured
+  output via TOOLS mode. **+10% regional/multi-region premium** — `run_result.endpoint` records
+  the endpoint so cost comparisons stay fair.
+- **DeepSeek R1 / V3.x:** **text-only** reasoning -> the capability gate **skips** them for
+  image/PDF tasks (recorded "not applicable"). Only `deepseek-ocr` is vision-capable. They
+  still participate fully in the **text** OPD tasks (items_categorisation, nme_analysis).
+- **Qwen3 (Vertex MaaS):** the MaaS members are **text-only**; VL variants are self-deploy.
+  Gated out of image tasks; full participants in text tasks. Thinking variant is separate.
+- **Grok (xAI / Vertex):** **base64 image ≤4 MB** (URL ≤20 MB), **≤33 MP**, **jpg/png only**,
+  tile-based image-token billing. PDFs **must** be rasterized per page (the `RasterizingAdapter`
+  enforces all of this via the doc-prep toolkit). Reasoning vs non-reasoning are separate.
+- **GLM / Kimi:** available on **both** Vertex MaaS (`vertex_partner`, existing creds) and the
+  external z.ai / Moonshot APIs (`openai_compatible`, needs a key). Treated text-only for the
+  document tasks (vision members listed separately); `json_mode` + repair ladder.
+- **Mistral / Llama:** vision members (Small 3.1, Medium 3, OCR; Llama 4, 3.2-90B-Vision) take
+  rasterized images; the rest are text-only. `json_mode` + repair ladder.
+- **Gemma 4 (MaaS) / Gemma 3 (self-deploy):** Gemma 3 is **VM-uptime priced** (self-deploy GPU
+  endpoint, cold-start 429); flagged separately in the rate card (`gemma-self-deploy`, rates 0
+  with a note). Weak structured-output reliability -> repair ladder.
+- **gpt-oss / MiniMax / Jamba:** text-only; gated out of image/PDF tasks.
+
+## Adapters (Phase 2)
+
+- `vertex_partner` is routed by **capability, not just provider**: `pdf_native` Claude uses the
+  PDF pass-through adapter; vision-only Grok/Llama/Gemma/Mistral use the **`RasterizingAdapter`**
+  (`pdf_to_images` -> `prepare_image_for_cap` per the 4 MB / 33 MP / jpg-png / 30 MB caps).
+- `xai` and `openai_compatible` external models use the same rasterizing/text adapters; creds
+  are resolved per provider (`XAI_API_KEY`, `OPENAI_COMPATIBLE_API_KEY` + `_BASE_URL`).
+- Text-only models on a document task are **gated out** (recorded skipped / "not applicable",
+  never failed) by the shared capability gate.
+
+## Pricing (`providers/pricing/rate_card.json`, version `colosseum-2026-06-phase2`)
+
+Input/output/cache-read/thinking $ per 1M for every `pricing_ref`. Estimates from public list
+prices (cross-checked vs LiteLLM `model_cost` where available), **not** provider invoices.
+Self-deploy (`gemma-self-deploy`) is VM-uptime priced (rates 0 + a `note`) and tracked
+separately. `pricing_version` is recorded on every `run_result`.

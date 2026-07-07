@@ -7,9 +7,11 @@ from app.providers.adapters.base import (
     DocumentInput,
     NormalizedContent,
     ProviderAdapter,
+    TextOnlyAdapter,
     get_adapter,
 )
 from app.providers.adapters.gemini_vertex import GeminiVertexAdapter
+from app.providers.adapters.rasterizing import RasterizingAdapter
 
 __all__ = [
     "ProviderAdapter",
@@ -17,5 +19,7 @@ __all__ = [
     "NormalizedContent",
     "CapabilityGateError",
     "GeminiVertexAdapter",
+    "RasterizingAdapter",
+    "TextOnlyAdapter",
     "get_adapter",
 ]

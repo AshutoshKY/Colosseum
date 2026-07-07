@@ -1,0 +1,232 @@
+{
+  "document": "test-docs/26052730136-1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "itemized_bill",
+          "pages": "1-1"
+        },
+        {
+          "document_type": "prescription",
+          "pages": "2-2"
+        },
+        {
+          "document_type": "claim_forms",
+          "pages": "3-3"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-05-07",
+            "ip_number": "",
+            "net_amount": 2631.0,
+            "page_number": 1,
+            "invoice_number": "CA/1065",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "PRIDE HEALTHCARE",
+              "registration_number": "20-263181,21-263182,20C-263183"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "DIAMICRON XR MEX 500",
+              "is_returned": false,
+              "final_amount": 702.08
+            },
+            {
+              "discount": 0.0,
+              "item_name": "GEMICAL-XT",
+              "is_returned": false,
+              "final_amount": 464.0
+            },
+            {
+              "discount": 0.0,
+              "item_name": "STALIX DM (10/100/500)",
+              "is_returned": false,
+              "final_amount": 699.6
+            },
+            {
+              "discount": 0.0,
+              "item_name": "NOVASTAT 10",
+              "is_returned": false,
+              "final_amount": 765.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "5c4a39550530",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 2,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 3,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 4,
+              "category": "Medicines From Shop"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "patches": [
+        {
+          "type": "EDIT_CLAIMED_AMOUNT",
+          "impact": "Updates claimed amount",
+          "reason": "Found explicit claim amount on Page 3: OPD Claim Form shows Claim Amount: 2631",
+          "new_amount": 2631.0,
+          "old_amount": 0.0,
+          "page_reference": "3"
+        },
+        {
+          "key": "patient_age",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Prescription on Page 2 explicitly states age as 50 years, whereas claim form shows 49.",
+          "new_value": 50,
+          "old_value": 49,
+          "page_reference": "2"
+        },
+        {
+          "type": "FLAG_ITEM",
+          "reason": "[POLICY VIOLATION: Health supplements not covered] - GEMICAL-XT (₹464.00) is a multivitamin/calcium supplement excluded per policy rules.",
+          "bill_id": "5c4a39550530",
+          "flag_type": "POLICY_VIOLATION",
+          "item_s_no": 2,
+          "recommendation": "Mark as non-admissible"
+        }
+      ],
+      "icd_codes": [
+        {
+          "code": "E11.9",
+          "type": "primary",
+          "source": "Diagnosis - Type 2 Diabetes Mellitus 10 years; Prescription - Stalix DM, Diamicron XR Mex",
+          "description": "Type 2 diabetes mellitus without complications"
+        },
+        {
+          "code": "E78.5",
+          "type": "secondary",
+          "source": "Prescription - Novastat 10mg (Rosuvastatin) for cholesterol management",
+          "description": "Hyperlipidemia, unspecified"
+        }
+      ],
+      "bills_analyzed": 1,
+      "policy_remarks": "One policy violation found: GEMICAL-XT is a health supplement/multivitamin which is generally excluded under the provided policy rules.",
+      "patches_applied": 3,
+      "duplicates_found": 0,
+      "policy_violations": [
+        {
+          "bill_id": "5c4a39550530",
+          "item_name": "GEMICAL-XT",
+          "item_s_no": 2,
+          "rule_name": "Health supplements not covered",
+          "recommendation": "Reject item",
+          "amount_impacted": 464.0,
+          "violation_details": "Item is a multivitamin/calcium supplement (Calcium 1250mg + Vit D3+B6+B9+B12) which is explicitly excluded under the policy."
+        }
+      ],
+      "discrepancy_amount": 0.32,
+      "discrepancy_reason": "The claimed amount of ₹2631.00 found on the claim form (Page 3) matches the calculated total of the pharmacy bill (₹2630.68) within decimal tolerance. The patient age was corrected from 49 to 50 based on the prescription.",
+      "medical_legibility": {
+        "summary": "All billed medicines (Stalix DM, Diamicron XR Mex, Novastat, Gemical-XT) match the prescription dated 04/05/2026. The treatment for Type 2 Diabetes and Hyperlipidemia (implied by Novastat) is consistent with the diagnosis.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 2630.68,
+      "bills_with_corrections": 0,
+      "updated_claimed_amount": 2631.0,
+      "original_claimed_amount": 0.0,
+      "original_total_of_bills": 2630.68,
+      "policy_violations_count": 1,
+      "medical_legibility_issues": 0
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "5c4a39550530",
+            "bill_date": "2026-05-07",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 2631.0,
+            "page_number": 1,
+            "invoice_number": "CA/1065",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "PRIDE HEALTHCARE",
+              "registration_number": "20-263181,21-263182,20C-263183"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "DIAMICRON XR MEX 500",
+              "is_returned": false,
+              "final_amount": 702.08,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "item_id": "2",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "GEMICAL-XT",
+              "is_returned": false,
+              "final_amount": 464.0,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 3,
+              "is_nme": false,
+              "item_id": "3",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "STALIX DM (10/100/500)",
+              "is_returned": false,
+              "final_amount": 699.6,
+              "categorization_source": "llm"
+            },
+            {
+              "s.no.": 4,
+              "is_nme": false,
+              "item_id": "4",
+              "category": "Medicines From Shop",
+              "discount": 0.0,
+              "item_name": "NOVASTAT 10",
+              "is_returned": false,
+              "final_amount": 765.0,
+              "categorization_source": "llm"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

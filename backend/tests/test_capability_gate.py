@@ -36,11 +36,15 @@ def test_text_only_model_gated_out_of_pdf_task():
 
 
 def test_registry_deepseek_is_text_only_and_cannot_handle_documents():
-    cap = get_capability("vertex_ai/deepseek-r1")
+    # R1 is verified callable (Phase 2.5 live probe) but still TEXT-ONLY: the gate must skip it
+    # on document tasks (recorded "not applicable", never failed).
+    cap = get_capability("vertex_ai/deepseek-ai/deepseek-r1-0528-maas")
     assert cap.vision is False
     assert cap.pdf_native is False
     assert cap.can_handle_documents() is False
-    assert cap.enabled is False  # stubbed/disabled until verified
+    assert cap.enabled is True  # verified callable on vertex-internal-testing
+    # An un-probed DeepSeek variant stays gated off until verified.
+    assert get_capability("vertex_ai/deepseek-ai/deepseek-v3.1-maas").enabled is False
 
 
 def test_gemini_passes_pdf_gate():
@@ -55,7 +59,7 @@ def test_gemini_passes_pdf_gate():
 
 def test_vision_model_with_no_pdf_native_still_passes_gate():
     # Grok: not pdf_native but vision -> can take rasterized images, so gate allows it.
-    cap = get_capability("xai/grok-4")
+    cap = get_capability("xai/grok-4-0709")
     adapter = ProviderAdapter(cap)
     adapter.gate([DocumentInput(path="/tmp/x.pdf")])
     assert cap.vision is True

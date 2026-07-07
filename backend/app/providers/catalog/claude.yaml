@@ -1,0 +1,95 @@
+# Claude (Anthropic) on Vertex AI Model Garden (vertex_partner / MaaS).
+# Full vision + native PDF + prompt caching + tool-use + citations. Structured output via
+# TOOLS mode (Instructor). Regional/multi-region endpoints add ~10% over global pricing —
+# recorded per-run via run_result.endpoint for fair cost comparison.
+#
+# GATED OFF: not verified callable on vertex-internal-testing. Anthropic MaaS models require
+# per-model Model Garden acceptance; we cannot confirm via gcloud here. The live smoke flips
+# verified=true for any that actually answer.
+
+family: claude
+provider: vertex_partner
+access: maas
+defaults:
+  modalities: [text, image, pdf]
+  pdf_native: true
+  vision: true
+  max_payload_mb: 30.0
+  context_window: 200000
+  structured_method: tools
+  thinking: true
+  caching: true
+  batch: true
+  enabled: false
+  verified: false
+  reason: "not verified callable on project (Anthropic Model Garden acceptance unconfirmed; no gcloud)"
+  notes: "+10% regional/multi-region premium; record endpoint for fair cost compare."
+
+models:
+  # --- Claude 4.x (current generation) ---
+  - model_id: vertex_ai/claude-opus-4-8@default
+    display_name: Claude Opus 4.8 (Vertex)
+    version: "4.8"
+    variant: opus
+    pricing_ref: claude-opus-4-8
+  - model_id: vertex_ai/claude-opus-4-7@default
+    display_name: Claude Opus 4.7 (Vertex)
+    version: "4.7"
+    variant: opus
+    pricing_ref: claude-opus-4-7
+  - model_id: vertex_ai/claude-opus-4-6@default
+    display_name: Claude Opus 4.6 (Vertex)
+    version: "4.6"
+    variant: opus
+    pricing_ref: claude-opus-4-6
+  - model_id: vertex_ai/claude-opus-4-5@20251101
+    display_name: Claude Opus 4.5 (Vertex)
+    version: "4.5"
+    variant: opus
+    pricing_ref: claude-opus-4-5
+  - model_id: vertex_ai/claude-opus-4-1@20250805
+    display_name: Claude Opus 4.1 (Vertex)
+    version: "4.1"
+    variant: opus
+    pricing_ref: claude-opus-4-1
+  - model_id: vertex_ai/claude-opus-4@20250514
+    display_name: Claude Opus 4 (Vertex)
+    version: "4.0"
+    variant: opus
+    pricing_ref: claude-opus-4
+  - model_id: vertex_ai/claude-sonnet-4-6@default
+    display_name: Claude Sonnet 4.6 (Vertex)
+    version: "4.6"
+    variant: sonnet
+    pricing_ref: claude-sonnet-4-6
+  - model_id: vertex_ai/claude-sonnet-4-5@20250929
+    display_name: Claude Sonnet 4.5 (Vertex)
+    version: "4.5"
+    variant: sonnet
+    pricing_ref: claude-sonnet-4-5
+  - model_id: vertex_ai/claude-sonnet-4@20250514
+    display_name: Claude Sonnet 4 (Vertex)
+    version: "4.0"
+    variant: sonnet
+    pricing_ref: claude-sonnet-4
+  - model_id: vertex_ai/claude-haiku-4-5@20251001
+    display_name: Claude Haiku 4.5 (Vertex)
+    version: "4.5"
+    variant: haiku
+    pricing_ref: claude-haiku-4-5
+  # --- Claude 3.x (legacy, present in Model Garden) ---
+  - model_id: vertex_ai/claude-3-7-sonnet@20250219
+    display_name: Claude 3.7 Sonnet (Vertex)
+    version: "3.7"
+    variant: sonnet
+    pricing_ref: claude-3-7-sonnet
+  - model_id: vertex_ai/claude-3-5-sonnet@20240620
+    display_name: Claude 3.5 Sonnet (Vertex)
+    version: "3.5"
+    variant: sonnet
+    pricing_ref: claude-3-5-sonnet
+  - model_id: vertex_ai/claude-3-5-haiku@20241022
+    display_name: Claude 3.5 Haiku (Vertex)
+    version: "3.5"
+    variant: haiku
+    pricing_ref: claude-3-5-haiku

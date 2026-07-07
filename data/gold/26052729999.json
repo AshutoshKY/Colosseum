@@ -1,0 +1,232 @@
+{
+  "document": "test-docs/26052729999-1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "other",
+          "pages": "1-1"
+        },
+        {
+          "document_type": "claim_forms",
+          "pages": "2-2"
+        },
+        {
+          "document_type": "identity_document",
+          "pages": "3-6"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "7-7,9-9"
+        },
+        {
+          "document_type": "prescription",
+          "pages": "8-8"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "10-10"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-05-23",
+            "ip_number": "",
+            "net_amount": 8250.0,
+            "page_number": 7,
+            "invoice_number": "1429",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "JOTI OPTICS",
+              "registration_number": "19AFTPB8925P1ZH"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "Frame: Ite-rome (vogue Frome) + Lenes: Ile-ak Balew-",
+              "is_returned": false,
+              "final_amount": 8250.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-05-17",
+            "ip_number": "",
+            "net_amount": 400.0,
+            "page_number": 9,
+            "invoice_number": "",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Joti Optics"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "item_name": "Consultation Fees",
+              "is_returned": false,
+              "final_amount": 400.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "907ffc226580",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Others"
+            }
+          ]
+        },
+        {
+          "bill_id": "480d3d76b589",
+          "categorized_items": [
+            {
+              "s.no.": 2,
+              "category": "Consultation"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "status": "MATCH",
+      "patches": [
+        {
+          "type": "FLAG_ITEM",
+          "reason": "[POLICY VIOLATION: Cost of spectacles not covered] - Item 'Frame: Ite-rome (vogue Frome) + Lenes: Ile-ak Balew-' (₹8250) is explicitly excluded under the OPD policy rules.",
+          "bill_id": "907ffc226580",
+          "flag_type": "POLICY_VIOLATION",
+          "item_s_no": 1,
+          "recommendation": "Mark as non-admissible"
+        },
+        {
+          "key": "patient_name",
+          "type": "EDIT_PATIENT_SUMMARY",
+          "reason": "Patient name is correct as per claim form and health card.",
+          "new_value": "KRISHNA GOSWAMI",
+          "old_value": "KRISHNA GOSWAMI",
+          "page_reference": "1"
+        }
+      ],
+      "icd_codes": [
+        {
+          "code": "Z01.00",
+          "type": "primary",
+          "source": "Prescription - Routine check up",
+          "description": "Encounter for examination of eyes and vision without abnormal findings"
+        },
+        {
+          "code": "Z96.1",
+          "type": "secondary",
+          "source": "Diagnosis - BE Pseudophakia",
+          "description": "Presence of intraocular lens"
+        }
+      ],
+      "bills_analyzed": 2,
+      "policy_remarks": "The bill for spectacles (Frame and Lenses) for ₹8250 violates the policy rule: 'Correction of eye sight, Cost of spectacles, contact lenses, hearing aids etc are not covered under OPD.'",
+      "patches_applied": 2,
+      "duplicates_found": 0,
+      "policy_violations": [
+        {
+          "bill_id": "907ffc226580",
+          "item_name": "Frame: Ite-rome (vogue Frome) + Lenes: Ile-ak Balew-",
+          "item_s_no": 1,
+          "rule_name": "Correction of eye sight, Cost of spectacles, contact lenses, hearing aids etc are not covered under OPD",
+          "recommendation": "Reject item",
+          "amount_impacted": 8250.0,
+          "violation_details": "The bill is for the purchase of a frame and lenses (spectacles), which is a standard exclusion in this OPD policy."
+        }
+      ],
+      "discrepancy_amount": 0.0,
+      "discrepancy_reason": "The total of extracted bills (₹8250 for spectacles and ₹400 for consultation) matches the claimed amount of ₹8650. However, the spectacle bill is a policy violation.",
+      "medical_legibility": {
+        "summary": "The consultation and spectacle prescription align with the diagnosis of BE Pseudophakia and routine check-up. However, spectacles are a policy exclusion.",
+        "flagged_items": [],
+        "prescription_bill_match": true,
+        "diagnosis_treatment_consistent": true
+      },
+      "true_total_of_bills": 8650.0,
+      "bills_with_corrections": 1,
+      "updated_claimed_amount": 8650.0,
+      "original_claimed_amount": 8650.0,
+      "original_total_of_bills": 8650.0,
+      "policy_violations_count": 1,
+      "medical_legibility_issues": 0
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "907ffc226580",
+            "bill_date": "2026-05-23",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 8250.0,
+            "page_number": 7,
+            "invoice_number": "1429",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "JOTI OPTICS",
+              "registration_number": "19AFTPB8925P1ZH"
+            }
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Others",
+              "discount": 0.0,
+              "item_name": "Frame: Ite-rome (vogue Frome) + Lenes: Ile-ak Balew-",
+              "is_returned": false,
+              "final_amount": 8250.0,
+              "categorization_source": "llm"
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "480d3d76b589",
+            "bill_date": "2026-05-17",
+            "bill_type": "itemized_bill",
+            "ip_number": "",
+            "net_amount": 400.0,
+            "page_number": 9,
+            "invoice_number": "",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Joti Optics",
+              "registration_number": null
+            }
+          },
+          "items": [
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "item_id": "1",
+              "category": "Consultation",
+              "discount": 0.0,
+              "item_name": "Consultation Fees",
+              "is_returned": false,
+              "final_amount": 400.0,
+              "categorization_source": "fuzzy"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
