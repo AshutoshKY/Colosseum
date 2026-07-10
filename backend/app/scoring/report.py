@@ -27,13 +27,20 @@ from sqlmodel import Session, select
 
 from app.core.logging import get_logger
 from app.db import get_engine, session_scope
-from app.models import BenchmarkRun, GroundTruth, RunCell, RunResult, Score
+from app.models import BenchmarkRun, GroundTruth, JudgeComparison, RunCell, RunResult, Score
 from app.scoring.field_metrics import score_against_gold
 
 logger = get_logger(__name__)
 
 # Context-only ground-truth entries (upstream feed data) that are never scored.
-NON_SCORED_TASKS = {"upstream_bills", "upstream_benefits"}
+NON_SCORED_TASKS = {
+    "upstream_bills",
+    "upstream_benefits",
+    "claimed_amount",
+    "policy",
+    "benefits",
+    "patient_name",
+}
 
 
 def _gold_map(session: Session) -> dict[tuple[int, str], dict]:
@@ -147,6 +154,60 @@ def field_breakdown(session: Session, run_ids: list[int], task: str) -> dict[str
                 slot["matched"] += counts["matched"]
                 slot["total"] += counts["total"]
     return out
+
+
+def judge_aggregates(session: Session, run_id: int) -> dict[tuple[str, str], dict[str, float | int | None]]:
+    """Aggregate grade scores and head-to-head ranks per task/model."""
+    values: dict[tuple[str, str], dict[str, list[float] | int]] = {}
+
+    grade_rows = session.exec(
+        select(Score, RunResult, RunCell)
+        .join(RunResult, RunResult.id == Score.result_id)  # type: ignore[arg-type]
+        .join(RunCell, RunCell.id == RunResult.cell_id)  # type: ignore[arg-type]
+        .where(RunCell.run_id == run_id)
+    ).all()
+    for score, _result, cell in grade_rows:
+        payload = score.judge_score or {}
+        grades = payload.get("grades") or ({payload.get("mode_used", "grade"): payload} if payload else {})
+        slot = values.setdefault(
+            (cell.task, cell.model_id), {"scores": [], "ranks": [], "wins": 0, "ranked": 0}
+        )
+        for grade in grades.values():
+            if isinstance(grade, dict) and grade.get("overall_score") is not None:
+                slot["scores"].append(float(grade["overall_score"]))  # type: ignore[union-attr]
+
+    comparisons = session.exec(
+        select(JudgeComparison).where(
+            JudgeComparison.run_id == run_id,
+            JudgeComparison.mode == "head_to_head",
+        )
+    ).all()
+    for comparison_row in comparisons:
+        for ranking in comparison_row.payload.get("ranking", []):
+            model_id = ranking.get("model_id")
+            rank = ranking.get("rank")
+            if model_id is None or rank is None:
+                continue
+            slot = values.setdefault(
+                (comparison_row.task_name, str(model_id)),
+                {"scores": [], "ranks": [], "wins": 0, "ranked": 0},
+            )
+            slot["ranks"].append(float(rank))  # type: ignore[union-attr]
+            slot["ranked"] = int(slot["ranked"]) + 1
+            slot["wins"] = int(slot["wins"]) + int(rank == 1)
+
+    output: dict[tuple[str, str], dict[str, float | int | None]] = {}
+    for key, slot in values.items():
+        scores = slot["scores"]
+        ranks = slot["ranks"]
+        ranked = int(slot["ranked"])
+        output[key] = {
+            "judge_score": round(statistics.mean(scores), 4) if scores else None,  # type: ignore[arg-type]
+            "mean_rank": round(statistics.mean(ranks), 3) if ranks else None,  # type: ignore[arg-type]
+            "win_rate": round(int(slot["wins"]) / ranked, 4) if ranked else None,
+            "judged_cells": len(scores) + ranked,
+        }
+    return output
 
 
 def render_field_breakdown(task: str, breakdown: dict[str, dict[str, dict]]) -> str:

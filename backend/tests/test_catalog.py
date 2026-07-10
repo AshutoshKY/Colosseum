@@ -16,7 +16,18 @@ from app.providers.registry import (
 def test_catalog_loads_many_families():
     summary = catalog_summary()
     # every required family is present
-    for fam in ("gemini", "claude", "deepseek", "qwen", "kimi", "glm", "grok", "llama", "mistral"):
+    for fam in (
+        "gemini",
+        "claude",
+        "deepseek",
+        "qwen",
+        "kimi",
+        "glm",
+        "grok",
+        "llama",
+        "mistral",
+        "bedrock",
+    ):
         assert fam in summary, fam
     assert len(registry) >= 70  # exhaustive, versioned catalog
 
@@ -26,13 +37,14 @@ def test_only_verified_callable_models_enabled_everything_else_gated_with_reason
     assert enabled, "expected at least the Gemini family enabled"
     # Phase 2.5 live probe verified exactly these as callable on vertex-internal-testing:
     # Gemini 2.5 (flash/pro/flash-lite) + DeepSeek R1 + Qwen3-235B. Nothing unverified ships enabled.
-    assert enabled == {
+    assert enabled >= {
         "vertex_ai/gemini-2.5-flash",
         "vertex_ai/gemini-2.5-pro",
         "vertex_ai/gemini-2.5-flash-lite",
         "vertex_ai/deepseek-ai/deepseek-r1-0528-maas",
         "vertex_ai/qwen/qwen3-235b-a22b-instruct-2507-maas",
     }
+    assert not {cap.model_id for cap in registry.values() if cap.enabled and not cap.verified}
     # Every gated-off model carries a non-empty reason.
     for cap in registry.values():
         if not cap.enabled:

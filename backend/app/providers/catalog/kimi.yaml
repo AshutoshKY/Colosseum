@@ -17,10 +17,11 @@ groups:
       needs_repair_fallback: true
       thinking: true
       context_window: 262144
-      enabled: false
-      verified: false
-      reason: "not verified callable on project (Kimi Model Garden enablement unconfirmed; no gcloud)"
-      notes: "Kimi K2 thinking; text-only for document tasks (vision unverified)."
+      vertex_location: global
+      enabled: true
+      verified: true
+      reason: null
+      notes: "VERIFIED callable on vertex-internal-testing (July 2026). Kimi K2 thinking; text-only for document tasks (vision unverified). Vertex MaaS Kimi is global-endpoint-only."
     models:
       - model_id: vertex_ai/moonshotai/kimi-k2-thinking-maas
         display_name: Kimi K2 Thinking (Vertex)

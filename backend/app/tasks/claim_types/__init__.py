@@ -12,9 +12,14 @@ Mirrors superclaims-ai's claim-type model
 
 from __future__ import annotations
 
-from app.tasks.base import Task
-from app.tasks.claim_types.ipd import CL_CLAIM_TYPE, RM_CLAIM_TYPE, IpdClaimTypeStub
-from app.tasks.opd import OPD_TASKS
+from app.tasks.base import TaskPack
+from app.tasks.claim_types.ipd import (
+    CL_CLAIM_TYPE,
+    PP_CLAIM_TYPE,
+    RM_CLAIM_TYPE,
+    IpdClaimTypeStub,
+)
+from app.tasks.opd import OPD_PIPE_ORDER, OPD_TASKS
 
 # IPD aliases -> sub-type profiles (cashless / reimbursement).
 CLAIM_TYPE_ALIASES = {"IPD": "CL", "MR": "RM"}
@@ -29,15 +34,17 @@ def resolve_claim_type(claim_type: str) -> str:
     return CLAIM_TYPE_ALIASES.get(key, key)
 
 
-def get_task_pack(claim_type: str) -> dict[str, Task]:
-    """Return the task pack for a claim type. OPD is wired; CL/RM stubs raise NotImplementedError."""
-    resolved = resolve_claim_type(claim_type)
+def get_task_pack(claim_type: str, variant: str | None = None) -> TaskPack:
+    """Return the OPD pack or an IPD CL/RM/PP variant."""
+    resolved = (variant or resolve_claim_type(claim_type)).upper()
     if resolved == "OPD":
-        return OPD_TASKS
+        return TaskPack("OPD", OPD_TASKS, OPD_PIPE_ORDER)
     if resolved == "CL":
         return CL_CLAIM_TYPE.task_pack()
     if resolved == "RM":
         return RM_CLAIM_TYPE.task_pack()
+    if resolved == "PP":
+        return PP_CLAIM_TYPE.task_pack()
     raise KeyError(f"Unknown claim type: {claim_type!r} (resolved {resolved!r}).")
 
 
@@ -49,4 +56,5 @@ __all__ = [
     "IpdClaimTypeStub",
     "CL_CLAIM_TYPE",
     "RM_CLAIM_TYPE",
+    "PP_CLAIM_TYPE",
 ]

@@ -24,10 +24,11 @@ groups:
       structured_method: json_mode
       needs_repair_fallback: true
       context_window: 2000000
-      enabled: false
-      verified: false
-      reason: "not verified callable on project (xAI Model Garden enablement unconfirmed; no gcloud)"
-      notes: "PDF -> rasterized images; 4 MB per-image base64 guard, <=33 MP, jpg/png only."
+      vertex_location: global
+      enabled: true
+      verified: true
+      reason: null
+      notes: "VERIFIED callable on vertex-internal-testing (July 2026). PDF -> rasterized images; 4 MB per-image base64 guard, <=33 MP, jpg/png only. Vertex MaaS Grok is global-endpoint-only."
     models:
       - model_id: vertex_ai/xai/grok-4.20-reasoning
         display_name: Grok 4.20 Reasoning (Vertex)

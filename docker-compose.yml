@@ -32,5 +32,44 @@ services:
 
   # Temporal is deferred to Phase 2 (orchestrator-agnostic runner; asyncio for local dev).
 
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: colosseum-backend
+    restart: unless-stopped
+    ports:
+      - "8100:8100"
+    environment:
+      - DATABASE_URL=postgresql+psycopg://colosseum:colosseum@postgres:5432/colosseum
+      - REDIS_URL=redis://redis:6379/0
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/vertex-sa.json
+    volumes:
+      - ./.env:/app/.env
+      - ./secrets:/app/secrets
+      - ./data:/app/data
+      - ./test-docs:/app/test-docs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Production frontend: static Vite build served by nginx, which also
+  # proxies /api (including SSE) to the backend. For hot-reload development
+  # run `npm run dev` in ./frontend, or swap dockerfile to Dockerfile.dev.
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: colosseum-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    environment:
+      - BACKEND_URL=http://backend:8100
+    depends_on:
+      - backend
+
 volumes:
   pgdata:

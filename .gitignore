@@ -25,6 +25,10 @@ slice.db*
 .mypy_cache/
 .coverage
 htmlcov/
+node_modules/
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
 
 # OS / editor
 .DS_Store

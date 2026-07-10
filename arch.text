@@ -1,0 +1,128 @@
+Colosseum — Complete Architectural Picture
+What it is: a model-agnostic LLM benchmarking platform for insurance (health) claims processing. It runs the same prompts + same mandatory structured-output schemas across many LLMs/providers on real claim PDFs, then compares accuracy/cost/latency. Repo is ~9,160 lines of Python; the git history is only 2 commits (Phase 1 scaffold + a single "initial push of colosseum codebase" squash), so most work is uncommitted-then-squashed.
+
+Big-picture reality vs. the plan: docs/plan.md describes an ambitious stack (FastAPI + Vite/React dashboard, LangGraph, Temporal, Redis, LLM-as-judge). Almost none of the orchestration/API surface was actually built. What exists is: the provider gateway, a data-driven model catalog, an 8-task OPD pipeline, deterministic field-metric scoring, SQLModel persistence, and a single Streamlit app that is the de-facto UI/runner. Judge, FastAPI, Temporal, Redis, and a React frontend are absent.
+
+1. Overall structure, API surface, DB models, persistence
+Backend layout (/backend/app/):
+
+core/ — config.py:59 (pydantic-settings; layers in sibling repos' .env via EXTERNAL_ENV_FILES), logging.py
+db/ — engine.py (sync SQLModel engine, session_scope contextmanager; Postgres on :5433, SQLite for tests)
+models/ — SQLModel ORM tables (see below)
+providers/ — the model-agnostic core (gateway, registry, capabilities, catalog, adapters, pricing, docprep, usage)
+tasks/ — the OPD "task pack" (base protocol, opd.py, prompts/, schemas/, claim_types/)
+runner/ — execution (opd_smoke.py, persistence.py, vertical_slice.py)
+scoring/ — field_metrics, scoreboard, report, ground_truth_import
+observability/ — Langfuse v4 wiring only
+utils/pdf.py — page extraction
+API surface: NONE. There is no backend/app/api/ directory and zero FastAPI/APIRouter/route decorators anywhere (grep confirmed). docs/plan.md:101 planned api/ routers (runs, models, scoreboard, documents) — not built. The only entrypoints are CLI (python -m app.runner.opd_smoke, python -m app.scoring.report, python -m app.scoring.ground_truth_import) and the Streamlit app.
+
+DB models (backend/app/models/, registered on SQLModel.metadata):
+
+benchmark.py:26 BenchmarkRun (id, name, task_pack_version, status), :36 RunCell (one task×document×model×config coordinate; status, skip_reason), :52 RunResult (the "store everything" row: prompt_system/instruction, raw_response, parsed_output, valid, token classes input/output/thinking/cached/total, 5 cost columns, latency_ms, retries, error, usage_raw, structured_method, endpoint)
+document.py DocumentSample (path, claim_type, page_count, sha256 unique)
+ground_truth.py GroundTruth (document_id+task unique, gold JSONB)
+score.py Score (result_id, field_metrics JSON, judge_score JSON — unused placeholder, composite, rank)
+catalog.py ModelCatalog (registered but the live registry is loaded from YAML, not this table)
+Alembic: alembic/versions/0001_initial.py emits the whole schema straight from SQLModel.metadata.create_all (no hand-written columns); 0002_run_result_prompt_input.py adds the prompt columns. Migration is metadata-driven, so it tracks the ORM automatically.
+
+Persistence flow: runner/persistence.py — register_document() (idempotent by sha256) + persist_cell_result() maps a GatewayResult onto a RunResult row and sets cell status (skipped/succeeded/failed).
+
+2. Provider layer (backend/app/providers/)
+gateway.py:77 ModelGateway.structured() is the single model-agnostic entrypoint (async). Flow (gateway.py:90-190):
+
+get_capability(model_id) → capability profile
+get_adapter(capability).normalize(...) — capability gate raises CapabilityGateError for text-only models on document tasks → returned as skipped, not failed (gateway.py:111-126)
+_call_with_fallback (:193) — Tier 1 Instructor-over-LiteLLM structured call; Tier 2 repair ladder (free-text generation → _repair_to_schema regex/brace extraction → schema validation) but only if capability.needs_repair_fallback (:216). Strong models surface the error instead of guessing.
+usage normalized (usage.py) + cost estimated (pricing/estimator.py) → GatewayResult
+Structured method chosen per capability: json_schema | json_mode | tools (_MODE_BY_METHOD:45); Vertex json_mode gets MD_JSON mode (:261). Provider kwargs (_provider_kwargs:308) inject Vertex service-account creds / xAI key / openai-compatible base_url + a thinking budget when supported.
+
+capabilities.py — ModelCapability pydantic model (frozen): modalities, pdf_native, vision, size caps (max_image_mb, max_payload_mb, max_image_megapixels), structured_method, needs_repair_fallback, thinking, caching, batch, pricing_ref, enabled, verified. Providers enum: vertex_ai, vertex_partner, xai, openai_compatible.
+
+registry.py — loads all catalog/*.yaml into registry dict at import. list_models(enabled_only=...), families(), catalog_summary(), gate_reason().
+
+Adapters (providers/adapters/): base.py holds the shared capability gate + adapter selection by capability (get_adapter:108): pdf_native→GeminiVertexAdapter (PDF pass-through), vision→RasterizingAdapter (PDF→images per size caps), text-only→TextOnlyAdapter. docprep.py + utils/pdf.py handle PDF page extraction/rasterization.
+
+Catalog YAMLs (providers/catalog/, 10 files, 77 models total, 5 enabled):
+
+gemini.yaml — the only fully-verified family. Enabled: gemini-2.5-flash/pro/flash-lite. All Gemini 3.x gated off (Vertex 404 on vertex-internal-testing).
+qwen.yaml — 4 enabled (verified July 2026): qwen3-235b-instruct, qwen3-coder-480b, qwen3-next-80b instruct + thinking (text-only, gated out of image/PDF).
+deepseek.yaml — deepseek-r1-0528 enabled/verified (text-only); V3.1/V3.2/OCR gated.
+open_models.yaml — gemma-4-26b enabled/verified; gpt-oss/MiniMax/Jamba/Gemma-3-self-deploy gated.
+claude.yaml (13 models Opus/Sonnet/Haiku 3.5→4.8), grok.yaml (Vertex + xai), glm.yaml (Vertex + z.ai), kimi.yaml, mistral.yaml, llama.yaml — all gated off (Model Garden enablement unconfirmed / no external key).
+Note the docs say "5 enabled" but the catalog files now show ~7 enabled (Qwen additions + Gemma-4 verified later) — the doc count in models-and-caveats.md:157 is stale vs. the YAML.
+
+Capability gating is enforced in two places: adapters/base.py:60 gate() (text-only → skip document tasks) and enabled/verified flags in the catalog (a model won't run unless verified callable on this project or a key exists).
+
+Pricing: providers/pricing/rate_card.json + estimator.py, keyed by pricing_ref; pricing_version recorded per run; self-deploy flagged as VM-uptime (rate 0).
+
+3. Task / agent layer
+Task protocol (tasks/base.py:25): a Task = name + system_prompt + instruction + schema (Pydantic) + requires_documents + is_text_task + build_input(). Model-neutral.
+
+The 8 OPD tasks (tasks/opd.py:307, OPD_TASKS):
+
+segregation (doc) — classifies claim packet into document segments
+policy_extraction (text) — from superclaims-ai
+itemized_bills (doc)
+consolidated_bills (doc)
+items_categorisation (text)
+nme_analysis (text) — non-medical-expense analysis
+benefit_plan (text) — from superclaims-ai
+audit (doc; system prompt built per-doc via build_audit_prompt, has the degenerate-output repair ladder)
+Prompts live in tasks/prompts/opd_healthpay.py — 2,369 lines, verbatim-vendored prompts (see §7d). Schemas in tasks/schemas/opd_healthpay.py (179 lines: DocumentSegregatorResponse, ItemizedBillsOutput, ConsolidatedBillsOutput, ItemsCategorisationOutput, NMEAnalysisResponse, AuditAnalysisOutput, BenefitPlanSelectionOutput, EkincarePolicyExtractionOutput). There's also an older schemas/opd.py/prompts/bills.py kept for Phase-1 back-compat.
+
+Claim-type layer (tasks/claim_types/): OPD fully wired; IPD resolves to CL/RM sub-types that are NotImplementedError stubs (ipd.py). get_task_pack("OPD") returns the pack; CL/RM raise.
+
+End-to-end single run (runner/opd_smoke.py:156 run_opd_smoke): for each doc × model, runs the document pipe (segregation → itemized → consolidated), then merge_bills (deterministic non-LLM transform, opd.py:149), then text pipe (policy_extraction, items_categorisation → nme, benefit_plan), then audit last. Each stage's parsed output feeds the next via build_text_inputs (opd.py:267). Persists a RunResult per cell, scores against gold, prints a scoreboard.
+
+4. Scoring / ground truth
+Gold format (data/gold/*.json, 22 files; docs/ground-truth-format.md): {"document": path-or-sha256, "tasks": {task_name: gold_json}}. Task keys include the 8 pipeline tasks plus context-only feeds upstream_bills and upstream_benefits (never scored, used to inject gold upstream data — see report.py:36 NON_SCORED_TASKS). Confirmed a real sample has all 8 + both upstream keys.
+
+Scoring logic (scoring/field_metrics.py): recursive deterministic diff, gold drives the field set. Scalars exact (strings trimmed/lowercased), numbers within 1% tolerance (:14), lists set-based precision/recall keyed on identifying fields (_list_key:116). Records per-field match counts (_record_field) with list-selectors collapsed (bills[].items[].discount) so every field is auditable across docs. Null prediction scores 0. accuracy = matched_leaves / total_gold_leaves.
+
+scoring/report.py: score_run() upserts a Score row per result; comparison() aggregates per (task, model): mean accuracy, valid%, cost, median latency, tokens; field_breakdown() gives per-field match rates per model. CLI supports multiple --run ids merged.
+
+scoring/scoreboard.py: composite = 0.6*accuracy + 0.25*cost_efficiency + 0.15*latency_efficiency (W_ACC/W_COST/W_LAT:19), normalized within each task group; falls back to structural validity when no gold. Skipped cells excluded.
+
+Ground-truth import (scoring/ground_truth_import.py): CLI + import_ground_truth() upserts per (document, task); resolves docs by sha256/path.
+
+Benchmarking flow docs: docs/benchmarking-guide.md, docs/ground-truth-format.md (read), and phase docs.
+
+5. streamlit_app.py (907 lines — this IS the app)
+Read fully. It's the primary UI and runner. Structure:
+
+Header CSS + helpers (get_test_pdfs, _gold_for, draw_live_grid live-status grid)
+run_custom_benchmark (:148-345) — the async batch runner. Iterates selected_docs × selected_models × ordered_tasks (pipeline-ordered), runs each cell through ModelGateway.structured, persists, live-updates a status grid, then score_run.
+Sidebar "Run Controller": run name, multiselect documents (from test-docs/), multiselect models (enabled catalog models; disabled ones shown greyed), multiselect tasks/agents, a "Gold Upstream Feed" checkbox (feed downstream tasks from ground truth instead of model output), a Vertex rate-limit pause slider, and a Ground Truth CSV importer (import_csv_baselines).
+5 tabs: (1) Leaderboard/Scoreboard with accuracy-vs-cost scatter + latency bar charts + per-task tables + per-field breakdown; (2) Output Inspector — side-by-side model outputs for a chosen doc+task, with gold, mismatches, token/cost metrics, raw prompt + raw API response inspectors; (3) Run Live Benchmark console; (4) Ground Truth & Datasets manager; (5) Models Catalog with pricing.
+File upload: NO — documents are selected from the pre-existing test-docs/ folder; no st.file_uploader. Ground-truth is imported from data/gold_exports/*.csv.
+
+6. Docs / stated roadmap
+docs/plan.md — the master plan. Stack: LiteLLM + Instructor + custom capability layer + LangGraph + Postgres/SQLModel + FastAPI + Vite/React + Temporal (deferred) + Redis + Langfuse. 4 build phases. Multi-signal scoring incl. LLM-as-judge was explicitly planned (plan.md:99 judge.py, "neutral strong model, rubric, pairwise+absolute, never judge itself").
+docs/project-overview.md — the vision: "plug-and-play model arena," store everything, unbiased multi-signal scorer, cheapest-model-above-threshold per task.
+docs/phase-2-opd-and-models.md — build the exhaustive versioned Model Garden catalog + OPD task pack; IPD (CL/RM) placeholders only; ground-truth hook.
+docs/phase-2.5-prompt-sourcing.md — corrected prompt sourcing (see §7d).
+docs/models-and-caveats.md — source of truth for the capability registry; 77 models table, per-family caveats (Grok 4MB base64, Gemini native PDF, DeepSeek text-only, Vertex 30MB payload cap, etc.).
+Roadmap gap: Phases 3-4 (LLM judge, FastAPI, Vite dashboard, Temporal, Redis) are planned but unbuilt; Streamlit was substituted for the React dashboard.
+
+7. Explicit answers
+(a) Batch/bulk run capability today? Yes, partially. streamlit_app.py run_custom_benchmark iterates a full docs×models×tasks matrix, and runner/opd_smoke.py --full runs the 27-PDF × all-enabled-models matrix (gated behind explicit --full for cost control). A BenchmarkRun groups all cells. So bulk runs exist — but they are sequential, not parallel/distributed (Temporal was deferred and never built).
+
+(b) Multiple models on the same doc, concurrently, compared? Compared: yes. Concurrently: no. You can select multiple models and multiple docs and the results are compared side-by-side (Output Inspector tab) and ranked (Leaderboard). But execution is a sequential await loop — grep confirmed no asyncio.gather/create_task/TaskGroup anywhere. Each cell runs one at a time (with an added rate-limit sleep). This is a prime rework target.
+
+(c) LLM-as-judge? No — planned, not implemented. The plan (plan.md:99) and DB schema (score.py judge_score column) reserve space for it, but there is no judge.py, no rubric, no judge invocation. Scoring is purely deterministic field-metrics + cost/latency composite. grep for judge/rubric found only the unused schema column.
+
+(d) How are agent prompts sourced? Hardcoded Python string constants, verbatim-vendored (copied) from sibling repos — not synced, not configurable at runtime. tasks/prompts/opd_healthpay.py (2,369 lines) contains the full prompts copied verbatim from healthpay-ai (segregation, itemized_bills, items_categorisation, nme, audit) and superclaims-ai (benefit_plan, policy_extraction), per docs/phase-2.5-prompt-sourcing.md. They were manually de-tuned to be model-neutral. There is no live sync from those repos and no prompt-config/DB/versioning layer — changing a prompt means editing Python. The audit system prompt is the one exception: assembled per-document at runtime via build_audit_prompt(claimed_amount, calculated_total, extracted_json).
+
+(e) Agent dependency / pipeline (one agent's output feeding another)? Yes — this is a first-class concept. The OPD pipeline has an explicit dependency order (OPD_PIPE_ORDER, opd.py:323): segregation → policy_extraction → itemized_bills → consolidated_bills → merge_bills (deterministic non-LLM transform) → items_categorisation → nme_analysis → benefit_plan → audit. Wiring lives in build_text_inputs (opd.py:267) and apply_categories/prepare_*_input helpers, which render one stage's structured JSON into the next stage's instruction. Both runners honor this. A "Gold Upstream Feed" toggle lets downstream tasks consume ground-truth upstream data instead of the model's own (upstream) output — so you can measure a single task's accuracy in isolation without upstream error contamination.
+
+Key files for the rework
+Gateway/core seam: backend/app/providers/gateway.py:77 (make execution concurrent here / at the runner level)
+Runners (sequential loops to parallelize): streamlit_app.py:148, backend/app/runner/opd_smoke.py:156
+Task pack + pipeline wiring: backend/app/tasks/opd.py (OPD_TASKS:307, OPD_PIPE_ORDER:323, build_text_inputs:267)
+Prompts (hardcoded, 2,369 lines): backend/app/tasks/prompts/opd_healthpay.py
+Schemas: backend/app/tasks/schemas/opd_healthpay.py
+Catalog (77 models): backend/app/providers/catalog/*.yaml; loader registry.py
+Scoring: backend/app/scoring/field_metrics.py, scoreboard.py, report.py
+Persistence + DB models: backend/app/runner/persistence.py, backend/app/models/benchmark.py
+Missing (planned): api/ (FastAPI), scoring/judge.py (LLM-as-judge), any concurrency, React frontend, Temporal/Redis.

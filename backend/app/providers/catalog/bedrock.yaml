@@ -1,0 +1,70 @@
+# AWS Bedrock via short-lived bearer token. Availability in ap-south-1 varies by account;
+# verify_bedrock.py is the source of truth and entries stay gated until a live probe passes.
+
+family: bedrock
+provider: bedrock
+access: maas
+defaults:
+  modalities: [text, image]
+  pdf_native: false
+  vision: true
+  max_image_mb: 10
+  max_payload_mb: 25
+  structured_method: json_mode
+  needs_repair_fallback: true
+  thinking: false
+  enabled: false
+  verified: false
+  reason: "requires a current AWS_BEARER_TOKEN_BEDROCK and live verification in ap-south-1"
+  notes: "Bearer token expires in about 12 hours; PDFs are rasterized to images."
+
+models:
+  - model_id: bedrock-claude-sonnet-4-5
+    litellm_model: bedrock/global.anthropic.claude-sonnet-4-5-20250929-v1:0
+    display_name: Claude Sonnet 4.5 (Bedrock)
+    version: "4.5"
+    variant: sonnet
+    structured_method: tools
+    needs_repair_fallback: false
+    thinking: budget
+    caching: true
+    pricing_ref: bedrock_claude_sonnet_4_5
+
+  - model_id: bedrock-nova-pro
+    litellm_model: bedrock/apac.amazon.nova-pro-v1:0
+    display_name: Amazon Nova Pro (Bedrock)
+    version: "1"
+    variant: pro
+    pricing_ref: bedrock_nova_pro
+
+  - model_id: bedrock-nova-lite
+    litellm_model: bedrock/apac.amazon.nova-lite-v1:0
+    display_name: Amazon Nova Lite (Bedrock)
+    version: "1"
+    variant: lite
+    pricing_ref: bedrock_nova_lite
+
+  - model_id: bedrock-nova-micro
+    litellm_model: bedrock/apac.amazon.nova-micro-v1:0
+    display_name: Amazon Nova Micro (Bedrock)
+    version: "1"
+    variant: micro
+    modalities: [text]
+    vision: false
+    pricing_ref: bedrock_nova_micro
+
+  - model_id: bedrock-llama-3-2-90b-vision
+    litellm_model: bedrock/meta.llama3-2-90b-instruct-v1:0
+    display_name: Llama 3.2 90B Vision (Bedrock)
+    version: "3.2-90b"
+    variant: vision
+    pricing_ref: bedrock_llama_3_2_90b
+
+  - model_id: bedrock-mistral-large
+    litellm_model: bedrock/mistral.mistral-large-2407-v1:0
+    display_name: Mistral Large 2 (Bedrock)
+    version: "2407"
+    variant: text
+    modalities: [text]
+    vision: false
+    pricing_ref: bedrock_mistral_large

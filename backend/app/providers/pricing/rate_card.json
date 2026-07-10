@@ -33,6 +33,14 @@
 
     "qwen3": {"input_usd_per_million": 0.25, "output_usd_per_million": 1.0, "cache_read_usd_per_million": 0.1, "thinking_usd_per_million": 1.0},
     "qwen3-coder": {"input_usd_per_million": 0.3, "output_usd_per_million": 1.2, "cache_read_usd_per_million": 0.1},
+    "self_deploy_qwen3_vl_8b": {"input_usd_per_million": 0, "output_usd_per_million": 0, "note": "Self-hosted vLLM; VM-uptime priced, not per-token."},
+
+    "bedrock_claude_sonnet_4_5": {"input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cache_read_usd_per_million": 0.3, "thinking_usd_per_million": 15.0},
+    "bedrock_nova_pro": {"input_usd_per_million": 0.84, "output_usd_per_million": 3.36},
+    "bedrock_nova_lite": {"input_usd_per_million": 0.063, "output_usd_per_million": 0.252},
+    "bedrock_nova_micro": {"input_usd_per_million": 0.037, "output_usd_per_million": 0.148},
+    "bedrock_llama_3_2_90b": {"input_usd_per_million": 2.0, "output_usd_per_million": 2.0},
+    "bedrock_mistral_large": {"input_usd_per_million": 3.0, "output_usd_per_million": 9.0},
 
     "glm-5": {"input_usd_per_million": 1.0, "output_usd_per_million": 3.2, "cache_read_usd_per_million": 0.2, "thinking_usd_per_million": 3.2},
     "glm-4.7": {"input_usd_per_million": 0.6, "output_usd_per_million": 2.2, "cache_read_usd_per_million": 0.11, "thinking_usd_per_million": 2.2},

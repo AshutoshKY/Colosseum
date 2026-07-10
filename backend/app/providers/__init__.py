@@ -10,7 +10,7 @@ from app.providers.capabilities import (
     Provider,
     StructuredMethod,
 )
-from app.providers.gateway import GatewayResult, ModelGateway
+from app.providers.gateway import GatewayResult, ModelGateway, ProviderAuthError
 from app.providers.registry import get_capability, is_registered, list_models, registry
 from app.providers.usage import NormalizedUsage, normalize_usage
 
@@ -26,6 +26,7 @@ __all__ = [
     "is_registered",
     "ModelGateway",
     "GatewayResult",
+    "ProviderAuthError",
     "DocumentInput",
     "NormalizedUsage",
     "normalize_usage",

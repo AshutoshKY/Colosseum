@@ -59,38 +59,47 @@ models:
     version: "3"
     variant: flash
     pricing_ref: gemini-3-flash-preview
-    enabled: false
-    verified: false
-    reason: "Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026)."
+    vertex_location: global
+    enabled: true
+    verified: true
+    reason: null
   - model_id: vertex_ai/gemini-3-pro-preview
+    litellm_model: vertex_ai/gemini-3.1-pro-preview
     display_name: Gemini 3 Pro
     version: "3"
     variant: pro
     pricing_ref: gemini-3.1-pro-preview
-    enabled: false
-    verified: false
-    reason: "Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026)."
-  - model_id: vertex_ai/gemini-3.1-pro-preview
+    vertex_location: global
+    enabled: true
+    verified: true
+    reason: null
+  - model_id: gemini-3.1-pro
+    litellm_model: vertex_ai/gemini-3.1-pro-preview
     display_name: Gemini 3.1 Pro
     version: "3.1"
     variant: pro
     pricing_ref: gemini-3.1-pro-preview
-    enabled: false
-    verified: false
-    reason: "Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026)."
+    thinking: level
+    vertex_location: global
+    enabled: true
+    verified: true
+    reason: null
+    notes: "VERIFIED July 2026 on the layered superclaims-ai Vertex credentials at the global endpoint; level-style thinking."
   - model_id: vertex_ai/gemini-3.1-flash-lite
     display_name: Gemini 3.1 Flash-Lite
     version: "3.1"
     variant: flash-lite
     pricing_ref: gemini-3.1-flash-lite
-    enabled: false
-    verified: false
-    reason: "Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026)."
+    vertex_location: global
+    enabled: true
+    verified: true
+    reason: null
   - model_id: vertex_ai/gemini-3.5-flash
     display_name: Gemini 3.5 Flash
     version: "3.5"
     variant: flash
     pricing_ref: gemini-3-flash-preview
-    enabled: false
-    verified: false
-    reason: "Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026); pricing approximated to gemini-3-flash."
+    vertex_location: global
+    enabled: true
+    verified: true
+    reason: null

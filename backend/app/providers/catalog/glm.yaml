@@ -20,10 +20,11 @@ groups:
       needs_repair_fallback: true
       thinking: true
       context_window: 200000
-      enabled: false
-      verified: false
-      reason: "not verified callable on project (GLM Model Garden enablement unconfirmed; no gcloud)"
-      notes: "GLM thinking-capable; treated text-only (vision via separate -V members)."
+      vertex_location: global
+      enabled: true
+      verified: true
+      reason: null
+      notes: "VERIFIED callable on vertex-internal-testing (July 2026). GLM thinking-capable; treated text-only (vision via separate -V members). Vertex MaaS GLM is global-endpoint-only."
     models:
       - model_id: vertex_ai/zai-org/glm-5-maas
         display_name: GLM-5 (Vertex)

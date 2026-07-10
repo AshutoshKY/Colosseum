@@ -61,8 +61,15 @@ A single JSON file (or a directory of them — one per claim). One object, or a 
   Pydantic schema (the same schema the models emit). You only need to provide the tasks you
   have a baseline for; missing tasks fall back to validity-only scoring.
 
-The task names are exactly: `segregation`, `consolidated_bills`, `itemized_bills`,
-`items_categorisation`, `nme_analysis`, `audit`, `policy_extraction`, `benefit_plan`.
+Any task name returned by `GET /api/packs` is accepted. Values use the same JSON shape as
+the task's output schema. This includes all OPD clinical, bill, identity, ICD,
+patient-summary and benefit tasks, plus all IPD extraction, merge, NME, audit and validation
+tasks.
+
+For subset runs, unselected upstream task outputs are read from this same `tasks` map.
+Legacy aliases remain accepted: `upstream_bills` maps to `merge_bills` and
+`upstream_benefits` supplies benefit context. Context-only keys `claimed_amount`, `policy`,
+`benefits`, and `patient_name` are feedable but never scored.
 
 ## How fields are scored
 

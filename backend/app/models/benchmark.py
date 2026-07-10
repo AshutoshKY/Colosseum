@@ -21,6 +21,8 @@ class RunStatus(str, Enum):
     succeeded = "succeeded"
     failed = "failed"
     skipped = "skipped"  # e.g. capability-gated (text-only model on an image task)
+    completed = "completed"
+    cancelled = "cancelled"
 
 
 class BenchmarkRun(SQLModel, table=True):
@@ -29,6 +31,8 @@ class BenchmarkRun(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True)
     task_pack_version: str = Field(default="v1")
+    pack: str = Field(default="OPD", index=True)
+    spec: dict[str, Any] | None = Field(default=None, sa_column=Column(JSONB_VARIANT))
     status: RunStatus = Field(default=RunStatus.pending, index=True)
     created_at: Any = created_at_field()
 

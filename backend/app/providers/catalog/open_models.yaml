@@ -32,6 +32,10 @@ groups:
         version: "4-26b"
         variant: vision
         pricing_ref: gemma
+        enabled: true
+        verified: true
+        reason: null
+        notes: "VERIFIED callable on vertex-internal-testing (July 2026). Multimodal MaaS; json_mode (MD_JSON) + repair ladder; PDF via images."
 
   # ---- Gemma 3 (self-deploy only) ----
   - provider: vertex_partner
@@ -76,10 +80,10 @@ groups:
       needs_repair_fallback: true
       thinking: true
       context_window: 131072
-      enabled: false
-      verified: false
-      reason: "not verified callable on project (gpt-oss MaaS enablement unconfirmed; no gcloud)"
-      notes: "text-only open-weight reasoning; gate out of image/PDF tasks."
+      enabled: true
+      verified: true
+      reason: null
+      notes: "VERIFIED callable on vertex-internal-testing (July 2026); parsed to schema cleanly on this probe. text-only open-weight reasoning; gate out of image/PDF tasks."
     models:
       - model_id: vertex_ai/openai/gpt-oss-120b-maas
         display_name: gpt-oss 120B (Vertex MaaS)
@@ -113,7 +117,12 @@ groups:
         version: "m2"
         variant: thinking
         thinking: true
+        vertex_location: global
         pricing_ref: minimax-m2
+        enabled: true
+        verified: true
+        reason: null
+        notes: "VERIFIED callable on vertex-internal-testing (July 2026); global-endpoint-only."
       - model_id: vertex_ai/jamba-1.5-large@001
         display_name: AI21 Jamba 1.5 Large (Vertex)
         version: "1.5-large"

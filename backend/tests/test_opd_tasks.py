@@ -156,13 +156,11 @@ def test_opd_claim_type_wired():
     assert "audit" in pack
 
 
-def test_ipd_aliases_and_stub_raises():
+def test_ipd_aliases_and_pack_is_wired():
     assert resolve_claim_type("IPD") == "CL"
     assert resolve_claim_type("MR") == "RM"
-    with pytest.raises(NotImplementedError):
-        get_task_pack("IPD")
-    with pytest.raises(NotImplementedError):
-        get_task_pack("RM")
+    assert "audit" in get_task_pack("IPD")
+    assert "audit" in get_task_pack("RM")
 
 
 # ---- rasterizing adapter (Phase 2) ----
@@ -182,6 +180,51 @@ def test_rasterizing_adapter_keeps_pages_under_grok_cap(synthetic_pdf):
         import base64 as _b64
 
         assert base64_size_mb(_b64.b64decode(b64)) <= 4.0
+
+
+def test_context_budget_caps_multipage_packet():
+    """A small context window forces a per-page MP cap so all pages' tokens fit (always-on)."""
+    from app.providers.adapters.rasterizing import _MIN_PAGE_MEGAPIXELS
+
+    cap = _grok_like_cap().model_copy(update={"context_window": 26032})
+    adapter = RasterizingAdapter(cap)
+    # No window -> no budget; a window -> budget shrinks as pages grow, floored for legibility.
+    no_window = RasterizingAdapter(_grok_like_cap().model_copy(update={"context_window": None}))
+    assert no_window._context_budget_megapixels(10) is None
+    b3 = adapter._context_budget_megapixels(3)
+    b10 = adapter._context_budget_megapixels(10)
+    b23 = adapter._context_budget_megapixels(23)
+    assert b3 > b10 > b23  # more pages -> tighter per-page cap
+    assert b23 >= _MIN_PAGE_MEGAPIXELS  # never below the legibility floor
+    # Total estimated vision tokens across pages stays under the window (with reserve headroom).
+    tokens_per_mp = 1_000_000 / (28 * 28)
+    assert 10 * b10 * tokens_per_mp < 26032
+
+
+def test_compression_toggle_tightens_megapixel_cap(synthetic_pdf):
+    """With compression enabled the adapter downscales to the smaller of catalog cap / request."""
+    from app.providers.docprep import megapixels
+    from app.utils.pdf import pdf_to_images
+
+    adapter = RasterizingAdapter(_grok_like_cap())  # catalog cap = 33 MP
+    original_mp = max(megapixels(img) for img in pdf_to_images(synthetic_pdf))
+
+    off = adapter.normalize(
+        system="s", instruction="extract",
+        documents=[DocumentInput(path=synthetic_pdf)],
+    )
+    on = adapter.normalize(
+        system="s", instruction="extract",
+        documents=[DocumentInput(path=synthetic_pdf)],
+        config={"compression": {"enabled": True, "max_megapixels": 1.0}},
+    )
+    assert off.notes["compressed"] is False
+    assert on.notes["compressed"] is True
+    # request (1 MP) is smaller than the catalog cap (33 MP), so it wins.
+    assert on.notes["max_image_megapixels"] == 1.0
+    # and the compressed payload is no larger than the uncompressed one.
+    assert on.sent_payload_mb <= off.sent_payload_mb
+    del original_mp
 
 
 def test_text_only_model_gated_out_of_pdf_task_via_adapter(synthetic_pdf):

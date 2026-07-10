@@ -40,6 +40,7 @@ _CATALOG_DIR = Path(__file__).resolve().parent
 
 # Capability fields that may be set in a group's ``defaults`` or overridden per-model.
 _CAPABILITY_FIELDS = {
+    "litellm_model",
     "modalities",
     "pdf_native",
     "vision",
@@ -57,6 +58,9 @@ _CAPABILITY_FIELDS = {
     "enabled",
     "verified",
     "notes",
+    "base_url_env",
+    "api_key_env",
+    "vertex_location",
 }
 
 
@@ -127,7 +131,10 @@ def load_catalog() -> list[tuple[ModelCapability, dict[str, Any]]]:
             for model in group.get("models", []) or []:
                 model = {**model, "_family": family}
                 cap, meta = _build_capability(
-                    model=model, provider=provider, access=access, defaults=defaults
+                    model=model,
+                    provider=Provider(model.get("provider", provider)),
+                    access=Access(model.get("access", access)),
+                    defaults=defaults,
                 )
                 # When a model is gated off, fold the reason into notes so it persists on the
                 # model_catalog row + shows up in the registry without a separate field.

@@ -17,4 +17,5 @@ class DocumentSample(SQLModel, table=True):
     claim_type: str | None = Field(default=None, index=True)
     page_count: int | None = None
     sha256: str = Field(index=True, unique=True)
+    origin: str = Field(default="test-docs", index=True)
     created_at: Any = created_at_field()

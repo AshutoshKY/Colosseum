@@ -8,9 +8,16 @@ cost so we can pick the most cost-efficient model per task.
 See [`docs/plan.md`](docs/plan.md), [`docs/project-overview.md`](docs/project-overview.md),
 and [`docs/models-and-caveats.md`](docs/models-and-caveats.md).
 
-## Status: Phase 1 (vertical slice)
+## Status: Colosseum v2
 
 Implemented:
+
+- Dependency-aware parallel OPD/IPD runs with gold-fed subset execution, per-provider
+  concurrency limits, cancellation, SSE progress, prompt versions, and bulk PDF upload.
+- Vertex, Bedrock, and OpenAI-compatible provider plumbing with verified catalog gating.
+- Gemini judge modes for gold grading, document grading, and anonymized head-to-head ranking.
+- FastAPI API plus the React run builder, live grid, dataset/gold editor, results, prompts,
+  catalog, field breakdown, and judge views.
 
 - Project scaffold (`pyproject.toml`, `docker-compose.yml` for Postgres + Redis, `.env.example`).
 - `core/` config (pydantic-settings, layers in external `.env` files) + logging.
@@ -39,10 +46,28 @@ uv run pytest backend/tests -m "not live"
 docker compose up -d
 cp .env.example .env   # then fill GOOGLE_APPLICATION_CREDENTIALS / VERTEXAI_PROJECT
 uv run alembic upgrade head
+uv run python scripts/seed_prompts.py
 
 # 4. Run the vertical slice (needs Vertex creds; persists a run_result)
 uv run python -m app.runner.vertical_slice data/02B-2026-006427.pdf
 ```
+
+## FastAPI + React
+
+Apply migrations, then start the internal API on loopback from the repository root:
+
+```bash
+uv run uvicorn app.api.main:app --app-dir backend --host 127.0.0.1 --port 8100
+# Equivalent from backend/: uv run uvicorn app.api.main:app --host 127.0.0.1 --port 8100
+```
+
+API health and OpenAPI are available at `http://127.0.0.1:8100/api/health` and
+`http://127.0.0.1:8100/openapi.json`. For frontend development, run `npm install && npm run dev`
+from `frontend/`; the API allows the Vite origins on ports 5173. To serve the built frontend
+from FastAPI, run `npm run build` first and restart uvicorn.
+
+The previous `streamlit_app.py` remains available as a legacy fallback; FastAPI + React is
+the primary interface.
 
 ## Running the live Gemini slice as a test
 

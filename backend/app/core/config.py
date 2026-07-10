@@ -35,9 +35,10 @@ def _bootstrap_external_env() -> None:
     Colosseum's `.env` keep precedence.
     """
     # Discover the external file list from the process env, falling back to Colosseum's .env.
+    local_values = dotenv_values(DEFAULT_ENV_FILE) if DEFAULT_ENV_FILE.exists() else {}
     raw = os.environ.get("EXTERNAL_ENV_FILES")
-    if raw is None and DEFAULT_ENV_FILE.exists():
-        raw = dotenv_values(DEFAULT_ENV_FILE).get("EXTERNAL_ENV_FILES")
+    if raw is None:
+        raw = local_values.get("EXTERNAL_ENV_FILES")
     if not raw:
         return
 
@@ -46,7 +47,7 @@ def _bootstrap_external_env() -> None:
         if not spec.strip() or not path.is_file():
             continue
         for key, value in dotenv_values(path).items():
-            if value is not None and key not in os.environ:
+            if value is not None and key not in os.environ and key not in local_values:
                 os.environ[key] = value
 
 
@@ -82,6 +83,15 @@ class Settings(BaseSettings):
     vertexai_project: str | None = Field(default=None)
     vertexai_location: str = "us-central1"
     colosseum_default_gemini_model: str = "vertex_ai/gemini-2.5-flash"
+    judge_default_model: str = "gemini-3.1-pro"
+
+    # ---- AWS Bedrock ----
+    aws_bearer_token_bedrock: str | None = None
+    aws_region_name: str = "ap-south-1"
+
+    # ---- Self-deployed Qwen3-VL (vLLM / OpenAI-compatible) ----
+    qwen_vl_base_url: str = "http://15.252.27.168:8000/v1"
+    qwen_vl_api_key: str = "EMPTY"
 
     # ---- Pricing ----
     pricing_version: str = "2026-06"

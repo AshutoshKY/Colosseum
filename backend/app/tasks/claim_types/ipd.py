@@ -1,61 +1,28 @@
-"""IPD claim-type placeholders: CL (cashless) and RM (reimbursement).
-
-Scaffolded but NOT built out in Phase 2. They mirror the shape of superclaims-ai's
-``config/profiles/base/cl.toml`` and ``rm.toml`` (RM extends CL) so the task pack can be filled
-in later, but every accessor raises ``NotImplementedError`` for now.
-
-The node lists below are documentation of the intended IPD pipeline (from cl.toml) — they are
-the agents an IPD task pack would vendor in a future phase.
-"""
+"""IPD claim-type profiles backed by the healthpay task pack."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
-from app.tasks.base import Task
+from app.tasks.base import Task, TaskPack
+from app.tasks.ipd import get_ipd_pack
 
 
 @dataclass(frozen=True)
-class IpdClaimTypeStub:
-    """A scaffolded IPD claim type. Accessors raise until the pack is built."""
-
-    claim_type: str  # "CL" or "RM"
+class IpdClaimType:
+    claim_type: str
     description: str
-    # Intended pipeline agents (mirrors base/cl.toml node order); not implemented yet.
-    planned_nodes: tuple[str, ...] = field(default_factory=tuple)
-    extends: str | None = None
 
-    def task_pack(self) -> dict[str, Task]:
-        raise NotImplementedError(
-            f"IPD claim type {self.claim_type!r} ({self.description}) is a Phase-2 placeholder "
-            f"and is not implemented yet. Planned pipeline: {', '.join(self.planned_nodes)}."
-        )
+    def task_pack(self) -> TaskPack:
+        return get_ipd_pack(self.claim_type)
 
-    def get_task(self, name: str) -> Task:  # noqa: ARG002
-        raise NotImplementedError(
-            f"IPD claim type {self.claim_type!r} is not implemented yet (placeholder)."
-        )
+    def get_task(self, name: str) -> Task:
+        return self.task_pack().tasks[name]
 
 
-CL_CLAIM_TYPE = IpdClaimTypeStub(
-    claim_type="CL",
-    description="IPD Cashless",
-    planned_nodes=(
-        "segregation",
-        "claim_form",
-        "discharge_summary",
-        "itemized_bills",
-        "consolidated_bills",
-        "merge_bills",
-        "items_categorisation",
-        "nme_analysis",
-        "audit",
-    ),
-)
+CL_CLAIM_TYPE = IpdClaimType("CL", "IPD Cashless")
+RM_CLAIM_TYPE = IpdClaimType("RM", "IPD Reimbursement")
+PP_CLAIM_TYPE = IpdClaimType("PP", "IPD Pre/Post hospitalization")
 
-RM_CLAIM_TYPE = IpdClaimTypeStub(
-    claim_type="RM",
-    description="IPD Reimbursement",
-    extends="CL",
-    planned_nodes=CL_CLAIM_TYPE.planned_nodes,
-)
+# Backward-compatible import name used by older callers.
+IpdClaimTypeStub = IpdClaimType

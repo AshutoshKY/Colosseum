@@ -10,6 +10,8 @@ from app.models.benchmark import BenchmarkRun, RunCell, RunResult, RunStatus
 from app.models.catalog import ModelCatalog
 from app.models.document import DocumentSample
 from app.models.ground_truth import GroundTruth
+from app.models.judge import JudgeComparison
+from app.models.prompt import PromptVersion
 from app.models.score import Score
 
 __all__ = [
@@ -21,4 +23,6 @@ __all__ = [
     "RunStatus",
     "Score",
     "GroundTruth",
+    "PromptVersion",
+    "JudgeComparison",
 ]

@@ -10,7 +10,7 @@
 
 ## Capability profile (fields the registry tracks per model)
 
-- `provider` — e.g. `vertex_ai`, `vertex_partner`, `xai`, `openai_compatible`.
+- `provider` — e.g. `vertex_ai`, `vertex_partner`, `xai`, `openai_compatible`, `bedrock`.
 - `access` — `maas` (managed/serverless) | `self_deploy` (GPU/TPU endpoint).
 - `modalities` — text / image / pdf / audio / video.
 - `pdf_native` — model ingests PDF directly (true) vs needs rasterization to images (false).
@@ -116,46 +116,75 @@ flipped on after a live call succeeds.
 
 ## Availability gating (what is enabled vs gated off)
 
-Updated by the **Phase 2.5 live probe** (June 19 2026) on `vertex-internal-testing`.
+Updated by the **July 2026 re-verification probe** (`scripts/verify_model.py`, one live
+structured-output call per family) on `vertex-internal-testing`. Supersedes the Phase 2.5 probe
+(June 19 2026) numbers below for every family that was re-tested.
 
-- **ENABLED + VERIFIED (5 models, all live-probed callable):**
-  - **Gemini 2.5** — `gemini-2.5-flash`, `gemini-2.5-pro`, `gemini-2.5-flash-lite` (native PDF,
-    vision, `json_schema`, thinking, caching; 30 MB payload cap).
-  - **DeepSeek R1** — `deepseek-ai/deepseek-r1-0528-maas` (Vertex MaaS, **text-only** reasoning;
-    `json_mode` + repair ladder; gated out of image/PDF tasks by the capability gate).
-  - **Qwen3** — `qwen/qwen3-235b-a22b-instruct-2507-maas` (Vertex MaaS, **text-only**;
-    `json_mode` + repair ladder; gated out of image/PDF tasks).
-- **GATED OFF (`enabled=false`):** everything else, each with a `reason`:
-  - **Gemini 3.x** (`gemini-3-flash/pro-preview`, `gemini-3.1-pro/flash-lite`, `gemini-3.5-flash`):
-    *"Not available on vertex-internal-testing (Vertex 404 on live probe, June 2026)."*
-  - Other Vertex Model Garden partners (Claude, other DeepSeek/Qwen variants, GLM, Kimi, Grok,
-    Mistral, Llama, Gemma, gpt-oss, MiniMax, Jamba): *"not verified callable on project (Model
-    Garden enablement unconfirmed; no gcloud)"*. `gpt-oss-120b` answers but its free-text did not
-    parse to schema on probe (callable but weak structured output). They route via
-    `vertex_partner` using the **existing Vertex creds**, so re-probing can flip those that answer.
+- **ENABLED + VERIFIED (Vertex MaaS, `vertex_partner`), confirmed callable July 2026:**
+  - **Gemini 2.5 / 3.x** — full family (native PDF, vision, `json_schema`, thinking, caching).
+  - **DeepSeek R1** — `deepseek-ai/deepseek-r1-0528-maas` (text-only reasoning).
+  - **Qwen3** — full family incl. Coder/Next, plus self-deployed **Qwen3-VL-8B**.
+  - **Gemma 4 26B** — MaaS multimodal.
+  - **GLM-5 / GLM-4.7** — Vertex MaaS, `vertex_ai/zai-org/*-maas`. **Global-endpoint-only**
+    (`vertex_location: global`) — the `us-central1` default 400s with `FAILED_PRECONDITION`.
+  - **Grok 4.20 / 4.1-fast (reasoning + non-reasoning)** — Vertex MaaS, `vertex_ai/xai/*`.
+    **Global-endpoint-only**, same fix as GLM.
+  - **Kimi K2 Thinking** — `vertex_ai/moonshotai/kimi-k2-thinking-maas`. **Global-endpoint-only**.
+  - **gpt-oss 120B / 20B** — `vertex_ai/openai/gpt-oss-*-maas`. Both answered *and* parsed to
+    schema cleanly on this probe (the earlier "callable but weak structured output" note for
+    120b did not reproduce — retest if it resurfaces).
+  - **MiniMax M2** — `vertex_ai/minimaxai/minimax-m2-maas`. **Global-endpoint-only**.
+
+  The common fix across GLM/Grok/Kimi/MiniMax: these Model Garden partner deployments only exist
+  at Vertex's `global` endpoint, not the project's default `us-central1` region. The catalog
+  previously had no `vertex_location` override for these families, so the gateway sent requests
+  to `us-central1` and got a hard `400 FAILED_PRECONDITION`/`404` — indistinguishable from "not
+  enabled" without reading the error body. Adding `vertex_location: global` to each group (or
+  per-model for MiniMax, since its Jamba group-mates are regional) fixed all four families with
+  no credential changes.
+
+- **STILL GATED OFF (`enabled=false`) — genuine 404s, not a config issue:**
+  - **Claude** (all 13 Vertex MaaS variants) — `404 NOT_FOUND` on
+    `publishers/anthropic/models/claude-haiku-4-5@20251001` (and presumably siblings): Anthropic
+    Model Garden is not enabled/accepted for the `vertex-internal-testing` GCP project. This is a
+    GCP Console / Model Garden acceptance step, not something fixable from this repo.
+  - **Llama** (all 11 variants) — same 404 pattern on `publishers/meta/models/...`: Llama Model
+    Garden not enabled on this project.
+  - **Mistral** (all 6 variants) — same 404 pattern on `publishers/mistralai/models/...`.
+  - **AI21 Jamba 1.5** (large/mini) — same 404 pattern on `publishers/ai21/models/...`.
+  - For all four: re-run `uv run python scripts/verify_model.py --model <id>` after enabling the
+    corresponding Model Garden publisher in the GCP Console for `vertex-internal-testing` (or
+    switching `VERTEXAI_PROJECT` to a project where they're already enabled).
   - External-only endpoints (z.ai GLM, Moonshot Kimi, xAI Grok direct): *"no API key (only
     Vertex + Langfuse creds present)"* — registered under `openai_compatible` / `xai`,
-    disabled until a key is supplied.
+    disabled until a key is supplied. (Their Vertex MaaS equivalents above are the ones that
+    now work.)
   - Self-deploy (Gemma 3): *"self-deploy endpoint not provisioned"* — **VM-uptime priced**, not
     per-token; cold-start 429 on first call.
+  - **AWS Bedrock** (all 6 models): `AWS_BEARER_TOKEN_BEDROCK` is set in `.env` but currently
+    returns `403 Forbidden` from `scripts/verify_bedrock.py` (both the boto3 path, which raises
+    `NoCredentialsError` since bearer-token-only auth isn't understood by the installed botocore,
+    and the direct-HTTPS bearer-token fallback, which gets a real 403). The token has very likely
+    expired — it's documented as lasting ~12 hours. Needs a fresh token in `.env` before Bedrock
+    can be re-verified; not fixable from the codebase alone.
 
 ## Families & versions registered (counts)
 
 | Family | Provider route | Versions / variants registered | Enabled |
 |---|---|---|---|
-| **gemini** | `vertex_ai` (MaaS) | 2.5 (flash/pro/flash-lite), 3 (flash/pro), 3.1 (pro/flash-lite), 3.5 (flash) | **3 (2.5 only; 3.x gated, Vertex 404)** |
-| **claude** | `vertex_partner` (MaaS) | Opus 4/4.1/4.5/4.6/4.7/4.8, Sonnet 4/4.5/4.6, Haiku 4.5, 3.7/3.5 Sonnet, 3.5 Haiku | 0 (gated) |
+| **gemini** | `vertex_ai` (MaaS) | 2.5 (flash/pro/flash-lite), 3 (flash/pro), 3.1 (pro/flash-lite), 3.5 (flash) | **8 (all)** |
+| **claude** | `vertex_partner` (MaaS) | Opus 4/4.1/4.5/4.6/4.7/4.8, Sonnet 4/4.5/4.6, Haiku 4.5, 3.7/3.5 Sonnet, 3.5 Haiku | 0 (gated — Model Garden not enabled on project, 404) |
 | **deepseek** | `vertex_partner` (MaaS) | R1-0528 (thinking), V3.1, V3.2, OCR (vision) | **1 (R1-0528 verified)** |
-| **qwen** | `vertex_partner` (MaaS) | 3-235B, 3-coder-480B, 3-next-80B **instruct + thinking** | **1 (3-235B verified)** |
-| **kimi** | `vertex_partner` + `openai_compatible` | K2 thinking (Vertex), K2/K2.5/K2-thinking (Moonshot) | 0 (gated) |
-| **glm** | `vertex_partner` + `openai_compatible` | GLM-5, GLM-4.7 (Vertex); GLM-5/4.7/4.6/4.6V (z.ai) | 0 (gated) |
-| **grok** | `vertex_partner` + `xai` | 4.20 / 4.1-fast **reasoning + non-reasoning** (Vertex); 4.3, 4.20, 4-fast (r/nr), 4, 3, 3-mini (xAI) | 0 (gated) |
-| **mistral** | `vertex_partner` (MaaS) | Small 3.1, Medium 3, Large, Nemo, Codestral 2, OCR | 0 (gated) |
-| **llama** | `vertex_partner` (MaaS) | 4 Scout/Maverick (16E/128E), 3.2-90B-Vision, 3.1 (405B/70B/8B), 3 (405B/70B/8B) | 0 (gated) |
-| **open_models** | `vertex_partner` (MaaS + self_deploy) | Gemma 4 26B (MaaS), Gemma 3 27B/12B/4B (self-deploy), gpt-oss 120B/20B, MiniMax M2, Jamba 1.5 large/mini | 0 (gated) |
+| **qwen** | `vertex_partner` (MaaS) | 3-235B, 3-coder-480B, 3-next-80B **instruct + thinking**, self-deploy VL-8B | **5 (all)** |
+| **kimi** | `vertex_partner` + `openai_compatible` | K2 thinking (Vertex), K2/K2.5/K2-thinking (Moonshot) | **1 (Vertex K2 thinking, verified)** |
+| **glm** | `vertex_partner` + `openai_compatible` | GLM-5, GLM-4.7 (Vertex); GLM-5/4.7/4.6/4.6V (z.ai) | **2 (Vertex GLM-5/4.7, verified)** |
+| **grok** | `vertex_partner` + `xai` | 4.20 / 4.1-fast **reasoning + non-reasoning** (Vertex); 4.3, 4.20, 4-fast (r/nr), 4, 3, 3-mini (xAI) | **4 (all 4 Vertex variants, verified)** |
+| **mistral** | `vertex_partner` (MaaS) | Small 3.1, Medium 3, Large, Nemo, Codestral 2, OCR | 0 (gated — Model Garden not enabled on project, 404) |
+| **llama** | `vertex_partner` (MaaS) | 4 Scout/Maverick (16E/128E), 3.2-90B-Vision, 3.1 (405B/70B/8B), 3 (405B/70B/8B) | 0 (gated — Model Garden not enabled on project, 404) |
+| **open_models** | `vertex_partner` (MaaS + self_deploy) | Gemma 4 26B (MaaS), Gemma 3 27B/12B/4B (self-deploy), gpt-oss 120B/20B, MiniMax M2, Jamba 1.5 large/mini | **4 (Gemma 4, gpt-oss 120B+20B, MiniMax M2 verified)** |
 
-**Total registered: 77 models; 5 enabled (verified callable: Gemini 2.5 flash/pro/flash-lite +
-DeepSeek R1 + Qwen3-235B), 72 gated off with reasons.** Run
+**Enabled and verified: 25 models** (up from 10 after the July 2026 re-verification pass — see
+"Availability gating" above). Run
 `python -c "from app.providers.registry import catalog_summary; print(catalog_summary())"`
 for the live per-family counts.
 
@@ -198,3 +227,64 @@ Input/output/cache-read/thinking $ per 1M for every `pricing_ref`. Estimates fro
 prices (cross-checked vs LiteLLM `model_cost` where available), **not** provider invoices.
 Self-deploy (`gemma-self-deploy`) is VM-uptime priced (rates 0 + a `note`) and tracked
 separately. `pricing_version` is recorded on every `run_result`.
+
+## v2 provider additions (July 2026)
+
+### AWS Bedrock
+
+Bedrock calls use LiteLLM's `bedrock/` transport with `AWS_REGION_NAME=ap-south-1` and the
+short-lived `AWS_BEARER_TOKEN_BEDROCK` API key. The token typically expires after about 12
+hours. Missing credentials fail before a network call; an `ExpiredToken` 401/403 is reported as
+`bedrock token expired — refresh AWS_BEARER_TOKEN_BEDROCK in .env`. Token values are never
+stored in the catalog, results, scripts, or logs.
+
+The seeded catalog includes Claude Sonnet 4.5, Nova Pro/Lite/Micro, Llama 3.2 90B Vision, and
+Mistral Large. They intentionally remain `enabled=false, verified=false` until
+`scripts/verify_bedrock.py` confirms access for the current account and region. Claude and
+Nova/Llama vision inputs use rasterized PDF pages; Nova Micro and Mistral Large are text-only.
+Claude uses tool-based structured output, while the other entries use JSON mode plus the repair
+fallback. Claude Sonnet 4.5 uses its global inference profile because AWS documents Mumbai as a
+supported source region; the verification script remains the source of truth for account-level
+availability. See the [AWS model card](https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-4-5.html)
+and [inference-profile support](https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html).
+
+### Qwen3-VL-8B (self-deployed vLLM)
+
+`qwen3-vl-8b` maps to `openai/Qwen/Qwen3-VL-8B-Instruct` at `QWEN_VL_BASE_URL` and uses
+`QWEN_VL_API_KEY` (`none` or `EMPTY` as key). The July 2026 verification succeeded, so it is
+enabled and `verified=true`. It accepts
+text and rasterized page images, caps images at 10 MB and total payloads at 25 MB, and uses JSON
+mode with the repair ladder because guided-decoding behavior depends on the deployed vLLM
+version. Per-token catalog cost is zero; infrastructure cost is VM uptime and must be tracked
+outside token pricing.
+
+### Gemini 3.1 Pro
+
+The stable Colosseum id `gemini-3.1-pro` maps to
+`vertex_ai/gemini-3.1-pro-preview` and is the default judge model. Gemini 3.x uses level-style
+thinking (`minimal`, `low`, `medium`, or `high`), which the gateway maps to LiteLLM's
+`reasoning_effort`; Gemini 2.5 retains token-budget thinking. The July 2026 live probe succeeded
+against the layered superclaims-ai credentials at the `global` Vertex endpoint, so this catalog
+entry is enabled and verified. Level-style Gemini models default to temperature 1.0 as
+recommended by the installed LiteLLM transport; explicit run configuration still wins. Google
+documents Gemini 3.1 Pro as a preview multimodal model with native PDF support and a 1M-token
+context window in the [Vertex AI release notes](https://cloud.google.com/vertex-ai/generative-ai/docs/release-notes).
+
+### `EXTERNAL_ENV_FILES` — healthpay-ai path correction (July 2026)
+
+`EXTERNAL_ENV_FILES` previously pointed at
+`/Users/ekincare/superclaims/healthpay-ai/.env`, which does not exist — healthpay-ai's real env
+files live at `healthpay-ai/healthpay/.env` and `healthpay-ai/healthpay/backend/.env`. Because
+`_bootstrap_external_env()` (`core/config.py`) silently skips any path that doesn't exist, this
+was a no-op: it never contributed credentials and never broke anything either, since
+`superclaims-ai/.env` already supplies the working `vertex-internal-testing` project ID and
+service-account JSON via `SUPERCLAIMS_GOOGLE_PROJECT_ID` / `SUPERCLAIMS_GOOGLE_CREDENTIALS_JSON`.
+Fixed to point at `healthpay-ai/healthpay/backend/.env`. That file uses generic (unprefixed) key
+names (`GOOGLE_API_KEY`, `GOOGLE_CLOUD_CREDENTIALS_JSON`, etc.) rather than a
+`HEALTHPAY_`-prefixed set, and since `_bootstrap_external_env()` never overwrites a key already
+supplied by Colosseum's own `.env` or by an earlier file in `EXTERNAL_ENV_FILES`, layering it in
+is additive/safe — it does not change which Vertex project or credentials Colosseum actually
+uses today (still `vertex-internal-testing` via superclaims-ai). No evidence was found anywhere
+in the repo of a distinct "healthpay-ai" GCP project or Vertex credential; healthpay-ai's role in
+this repo is otherwise limited to vendored reference prompts/schemas (see
+`backend/app/tasks/prompts/*healthpay*.py`), not live Vertex traffic.

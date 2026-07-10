@@ -22,8 +22,14 @@ class GeminiVertexAdapter(ProviderAdapter):
     """Pass PDFs through natively; no rasterization."""
 
     def normalize(
-        self, *, system: str, instruction: str, documents: list[DocumentInput]
+        self,
+        *,
+        system: str,
+        instruction: str,
+        documents: list[DocumentInput],
+        config: dict[str, object] | None = None,
     ) -> NormalizedContent:
+        del config  # PDF-native pass-through; image compression does not apply.
         self.gate(documents)
 
         content: list[dict[str, object]] = [{"type": "text", "text": instruction}]

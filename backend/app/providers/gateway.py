@@ -49,6 +49,10 @@ _MODE_BY_METHOD = {
 }
 
 
+class ProviderAuthError(RuntimeError):
+    """A provider credential is missing or needs refreshing."""
+
+
 @dataclass
 class GatewayResult:
     """Everything needed to persist a ``run_result`` row."""
@@ -106,7 +110,10 @@ class ModelGateway:
         adapter = get_adapter(capability)
         try:
             normalized = adapter.normalize(
-                system=system, instruction=instruction, documents=documents
+                system=system,
+                instruction=instruction,
+                documents=documents,
+                config=config,
             )
         except CapabilityGateError as gate:
             logger.info("model %s gated out: %s", model_id, gate.reason)
@@ -205,13 +212,16 @@ class ModelGateway:
                 capability=capability, messages=messages, schema=schema, config=config
             )
             return _CallOutcome(parsed=parsed, raw_response=raw, usage_raw=usage_raw, retries=0)
+        except ProviderAuthError:
+            raise
         except Exception as exc:  # noqa: BLE001 - any SO failure triggers the ladder
+            self._raise_provider_auth_error(capability, exc)
             logger.warning(
                 "structured call failed for %s (%s); engaging repair ladder",
                 capability.model_id,
                 exc.__class__.__name__,
             )
-            structured_error = {"stage": "structured", "type": exc.__class__.__name__, "message": str(exc)}
+            structured_error = {"stage": "structured", "type": exc.__class__.__name__, "message": str(exc) or exc.__class__.__name__}
 
         if not capability.needs_repair_fallback:
             # Strong, verified models: surface the structured error rather than guess.
@@ -229,6 +239,8 @@ class ModelGateway:
                 )
             error = {**structured_error, "stage": "repair", "message": "no parseable JSON in free text"}
             return _CallOutcome(parsed=None, raw_response=raw, usage_raw=usage_raw, error=error, retries=2)
+        except ProviderAuthError:
+            raise
         except Exception as exc:  # noqa: BLE001
             logger.error("free-text fallback failed for %s: %s", capability.model_id, exc.__class__.__name__)
             return _CallOutcome(
@@ -248,11 +260,27 @@ class ModelGateway:
         import instructor
         import litellm
 
-        client = instructor.from_litellm(litellm.acompletion)
-        mode = getattr(instructor.Mode, _MODE_BY_METHOD[capability.structured_method])
+        async def acompletion_wrapper(*args, **kwargs):
+            if "mode" in kwargs:
+                kwargs.pop("mode")
+            try:
+                return await litellm.acompletion(*args, **kwargs)
+            except Exception as exc:
+                self._raise_provider_auth_error(capability, exc)
+                raise
+
+        mode_str = _MODE_BY_METHOD[capability.structured_method]
+        if capability.structured_method == StructuredMethod.json_mode and (
+            capability.model_id.startswith("vertex_ai/")
+            or capability.provider.value in ("vertex_ai", "vertex_partner")
+        ):
+            mode_str = "MD_JSON"
+
+        mode = getattr(instructor.Mode, mode_str)
+        client = instructor.from_litellm(acompletion_wrapper, mode=mode)
 
         parsed, completion = await client.chat.completions.create_with_completion(
-            model=capability.model_id,
+            model=capability.transport_model,
             messages=messages,
             response_model=schema,
             mode=mode,
@@ -285,17 +313,24 @@ class ModelGateway:
                 ),
             }
         )
-        completion = await litellm.acompletion(
-            model=capability.model_id,
-            messages=repair_messages,
-            **self._provider_kwargs(capability, config),
-        )
+        try:
+            completion = await litellm.acompletion(
+                model=capability.transport_model,
+                messages=repair_messages,
+                **self._provider_kwargs(capability, config),
+            )
+        except Exception as exc:
+            self._raise_provider_auth_error(capability, exc)
+            raise
         text = completion.choices[0].message.content or ""
         return text, _completion_to_dict(completion), getattr(completion, "usage", None)
 
     def _provider_kwargs(self, capability: ModelCapability, config: dict[str, Any]) -> dict[str, Any]:
         """Provider-specific kwargs (Vertex creds, xAI/openai-compat keys, temperature, thinking)."""
-        kwargs: dict[str, Any] = {"temperature": config.get("temperature", 0.0)}
+        default_temperature = 1.0 if capability.thinking == "level" else 0.0
+        kwargs: dict[str, Any] = {
+            "temperature": config.get("temperature", default_temperature)
+        }
         if (mot := config.get("max_output_tokens")) is not None:
             kwargs["max_tokens"] = mot
 
@@ -318,7 +353,9 @@ class ModelGateway:
                 kwargs["vertex_credentials"] = creds
             if project:
                 kwargs["vertex_project"] = project
-            kwargs["vertex_location"] = self.region or self.settings.vertexai_location
+            kwargs["vertex_location"] = (
+                self.region or capability.vertex_location or self.settings.vertexai_location
+            )
 
         elif provider == "xai":
             if key := os.environ.get("XAI_API_KEY"):
@@ -327,16 +364,58 @@ class ModelGateway:
         elif provider == "openai_compatible":
             # External OpenAI-compatible endpoints (z.ai GLM, Moonshot Kimi). Resolve a key +
             # base_url from env by family; absent -> the call fails and the model stays gated.
-            if key := os.environ.get("OPENAI_COMPATIBLE_API_KEY"):
+            key_env = capability.api_key_env or "OPENAI_COMPATIBLE_API_KEY"
+            base_env = capability.base_url_env or "OPENAI_COMPATIBLE_BASE_URL"
+            if key := os.environ.get(key_env) or getattr(
+                self.settings, key_env.lower(), None
+            ):
                 kwargs["api_key"] = key
-            if base := os.environ.get("OPENAI_COMPATIBLE_BASE_URL"):
+            if base := os.environ.get(base_env) or getattr(
+                self.settings, base_env.lower(), None
+            ):
                 kwargs["api_base"] = base
 
+        elif provider == "bedrock":
+            token = self.settings.aws_bearer_token_bedrock or os.environ.get(
+                "AWS_BEARER_TOKEN_BEDROCK"
+            )
+            if not token:
+                raise ProviderAuthError(
+                    "bedrock token missing — set AWS_BEARER_TOKEN_BEDROCK in .env"
+                )
+            # LiteLLM reads AWS_BEARER_TOKEN_BEDROCK directly and uses it as the API key.
+            kwargs["api_key"] = token
+            kwargs["aws_region_name"] = self.region or self.settings.aws_region_name
+
         # Reasoning/thinking budget (provider-agnostic LiteLLM param) when requested + supported.
-        if capability.thinking and (budget := config.get("thinking_budget")) is not None:
+        if capability.thinking == "level" and (
+            level := config.get("thinking_level")
+        ) is not None:
+            kwargs["reasoning_effort"] = level
+        elif capability.thinking and (budget := config.get("thinking_budget")) is not None:
             kwargs["thinking"] = {"type": "enabled", "budget_tokens": int(budget)}
 
         return kwargs
+
+    @staticmethod
+    def _raise_provider_auth_error(capability: ModelCapability, exc: Exception) -> None:
+        """Translate an expired Bedrock bearer token without leaking provider details."""
+        if capability.provider.value != "bedrock":
+            return
+        message = str(exc).lower()
+        status = getattr(exc, "status_code", None)
+        if status is None:
+            status = getattr(getattr(exc, "response", None), "status_code", None)
+        if "bedrock token missing" in message:
+            raise ProviderAuthError(
+                "bedrock token missing — set AWS_BEARER_TOKEN_BEDROCK in .env"
+            ) from exc
+        if "bedrock token expired" in message or "expiredtoken" in message or (
+            status in {401, 403} and "expired" in message and "token" in message
+        ):
+            raise ProviderAuthError(
+                "bedrock token expired — refresh AWS_BEARER_TOKEN_BEDROCK in .env"
+            ) from exc
 
 
 # ---------------------------------------------------------------------------- helpers

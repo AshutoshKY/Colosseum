@@ -10,6 +10,7 @@ thinking/cache) is encoded here so callers never special-case a model.
 from __future__ import annotations
 
 from enum import Enum
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -19,6 +20,7 @@ class Provider(str, Enum):
     vertex_partner = "vertex_partner"
     xai = "xai"
     openai_compatible = "openai_compatible"
+    bedrock = "bedrock"
 
 
 class Access(str, Enum):
@@ -49,7 +51,11 @@ class ModelCapability(BaseModel):
 
     model_config = {"frozen": True}
 
-    model_id: str = Field(description="LiteLLM model id, e.g. 'vertex_ai/gemini-2.5-flash'")
+    model_id: str = Field(description="Stable Colosseum catalog id.")
+    litellm_model: str | None = Field(
+        default=None,
+        description="LiteLLM transport id when it differs from the catalog id.",
+    )
     display_name: str
     provider: Provider
     access: Access = Access.maas
@@ -87,7 +93,10 @@ class ModelCapability(BaseModel):
     )
 
     # --- billing-relevant extras ---
-    thinking: bool = Field(default=False, description="Supports reasoning/thinking; tokens billed.")
+    thinking: bool | Literal["budget", "level"] = Field(
+        default=False,
+        description="Reasoning support: false, budget tokens, or Gemini-style levels.",
+    )
     caching: bool = Field(default=False, description="Prompt/context caching supported.")
     batch: bool = Field(default=False, description="Batch API available.")
 
@@ -104,6 +113,11 @@ class ModelCapability(BaseModel):
     )
     notes: str | None = None
 
+    # Optional per-model environment indirection for OpenAI-compatible endpoints.
+    base_url_env: str | None = None
+    api_key_env: str | None = None
+    vertex_location: str | None = None
+
     # ------------------------------------------------------------------ helpers
     def supports_modality(self, modality: Modality) -> bool:
         return modality in self.modalities
@@ -111,6 +125,11 @@ class ModelCapability(BaseModel):
     def can_handle_documents(self) -> bool:
         """Whether this model can take document input at all (PDF native or via images)."""
         return self.pdf_native or self.vision
+
+    @property
+    def transport_model(self) -> str:
+        """Model identifier passed to LiteLLM."""
+        return self.litellm_model or self.model_id
 
     def to_json(self) -> dict[str, object]:
         """JSON-able dict for persisting onto ``model_catalog.capabilities``."""

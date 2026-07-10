@@ -37,11 +37,19 @@ models:
     version: "3-coder-480b"
     variant: instruct
     pricing_ref: qwen3-coder
+    enabled: true
+    verified: true
+    reason: null
+    notes: "VERIFIED callable on vertex-internal-testing (July 2026). Text-only: gated out of image/PDF tasks; json_mode (MD_JSON) + repair ladder."
   - model_id: vertex_ai/qwen/qwen3-next-80b-a3b-instruct-maas
     display_name: Qwen3 Next 80B A3B Instruct (Vertex)
     version: "3-next-80b"
     variant: instruct
     pricing_ref: qwen3
+    enabled: true
+    verified: true
+    reason: null
+    notes: "VERIFIED callable on vertex-internal-testing (July 2026). Text-only: gated out of image/PDF tasks; json_mode (MD_JSON) + repair ladder."
   # thinking variant of the same base — first-class separate config.
   - model_id: vertex_ai/qwen/qwen3-next-80b-a3b-thinking-maas
     display_name: Qwen3 Next 80B A3B Thinking (Vertex)
@@ -49,3 +57,37 @@ models:
     variant: thinking
     thinking: true
     pricing_ref: qwen3
+    enabled: true
+    verified: true
+    reason: null
+    notes: "VERIFIED callable on vertex-internal-testing (July 2026). Text-only: gated out of image/PDF tasks; json_mode (MD_JSON) + repair ladder."
+
+  # Self-deployed vLLM endpoint. Provider/access override the Vertex group defaults.
+  - model_id: qwen3-vl-8b
+    litellm_model: openai/Qwen/Qwen3-VL-8B-Instruct
+    display_name: Qwen3-VL-8B Instruct (self-deployed)
+    provider: openai_compatible
+    access: self_deploy
+    version: "3-vl-8b"
+    variant: vision
+    base_url_env: QWEN_VL_BASE_URL
+    api_key_env: QWEN_VL_API_KEY
+    modalities: [text, image]
+    pdf_native: false
+    vision: true
+    max_image_mb: 10
+    max_payload_mb: 25
+    # Self-deployed vLLM serves this with max_model_len=26032. A full-resolution scanned page
+    # (e.g. 5390x5590 ~30 MP) alone tokenizes to ~38k vision tokens — larger than the whole
+    # context window — which makes the endpoint hang (observed as TimeoutError). Cap each page
+    # at ~4 MP (~5k vision tokens) so a multi-page packet + prompt + output fits under 26k.
+    max_image_megapixels: 4.0
+    context_window: 26032
+    structured_method: json_mode
+    needs_repair_fallback: true
+    thinking: false
+    pricing_ref: self_deploy_qwen3_vl_8b
+    enabled: true
+    verified: true
+    reason: null
+    notes: "Self-deployed vLLM (max_model_len 26032); rasterized pages capped at 4 MP so images fit the context window; verified and enabled for live calls."

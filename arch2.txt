@@ -1,0 +1,294 @@
+superclaims-ai OPD Pipeline — Full Architecture Report
+Branch test-ekincare-v2 is checked out. All paths below are working-tree paths on that branch.
+
+Framework
+LangGraph (langgraph.graph.StateGraph) with config-driven topology. The graph is not hardcoded in Python — it's assembled from TOML profiles per client/claim-type, with an inheritance mechanism (extends).
+
+Graph builder: backend/app/lang_graph/graph.py — compile_graph() / build_graph(). Uses StateGraph(AgentState), adds nodes from the profile, wires edges and fan_ins (fan-in = LangGraph multi-source edge, i.e. a join/barrier), START -> entry_node, terminal_node -> END. Compiled with a checkpointer (backend/app/lang_graph/checkpointing.py).
+Node registry (name → callable): backend/app/lang_graph/registry.py (NODE_REGISTRY).
+Profile schema: backend/app/lang_graph/config/models.py (GraphProfile, GraphNode, NodeRuntime, GraphEdge, FanInEdge).
+Profile loader (TOML + extends merge): backend/app/lang_graph/config/loader.py.
+LLM provider: Google Gemini via Vertex AI, using langchain_google_genai.ChatGoogleGenerativeAI — backend/app/lang_graph/llm/client.py.
+Entry point / how it runs: backend/app/services/adjudication.py process_claim() (line ~282) builds initial_state and calls graph.ainvoke(...). It's driven by a Temporal workflow (backend/app/workers/workflows.py, activities.py).
+1. Full OPD graph flow (ekincare) — execution order
+The ekincare OPD profile is backend/app/clients/ekincare/graph/opd.toml, which extends = "base.OPD" (backend/app/clients/base/graph/opd.toml). Entry node segregation_agent, terminal node completion. Merged effective flow:
+
+
+START
+ └─ segregation_agent ──► store_segments
+     store_segments ──► ekincare_policy_extraction_agent   (ekincare OVERRIDES base:
+                                                             base fans out from store_segments;
+                                                             ekincare inserts policy extraction first)
+     ekincare_policy_extraction_agent fans out to:
+        ├─ claim_form_agent ──► store_claim_form ──► identity_document_agent ──► store_identity_document
+        ├─ prescription_agent ──► store_prescription
+        ├─ itemized_bills_agent ─────┐
+        ├─ consolidated_bills_agent ─┴─► merge_bills ──► store_bills ──► items_categorisation_agent
+        │                                                                   └─► nme_analysis_agent ──► store_nme_analysis
+        └─ cheque_bank_agent ──► store_cheque_bank
+
+  FAN-IN: [store_prescription, store_bills] ──► extract_icd_codes_agent ──► store_icd_codes
+  FAN-IN: [store_claim_form, store_identity_document, store_prescription, store_cheque_bank, store_nme_analysis]
+                                              ──► build_patient_summary ──► store_patient_summary ──► benefit_plan_agent
+  FAN-IN: [benefit_plan_agent, store_icd_codes] ──► audit_agent
+     audit_agent ──► fwa_invoice_duplicate ──► store_audit ──► validation ──► completion ──► END
+Notes on ekincare-vs-base differences:
+
+Base OPD fans out directly from store_segments; ekincare routes everything through ekincare_policy_extraction_agent first, and adds benefit_plan_agent + fwa_invoice_duplicate (10s timeout) into the audit path.
+lab_report_agent / store_lab_report exist in base but ekincare sets lab_report_agent enabled = false (dropped from ekincare fan-ins).
+Base OPD wires store_nme_analysis -> audit_agent directly (no benefit_plan, no fwa). Base has no benefit_plan_agent node at all in its edges; ekincare inserts the [benefit_plan_agent, store_icd_codes] -> audit_agent fan-in.
+Node types: LLM agent nodes live in backend/app/lang_graph/agents/ and some in nodes/. store_* nodes are DB-persistence nodes. merge_bills, items_categorisation, nme_analysis, build_patient_summary, benefit_plan, validation, fwa_invoice_duplicate, completion are in backend/app/lang_graph/nodes/. No conditional/branching edges — routing is static fan-out + fan-in barriers.
+
+2. Agent nodes — name, prompt, model, schema, inputs
+All LLM agents use the shared helpers in backend/app/lang_graph/agents/_common.py:
+
+invoke_pdf_agent(...) — builds [SystemMessage(prompt), HumanMessage([text, {type:"file", mime_type:"application/pdf", base64:...}])], calls ainvoke_structured. Used by all document-extraction agents.
+invoke_text_agent(...) — [SystemMessage(prompt), HumanMessage(json.dumps(payload))]. Used by text-only agents (ICD, NME).
+output_update(...) — maps each node's structured output into state keys (see §6).
+ainvoke_structured (backend/app/lang_graph/llm/structured.py) = model.with_structured_output(schema, method="json_schema").ainvoke(...).
+
+Prompts are Python string constants (not Jinja); a few use {{VAR}} / f-string substitution. Model/thinking config comes from the TOML runtime block per node, not the code.
+
+Node	Prompt (file · constant · variables)	model_key (thinking)	Output schema (file · fields summary)	Inputs consumed
+segregation_agent	prompts/segregation.py · DOCS_SEGREGATOR_SYSTEM_PROMPT (static) + build_ekincare_opd_document_check_prompt(benefits) appended when ekincare-OPD & benefits present (variable: required-docs list built from benefits)	gemini_3_flash, thinking_level=LOW, timeout 120	schemas/segregation.py · DocumentSegregatorOutput {segments: list[DocumentSegment{document_type(Literal 10 types), pages:str}], `required_documents_check: RequiredDocumentsCheck	None`}
+ekincare_policy_extraction_agent	prompts/ekincare.py · EKINCARE_POLICY_EXTRACTION_SYSTEM_PROMPT (static); human msg = policy text	gemini_2_5_flash, thinking 0	schemas/ekincare.py · EkincarePolicyExtractionOutput {nme_items:list[str], policy_rules:list[str], extraction_ok:bool, source}	state.policy or state.original_client_payload["policy"/"policy_details"] (text/JSON). No PDF.
+claim_form_agent	prompts/claim_forms.py · CLAIM_FORM_SYSTEM_PROMPT (static)	gemini_2_5_flash, thinking 0	schemas/claim_form.py · ClaimFormOutput (ClaimFormDetails / PartA / PartB, Gender enum)	PDF pages where segment.document_type == "claim_forms" (from state.segments) + state.file_path
+prescription_agent	prompts/documents.py · PRESCRIPTION_SYSTEM_PROMPT (static)	gemini_2_5_flash, thinking 0, retry_policy=standard	schemas/discharge_summary.py · PrescriptionOutput (has claims_digitization_details incl. diagnosis, presenting_complaint, prescribed_items, etc.)	prescription pages of PDF
+discharge_summary_agent (registered; not in ekincare OPD edges)	prompts/documents.py · DISCHARGE_SUMMARY_SYSTEM_PROMPT	gemini_2_5_flash	schemas/discharge_summary.py · DischargeSummaryOutput	discharge_summary PDF pages
+itemized_bills_agent	prompts/bills.py · ITEMIZED_BILLS_SYSTEM_PROMPT (f-string composed of _BILL_AMOUNT_RULES, _FACILITY_DETAILS_RULES)	gemini_2_5_flash, thinking 8000	schemas/bills.py · ItemizedBillsOutput {bills:[{bill:BillHeader, items:[ItemizedBillItem]}]}	itemized_bill PDF pages
+consolidated_bills_agent	prompts/bills.py · CONSOLIDATED_BILLS_SYSTEM_PROMPT	gemini_2_5_flash, thinking 8000	schemas/bills.py · ConsolidatedBillsOutput	consolidated_bill PDF pages
+cheque_bank_agent (optional)	prompts/documents.py · CHEQUE_BANK_SYSTEM_PROMPT	gemini_2_5_flash, thinking 0	schemas/bank_identity.py · BankDetailsOutput (BankDetails, AccountType)	cheque_or_bank_details PDF pages
+identity_document_agent (optional)	prompts/documents.py · IDENTITY_DOCUMENT_SYSTEM_PROMPT	gemini_2_5_flash, thinking 0	schemas/medical_documents.py · IdentityDocumentOutput	identity_document PDF pages
+extract_icd_codes_agent	prompts/icd.py · EXTRACT_ICD_CODES_SYSTEM_PROMPT; human msg = JSON payload	gemini_2_5_flash, thinking 0	schemas/icd.py · ExtractIcdCodesOutput {icd_codes:list[IcdCodeCandidate{code,name,diagnosis,description,chapter,block,source,type(primary/secondary),related_bill_ids}]}	Text agent. From prescription.claims_digitization_details: diagnosis, presenting_complaint, temperature_f, patient_age, prescribed_items; PLUS compact bill-item list {bill_id,item_name} from merged bills (extract_icd_codes.py::build_icd_payload). Fan-in: store_prescription + store_bills.
+items_categorisation_agent	prompts/bills.py · ITEMS_CATEGORISATION_SYSTEM_PROMPT; input via prepare_categorization_input(bill_data)	gemini_2_5_flash, thinking 8000	schemas/bills.py · ItemsCategorisationOutput {bill_item_categories:[{bill_id, categorized_items:[{s.no., category}]}]}	Merged bills (find_extracted_data(state,"merge_bills"))
+nme_analysis_agent	prompts/nme.py · get_nme_system_prompt(include_policy_violations) — composed from many blocks (NME_ANALYSIS_INSTRUCTION/SCHEMA/RULES/STEPS/EXAMPLE/ITEMS_DEF/FALSE_POSITIVES); input via prepare_nme_analysis_input(bills, policy_ctx)	gemini_2_5_flash, thinking 8000	schemas/bills.py · NmeAnalysisOutput (nme_list, and policy_violations:[NmePolicyViolation] when ekincare OPD + policy_rules)	Categorised bills (items_categorisation or merge_bills) + policy_context(state) (policy_rules/nme_items from ekincare policy extraction)
+benefit_plan_agent (ekincare only)	prompts/ekincare.py · EKINCARE_BENEFIT_PLAN_SYSTEM_PROMPT; input via prepare_benefit_plan_input(...)	gemini_2_5_flash, thinking 2048	schemas/ekincare.py · BenefitPlanSelectionOutput {plan_applicability:[PlanApplicability], item_assignments:[BenefitItemAssignment]} (fallback → BenefitPlanOutput in adjudication.py)	state.benefits, categorised/merged bills, state.policy_extraction, document-check context, partial_doc_failure, small clinical context (diagnosis/complaint/doctor spec from prescription)
+build_patient_summary	nodes/build_patient_summary.py — no LLM, deterministic PatientDataAggregator (utils/patient_data.py)	(prompt_key base.build_patient_summary but node is code-only)	schemas/adjudication.py · PatientSummaryOutput {patient_summary: dict[str, dict]}	claim_form, discharge_summary, prescription, bills (state.bill_data/merge_bills), lab_report, cheque_bank, identity_document
+audit_agent	prompts/audit.py · AUDIT_SYSTEM_PROMPT via get_audit_prompt(calculated_total, bill_audit_json) — template vars {{CALCULATED_TOTAL}}, {{JSON_OUTPUT}}	base: gemini_3_flash, thinking_level=LOW; run helper default gemini_3_pro. max_output_tokens=audit_max_output_tokens (16000).	schemas/adjudication.py · BillAuditOutput {original/corrected totals, discrepancy_amount, counts, mathematical_consistency, patches:[AuditPatch]}	Bill JSON = nme_analysis or merge_bills output; PLUS PDF (only segmented non-"other" pages, audit.py::_extract_relevant_pages)
+fwa_invoice_duplicate	nodes/fwa_invoice_duplicate.py — no LLM; DB duplicate check services/fwa/invoice_duplicate_checker.py	(timeout 10s)	dict written to invoice_duplicate_fwa	Invoices extracted from state (utils/invoice_duplicate.py), claim/user/dependent refs
+validation	nodes/validation.py — no LLM, deterministic scoring	—	schemas/adjudication.py · ValidationOutput (score, passed, warnings/errors, bills_score, amounts, categorization scores...)	state.bill_data/nme/merge, patient_summary, original_client_payload (claimed amount)
+completion	nodes/completion_nodes.py — no LLM; ekincare builds review payload (services/ekincare/...)	(timeout 10s)	dict completion	Aggregates everything: bills, patient_summary, prescription, icd, audit, validation, benefit_plan_breakdown, policy_extraction, fwa, etc.
+3. Dependency graph (what to feed if running a subset)
+State keys each agent reads (feed these if you skip the upstream producer):
+
+segregation_agent: file_path (PDF), optionally benefits. Produces segments.
+ekincare_policy_extraction_agent: policy or original_client_payload.policy. Produces policy_extraction, policy_nme_items, policy_rules.
+claim_form / prescription / itemized_bills / consolidated_bills / cheque_bank / identity_document: each needs segments (to pick its page ranges) + file_path. Independent of each other.
+merge_bills: needs extracted_data entries for itemized_bills/itemized_bill and consolidated_bills/consolidated_bill. Produces extracted_data[merge_bills].
+items_categorisation: needs merge_bills data.
+nme_analysis: needs items_categorisation (or merge_bills) + policy context (policy_rules, policy_extraction).
+extract_icd_codes: needs prescription extracted data + merged bills (for related_bill_ids). Fan-in: [store_prescription, store_bills].
+build_patient_summary: needs claim_form, discharge_summary, prescription, bills (bill_data/merge_bills), lab_report, cheque_bank, identity_document extracted data.
+benefit_plan_agent: needs benefits, categorised/merged bills, policy_extraction, document-check context, prescription clinical context.
+audit_agent: needs nme_analysis (preferred) or merge_bills bill JSON + PDF + segments (to select pages). Produces audit_analysis, audit_patches, patched bill_data.
+fwa_invoice_duplicate: needs invoices in state + claim_id.
+validation: needs bill_data/nme/merge + patient_summary + original_client_payload.
+completion: reads all above.
+Concise example dependencies (as requested):
+
+audit_agent consumes nme_analysis (falls back to merge_bills) output + segments + source PDF.
+build_patient_summary consumes claim_form + prescription + bills + cheque_bank + identity + (base: lab_report) + nme_analysis (via fan-in ordering).
+benefit_plan_agent consumes benefits (client payload) + items_categorisation/merge_bills + ekincare policy_extraction + prescription clinical context.
+extract_icd_codes consumes prescription + merged bills.
+4. Segregation & Audit — detailed
+Segregation agent
+
+Node: backend/app/lang_graph/agents/segregation.py (segregation_node).
+Prompt: backend/app/lang_graph/prompts/segregation.py. Static DOCS_SEGREGATOR_SYSTEM_PROMPT (10 document_types, bill decision tree, back-side policy, page-range rules). For ekincare OPD with benefits present, build_ekincare_opd_document_check_prompt(benefits) is appended — it iterates each benefit's required_documents (requirement_type required/conditional) and asks the model to return required_documents_check.
+Model: gemini_3_flash, thinking_level=LOW, timeout 120s.
+Schema: backend/app/lang_graph/schemas/segregation.py · DocumentSegregatorOutput: segments: list[DocumentSegment{document_type: Literal[claim_forms, cheque_or_bank_details, identity_document, itemized_bill, consolidated_bill, discharge_summary, prescription, investigation_report, cash_receipt, other], pages: str}] + required_documents_check: RequiredDocumentsCheck{all_present:bool, results:[{document_name, benefit_name, benefit_id, present, matched_segment}]} | None.
+Input: whole file_path PDF as base64 (all pages) + benefits. Output → state.segments (via utils/segregation.py::build_segregation_success_update); persisted by store_segments to the claim record.
+Audit agent
+
+Node: backend/app/lang_graph/nodes/audit.py (audit_node) → runner backend/app/lang_graph/agents/audit.py (run_audit_agent).
+Prompt: backend/app/lang_graph/prompts/audit.py · AUDIT_SYSTEM_PROMPT, filled by get_audit_prompt(calculated_total=..., bill_audit_json=...) replacing {{CALCULATED_TOTAL}} and {{JSON_OUTPUT}}. Rules: detect missing/duplicate bills & items, prefer itemized over consolidated, tolerance < Rs.1 or 0.5%, cite evidence; emits patches.
+Model: profile says gemini_3_flash + thinking_level=LOW; run_audit_agent default fallback gemini_3_pro; max_output_tokens = audit_max_output_tokens (default 16000, config.py).
+Schema: backend/app/lang_graph/schemas/adjudication.py · BillAuditOutput {original_total_of_bills, corrected_total_of_bills, discrepancy_amount, bills_analyzed, duplicates_found, bills_with_corrections, mathematical_consistency, patches: list[AuditPatch]}. AuditPatch {type: DELETE_BILL/DELETE_ITEM/EDIT_BILL_DETAILS/EDIT_ITEM/ADD_BILL/ADD_ITEM, bill_id, item_s_no, reason, page_reference, impact, bill_invoice_number, bill_net_amount, key, old_value, new_value, calculation, bill_data, item_data}.
+Inputs: bill JSON from nme_analysis (fallback merge_bills); calculate_bill_total(bill_data) (utils/bills.py); PDF — only non-"other" segmented pages (_extract_relevant_pages). Output → audit_analysis state key; patches applied to bills via utils/audit.py::apply_audit_patches → state.bill_data.
+5. How PDFs enter the pipeline
+The claim's document is a single PDF referenced by state.file_path (local path; resolved from claim doc_details.storage_key and downloaded — see adjudication.py).
+No separate OCR / text-parsing / page-splitting into images. The PDF bytes are base64-encoded and passed natively to Gemini as a {"type": "file", "mime_type": "application/pdf", "base64": ...} message part (Gemini's native PDF/document understanding).
+Page selection: backend/app/lang_graph/utils/pdf.py::extract_pages_as_base64(file_path, page_ranges) uses pypdf to build a sub-PDF containing only the pages a given agent needs (page ranges come from segments, e.g. "1-3,7"). If pypdf/splitting fails, it returns the full PDF (robust fallback).
+So at the agent boundary, document content = base64 PDF pages (not pre-extracted text, not images). Segregation gets all pages; each extraction agent gets only its document-type's pages; audit gets all non-"other" pages.
+6. State shape
+backend/app/lang_graph/state.py · AgentState(TypedDict, total=False) with LangGraph reducers:
+
+Reducers: take_first (claim_id, project, claim_type), take_last (most fields), add/append_list (accumulate).
+Key fields: claim_id, file_path, project, claim_type, flow_type, turn; segments: DocumentSegregatorOutput|None; extracted_data: list[dict] (append — the primary channel; each node appends {node, claim_id, data}); trace: list[str]; node_runtime: dict; benefits, policy, original_client_payload, user_details, bank_details, client_reference_id, claim_reference_id, insurance_id, user_id, dependent_id, historical_invoices (+ ingestion status fields); policy_extraction, policy_nme_items, policy_rules, policy_violations, corporate_id, document_check_context, mandatory_doc_failure, partial_doc_failure; benefit_plan_breakdown, patient_summary, icd_codes, audit_analysis, audit_full_data, audit_patches, deficiency_check_results, validation_scores, completion, bill_data, invoice_duplicate_fwa.
+The _common.output_update() in agents/_common.py maps each node's structured output both into extracted_data and into a dedicated top-level key (e.g. policy→policy+benefits, ekincare_policy→policy_extraction, benefit_plan→benefit_plan_breakdown, build_patient_summary→patient_summary, extract_icd_codes→icd_codes, audit→audit_analysis, validation→validation_scores).
+Retrieval helper: utils/extracted_data.py::find_extracted_data(state, node_name) reads back the latest data for a node from extracted_data.
+7. LLM configuration
+Client wrapper: backend/app/lang_graph/llm/client.py::get_chat_model(model_key, thinking_budget, thinking_level, max_output_tokens). Returns ChatGoogleGenerativeAI(vertexai=True, temperature=0.0, timeout=llm_timeout_seconds, max_retries=llm_max_retries, project=..., credentials=...). Credentials from google_credentials_json service account (cached by hash); project from google_project_id or cred project_id.
+Temperature = 0.0 for all agents (hardcoded).
+Thinking: for gemini-3* (non-lite) models it sets thinking_level (default "low"); otherwise sets thinking_budget (skipped for lite). Per-node thinking values come from TOML runtime.
+Model-key → real model string in backend/app/core/config.py LLMSettings (lines ~135-176):
+gemini_2_5_flash → gemini-2.5-flash
+gemini_2_5_pro → gemini-2.5-pro
+gemini_3_flash → flash_preview_model = gemini-3-flash-preview
+gemini_3_pro → pro_preview_model = gemini-3.1-pro-preview
+gemini_3_flash_lite → gemini-3.1-flash-lite
+llm_timeout_seconds=300.0, llm_max_retries=3, audit_max_output_tokens=16000.
+Allowed model keys / thinking levels enforced by config/models.py (ModelKey, ThinkingLevel = LOW|MEDIUM|MINIMAL).
+Structured output: always with_structured_output(schema, method="json_schema") (llm/structured.py) — Gemini json_schema mode against the Pydantic model.
+Per-agent model config lives in the TOML runtime block (model_key, thinking_budget/thinking_level, timeout_seconds, optional, enabled, retry_policy) — overridable per client via extends. Observability: Langfuse/Sentry wired via llm_runnable_config metadata and graph.py spans; cost estimation in backend/app/lang_graph/pricing/.
+Key files to replicate the pipeline
+Graph engine: backend/app/lang_graph/graph.py, registry.py, state.py, config/{loader,models}.py, checkpointing.py
+Topology (OPD): backend/app/clients/base/graph/opd.toml, backend/app/clients/ekincare/graph/opd.toml
+Agents: backend/app/lang_graph/agents/*.py (+ _common.py)
+Non-LLM nodes: backend/app/lang_graph/nodes/*.py
+Prompts: backend/app/lang_graph/prompts/*.py
+Schemas: backend/app/lang_graph/schemas/*.py (aggregated in outputs.py)
+LLM: backend/app/lang_graph/llm/{client,structured}.py; settings backend/app/core/config.py
+Invocation: backend/app/services/adjudication.py (process_claim, build_context_state)
+PDF handling: backend/app/lang_graph/utils/pdf.py
+One caveat for replication: agents/audit.py::run_audit_agent defaults to gemini_3_pro but the base OPD TOML sets audit_agent to gemini_3_flash (LOW thinking) — the TOML runtime wins at execution because runtime.get("model_key", "gemini_3_pro") receives the profile value; the gemini_3_pro default only applies if the profile omits model_key.
+
+Would you like me to also detail any specific prompt's full text (e.g. the NME analysis composite prompt or the bill-amount rules), or trace the Temporal workflow that schedules process_claim?
+
+I now have a complete and detailed picture of the pipeline. Here is my full report.
+
+HealthPay-AI IPD Claims Pipeline — test-fhpl branch
+Branch note: The checked-out branch is test-ekincare, NOT test-fhpl. I did NOT check anything out. All findings below were read via git show test-fhpl:<path>. No ~/.trae/worktrees/healthpay-ai exists. All paths below are branch-qualified to test-fhpl and rooted at healthpay/backend/app/lang_graph/ unless noted.
+
+Framework
+LangGraph (langgraph.graph.StateGraph, START, END, conditional edges, langgraph.types.Send for fan-out). LLM calls go through LangChain (langchain_core.messages, ChatGoogleGenerativeAI on Vertex AI). Graph is built dynamically per claim type from a FlowConfig and cached.
+
+Graph builder: graph.py — build_graph(config), get_graph(claim_type) (cached), app = get_graph("DEFAULT").
+Entry point / invocation: app/workers/claim_processor.py:158 — get_graph(claim_type).invoke({...}). Initial state = {"file_path": temp_file_path, "claim_id", "flow_type", "claim_type", "turn"}. The PDF is downloaded from MinIO to a temp file; only file_path is passed in (base64 is derived on demand inside nodes). file_data (base64) is only used by the re-extraction graph (reextraction_graph.py).
+1. Full graph flow (execution order)
+Defined entirely in graph.py. Node → function mapping:
+
+Node name	Function	File
+check_size	check_size_node	agents/file_segregation_agent.py
+(cond edge) route_by_size	route_by_size → input or fan-out segregate_half×2	same
+segregate_half	segregate_half_node (LLM, per half)	same
+merge_segments	merge_segments_node (+DB store)	same
+input	segregation_node (LLM + DB store)	same
+passthrough	_entry_passthrough (no-op fan-out hub)	graph.py
+clinical_agent	discharge_summary_extractor (default) OR prescription_extractor (OPD) — LLM	agents/data_extraction_agent.py
+store_clinical	store_discharge_summary_node OR store_prescription_node	nodes/discharge_summary_nodes.py, nodes/prescription_nodes.py
+itemized_bills_agent	itemized_bills_extractor (LLM)	agents/data_extraction_agent.py
+consolidated_bills_agent	consolidated_bills_extractor (LLM; skipped for PP)	same
+bills_agent	bill_merger_node (no LLM; merges bills)	agents/pharmacy_bills_agent.py
+store_bills	store_bills_node	nodes/bills_storage_nodes.py
+items_categorisation_agent	items_categorisation_node (fuzzy DB match + LLM)	agents/items_categorisation.py
+nme_analysis_agent	nme_analysis_node (LLM; bypassed for OPD)	same
+store_nme_analysis	store_nme_analysis_node	nodes/nme_analysis_nodes.py
+claim_form_agent	claim_form_extractor (LLM)	agents/data_extraction_agent.py
+store_claim_form	store_claim_form_node	nodes/claim_analysis_nodes.py
+ids_agent	identity_document_extractor (LLM)	agents/data_extraction_agent.py
+store_ids	store_ids_node	nodes/claim_analysis_nodes.py
+cheque_or_bank_details_agent	cheque_or_bank_details_extractor (LLM)	agents/data_extraction_agent.py
+store_cheque_or_bank_details	store_cheque_or_bank_details_node	nodes/claim_analysis_nodes.py
+patient_summary_agent	patient_summary_node (no LLM; DB aggregation)	agents/patient_summary_node.py
+store_patient_summary	store_patient_summary_node	nodes/patient_summary_nodes.py
+audit_agent	audit_node (LLM)	nodes/audit_nodes.py
+validation_agent	validation_node (no LLM; deterministic checks)	nodes/validation_nodes.py
+completion_aggregator	completion_aggregator_node (no LLM; builds review payload)	nodes/completion_nodes.py
+Edges / topology:
+
+
+START → check_size
+check_size ──route_by_size──▶ input            (≤50 pages)
+                          └──▶ segregate_half ×2 (>50 pages, Send fan-out)
+segregate_half → merge_segments → passthrough
+input → passthrough
+
+passthrough fans out to 5 parallel branches:
+  ├─ clinical_agent → store_clinical
+  ├─ itemized_bills_agent ──┐
+  ├─ consolidated_bills_agent ─┴─▶ bills_agent → store_bills
+  │                                → items_categorisation_agent → nme_analysis_agent → store_nme_analysis
+  ├─ claim_form_agent → store_claim_form → ids_agent → store_ids
+  └─ cheque_or_bank_details_agent → store_cheque_or_bank_details
+
+[store_clinical, store_cheque_or_bank_details, store_ids] → patient_summary_agent → store_patient_summary
+[store_nme_analysis, store_patient_summary] → audit_agent → validation_agent → completion_aggregator → END
+Barriers (LangGraph multi-source edges): patient_summary_agent waits on clinical+bank+ids stores; audit_agent waits on both NME and patient-summary stores.
+
+PAGE_SPLIT_THRESHOLD = 50 (in file_segregation_agent.py). ids_agent is deliberately sequenced after store_claim_form so it can read patient_name.
+
+Per-claim-type variation comes from flow_configs.py (FlowConfig): OPD uses prescription clinical extractor, OPD-specific audit prompt + policy rules + flash audit model; PP skips consolidated_bills_agent; RM/CL = default.
+
+2. Per-agent detail (name / prompt / model / schema / inputs)
+LLM defaults live in constants.py:
+
+GEMINI_MODEL = "gemini/gemini-2.5-flash"
+GEMINI_3_FLASH_MODEL = "gemini/gemini-3-flash-preview"
+GEMINI_3_PRO_MODEL = "gemini/gemini-3.1-pro-preview"
+GEMINI_LITE_MODEL = "gemini/gemini-2.5-flash-lite", GEMINI_THINKING_MODEL = "gemini/gemini-2.5-pro"
+THINKING_BUDGET = 8000; thinking levels MINIMAL/LOW/MEDIUM; DEFAULT_TEMPERATURE = 0.0; MAX_CONTINUATIONS = 12.
+Important on schemas: These agents do NOT use LangChain structured-output / with_structured_output. Each LLM call passes the PDF (base64 media block) + a system prompt that describes the JSON schema in text, then the raw string response is JSON-parsed (json.loads + json_repair). The Pydantic models in models/ and prompts/schema/ are used for downstream parsing/validation (e.g. _parse_nme_analysis, _parse_patient_summary), not for constraining the LLM output.
+
+The extractor agents (clinical, bills, claim form, bank, IDs) are all built by one factory create_node(document_type, system_prompt, model, ...) in agents/data_extraction_agent.py. Common behavior: read segments["aggregated_segments"][doc_type]["page_ranges"], crop those pages to a base64 sub-PDF via extract_ranges_to_one_pdf_base64(file_path, page_ranges), call process_file_with_llm(...), remap LLM page numbers back to original-PDF numbering, return {EXTRACTED_DATA: [{doc_type: response}], CLAIM_ID}.
+
+Agent (node)	Prompt constant / file	Template vars	Model	Output schema (Pydantic, for parsing)	Inputs consumed
+segregation_node (input) & segregate_half_node	DOCS_SEGREGATOR in prompts/prompts.py	none (static)	GEMINI_3_FLASH_MODEL, thinking LOW (overridable via agent_overrides["segregation_agent"])	models/document_segregator.py: DocumentSegregatorResponse {total_pages:int, segments:[DocumentSegment{document_type, pages (compact string e.g. "2-3,8"), format, quality_assessment, additional_notes, critical_elements}], overall_assessment}. Post-processed by aggregate_documents → {"aggregated_segments": {doc_type: {page_ranges:[{start,end}], total_pages}}}	full PDF (file_path), claim_id, flow_type, claim_type
+discharge_summary_extractor	DISCHARGE_SUMMARY_STRUCTURED_DATA_EXTRACTOR in prompts/structured_data_extractors.py	none	GEMINI_3_FLASH_MODEL, thinking MINIMAL	text-schema in prompt (claims_digitization_details etc.)	segments (discharge_summary + consolidated_bill page ranges), file_path
+prescription_extractor (OPD clinical)	PRESCRIPTION_STRUCTURED_DATA_EXTRACTOR_OPD same file	none	GEMINI_3_FLASH_MODEL, thinking MINIMAL, budget 0	text-schema	segments["prescription"], file_path
+itemized_bills_extractor	PHARMACY_BILL_STRUCTURED_DATA_EXTRACTOR (+ continuation prompts) in prompts/bills.py; truncate point PHARMACY_BILL_TRUNCATE_POINT	continuation uses `previous_json` replacement	GEMINI_MODEL (2.5-flash), budget 8000	models/pharmacy_bill.py: PharmacyBillStructuredData/PharmacyBillItem; also prompts/schema/bill_schemas.py. Output: {bills:[{bill:{..., bill_id, bill_type}, items:[...]}]}	segments["itemized_bill"], file_path
+consolidated_bills_extractor	CONSOLIDATED_BILL_STRUCTURED_DATA_EXTRACTOR in prompts/bills.py	continuation `previous_json`	GEMINI_MODEL, budget 8000	same bill schema (bill_type="consolidated_bill")	segments["consolidated_bill"], file_path
+claim_form_extractor	CLAIM_FORM_STRUCTURED_DATA_EXTRACTOR in prompts/claim_forms.py; schema prompts/schema/claim_form_schema.py	none	GEMINI_MODEL, budget 0	text-schema in claim_form_schema.py	segments["claim_forms"], file_path
+cheque_or_bank_details_extractor	BANK_DETAILS_EXTRACTOR in prompts/structured_data_extractors.py	none	GEMINI_3_FLASH_MODEL, budget 0	text-schema	segments["cheque_or_bank_details"], file_path
+identity_document_extractor (ids_agent)	IDENTITY_DOCUMENT_EXTRACTOR in prompts/structured_data_extractors.py	{patient_context} — injected with state["patient_name"] (string replace)	GEMINI_MODEL, budget 0	text-schema	segments["identity_document"], file_path, patient_name (from claim form store)
+items_categorisation_node	ITEMS_CATEGORISATION_SYSTEM_PROMPT in prompts/bills.py (fixed category list)	none	GEMINI_MODEL, budget 8000	LLM returns bill_item_categories; merged back onto bills. Fuzzy pre-pass via ItemCategoryMappingRepository.bulk_fuzzy_search_categories (0.95 threshold) — DB, not LLM	merged pharmacy_bills (from bill_merger_node via extracted_data)
+nme_analysis_node	dynamic per insurance provider via get_nme_prompt_for_claim(claim_id) in utils/nme_prompt_builder.py (base prompts in prompts/nme.py)	provider-specific rules injected	GEMINI_MODEL, budget 8000; bypassed entirely for OPD (returns empty nme_list)	models/nme_analysis.py: NMEAnalysisResponse/NMEItem {s_no, item_name, bill_amount, deductible_amount, admissible_amount, deduction_reason}. Downstream parsed as NMEAnalysisData (in completion_nodes)	categorised_items (from categorisation, via extracted_data), claim_id, claim_type
+patient_summary_node	no LLM — PatientDataAggregator.aggregate_patient_data_with_mapper in agents/patient_data_aggregator.py	n/a	none	PatientSummaryData (parsed by _parse_patient_summary, nodes/patient_summary_nodes.py) — sections: patient_details, hospitalization_details, clinical_details, past_history_details	reads all stored docs from DB by claim_id (claim form, clinical, bank, ids, etc.); OPD maps prescription→discharge_summary slot
+audit_node (audit_agent)	get_audit_prompt(...) in prompts/audit.py (see §4)	{{CLAIMED_AMOUNT}}, {{CALCULATED_TOTAL}}, {{JSON_OUTPUT}}, {{PATIENT_SUMMARY_FIELDS}}, {{POLICY_RULES}}, {{STAY_ASSESSMENT}}	GEMINI_3_FLASH_MODEL for OPD, else GEMINI_3_PRO_MODEL; thinking MEDIUM	LLM returns {analysis, patches:[...], validation} (text-schema; no Pydantic)	nme_analysis_parsed, patient_summary_parsed, segments, file_path, claim_type (see §4)
+validation_node	no LLM — deterministic bill/amount/categorization math	n/a	none	ValidationScores (see completion_nodes)	nme_analysis_parsed, patient_summary_parsed, segments
+completion_aggregator_node	no LLM	n/a	none	builds review payload; uses NMEAnalysisData, PatientSummaryData, ValidationScores	audit outputs + validation_scores from state
+LLM client wrapper: process_file_with_llm / process_text_with_llm in utils/llm_utils.py. It builds SystemMessage(system_prompt) + HumanMessage([{type:"media", data:base64, mime_type:"application/pdf"}]) (+ optional text prompt), invokes with retry/backoff, handles MAX_TOKENS continuations (up to 12) by re-prompting with `previous_json`, cleans/repairs JSON. Model instantiated by load_chat_model (utils/utils.py:118): ChatGoogleGenerativeAI(model, project, location="global", temperature=0.0, vertexai=True, credentials=...). For gemini-3* it sets thinking_level; otherwise thinking_budget. Rate limiter: InMemoryRateLimiter(10 rps, bucket 15).
+
+3. Dependency graph (for running a subset standalone)
+Data flows through the AgentState dict AND through the Postgres DB (store nodes write raw_extracted_data; patient_summary_node and audit_node re-read from DB). To run any node in isolation you must supply its inputs:
+
+segregation → needs only: file_path, claim_id, flow_type, claim_type. Produces segments (aggregated_segments with page ranges) + writes document_segments to DB.
+all extractor agents (clinical, itemized/consolidated bills, claim form, bank, IDs) → need: segments (specifically their doc-type page ranges) + file_path. IDs additionally needs patient_name.
+bill_merger → needs extracted_data containing itemized_bill and/or consolidated_bill entries.
+items_categorisation → needs extracted_data with pharmacy_bills (merger output) + DB ItemCategoryMapping table for fuzzy pass.
+nme_analysis → needs extracted_data with categorised_items + claim_id (for provider prompt) + claim_type.
+patient_summary → needs claim_id and all per-doc rows already stored in DB (claim form, clinical, bank, ids). It does not read them from state.
+audit → consumes nme_analysis_parsed (from store_nme_analysis) + patient_summary_parsed (from store_patient_summary) + segments (or fetches from DB via fetch_segments_from_db) + file_path + claim_type. This is the "audit consumes segregation + NME + patient-summary" relationship the user asked about.
+validation → consumes nme_analysis_parsed, patient_summary_parsed, segments.
+completion → consumes audit's nme_analysis_parsed/patient_summary_parsed + validation_scores.
+So to run e.g. audit standalone without upstream: feed {claim_id, file_path (or file_data), claim_type, nme_analysis_parsed, patient_summary_parsed, segments}. The nme_analysis_parsed must be the post-store NME JSON ({bills:[{bill, items}]}), and patient_summary_parsed the 4-section dict.
+
+4. Segregation agent and Audit agent — full detail
+Segregation agent
+File: agents/file_segregation_agent.py. Nodes: check_size_node, route_by_size, segregate_half_node, merge_segments_node, segregation_node.
+Prompt: DOCS_SEGREGATOR (static, no variables) in prompts/prompts.py. Persona "DocAnalytics-AI". Instructs: identify logical doc boundaries in a merged multi-page PDF, group consecutive same-type pages, emit ONE object per document_type with a compact pages string (e.g. "2-3,8"), is_pharmacy_bill boolean only for itemized_bill. Document-type categories come from DocumentType enum (app/core/enums.py / constants.py): claim_forms, insurance_policy, cheque_or_bank_details, identity_document, hospital_bill, pharmacy_bill, itemized_bill, consolidated_bill, cash_receipt, diagnostic_bill, discharge_summary, laboratory_report, prescription, investigation_report, other, etc.
+Model: GEMINI_3_FLASH_MODEL, thinking_level=LOW, budget THINKING_BUDGET. Overridable via FlowConfig.agent_overrides["segregation_agent"].
+Schema: models/document_segregator.py DocumentSegregatorResponse (text-described in prompt). Post-processing aggregate_documents (utils/utils.py) → {"aggregated_segments": {doc_type: {page_ranges:[{start,end}], total_pages}}}.
+Large-PDF path: if >50 pages, route_by_size uses Send to run segregate_half_node on each half in parallel; each half runs the same LLM prompt on a cropped base64 PDF, then page ranges are offset back to the original numbering and combined in merge_segments_node.
+OPD special-case (in segregation_node): merges cash_receipt page ranges into the itemized_bill bucket.
+Output/side effect: returns {segments: aggregated_data, claim_id, flow_type}; persists to DB via store_document_segments_with_flow_type (utils/segment_store_helper.py).
+Audit agent
+File: nodes/audit_nodes.py, function audit_node. Prompt file: prompts/audit.py.
+Prompt builder get_audit_prompt(claimed_amount, calculated_total, nme_analysis_json, claim_type, patient_summary_fields, stay_assessment). Selects base prompt from AUDIT_PROMPTS = {"default": AUDIT_SYSTEM_PROMPT, "opd": AUDIT_SYSTEM_PROMPT_OPD} keyed by FlowConfig.audit_prompt_variant, then string-replaces {{CLAIMED_AMOUNT}}, {{CALCULATED_TOTAL}}, {{JSON_OUTPUT}}, {{PATIENT_SUMMARY_FIELDS}}, {{POLICY_RULES}} (from FlowConfig.policy_rules, e.g. policy_rules_opd), {{STAY_ASSESSMENT}}. Prompt is assembled from modular blocks: CORE_PRINCIPLES, CORE_CONTEXT_HEADER, CORE_PATIENT_VERIFICATION, CORE_DUPLICATE_DETECTION, CORE_MISSING_BILL_DETECTION, CORE_DECIMAL_TOLERANCE, CORE_EXAMPLES, plus OPD variants (OPD_MEDICAL_LEGIBILITY, OPD_ICD_EXTRACTION, OPD_CASH_RECEIPT_RULES, etc.).
+Model: OPD → GEMINI_3_FLASH_MODEL, else GEMINI_3_PRO_MODEL; thinking_level=MEDIUM, budget 8000.
+Inputs: nme_analysis_parsed (parsed to NMEAnalysisData), patient_summary_parsed (→ _parse_patient_summary; flattened via flatten_patient_summary_fields into the 4-section flat dict fed to the prompt), computed claimed_amount (from patient summary) and calculated_total (calculate_total_amount_from_nme_analysis), cleaned_nme_json (prepare_nme_data_for_audit strips categorization_source). The audit PDF is the pages of all doc types except FlowConfig.audit_excluded_doc_types (default: other, investigation_report) and OTHER — extracted via extract_ranges_to_one_pdf_base64; falls back to file_data or full PDF.
+Output: LLM returns JSON {analysis:{status, discrepancy_reason,...}, patches:[...], validation:{...}}. Patches applied by apply_audit_patches supporting DELETE_BILL, DELETE_ITEM, EDIT_BILL_DETAILS, EDIT_ITEM, ADD_BILL, ADD_ITEM, EDIT_CLAIMED_AMOUNT, EDIT_PATIENT_SUMMARY (flat-key→section mapping via map_flat_key_to_patient_summary_path). Returns updated nme_analysis_parsed/patient_summary_parsed (edited) + ..._original (pre-audit) + audit_completed, audit_analysis, audit_full_data, audit_patches. Persists raw+parsed as document_type="audit_analysis" in raw_extracted_data.
+5. How documents/PDFs enter the pipeline
+Source: PDF stored in MinIO; claim_processor.py downloads it to a temp .pdf and passes the local file_path into the graph.
+Page utilities in utils/pdf_file_utils.py (uses PyPDF2): get_pdf_page_count, load_pdf_file (whole file → base64), extract_ranges_to_one_pdf_base64(path, page_ranges) (crops given ranges into one combined PDF → base64).
+No OCR / no text extraction / no image rasterization. The raw PDF (or a cropped sub-PDF) is sent to Gemini as a multimodal media block: {"type": "media", "data": <base64 pdf>, "mime_type": "application/pdf"} (in process_file_with_llm). Gemini reads the PDF natively. So the format reaching agents is base64-encoded PDF bytes, not text or images.
+Page-splitting: (a) >50-page PDFs are split in half for segregation only; (b) each extractor crops just its doc-type page ranges. Because cropping renumbers pages from 1, _remap_page_number / range-offset logic maps LLM-reported page numbers back to original-PDF numbering.
+6. State shape
+models/state.py. LangGraph state is a TypedDict (LangGraph v1.0+), not Pydantic. Base AgentState(TypedDict, total=False) with custom reducers take_first (claim_id init-once), take_last, and operator.add for list accumulation:
+
+file_path: Union[Dict,str], file_data: Optional[str] (base64, re-extraction), claim_id: Annotated[str, take_first], turn: int, flow_type, claim_type: Annotated[Optional[str], take_last].
+Parsed hand-off fields: nme_analysis_parsed, patient_summary_parsed (both Annotated[Dict, take_last]), patient_name.
+Audit: audit_analysis, audit_full_data, audit_patches (all take_last).
+PDF-split: page_count, half_start, half_end, partial_segments: Annotated[List[Dict], add].
+Subclasses: FileSegState (+files_segregated), SegmentProcessState (+segments, extracted_data: Annotated[List[Dict], add], processing_status, validation_scores: take_last), RawDocsStoreState, ExtractedDataState (+extracted_data). The graph is created with StateGraph(AgentState). Note: fan-out branches each append to extracted_data via the add reducer, so the merged state after passthrough contains a list of {doc_type: response} dicts.
+
+Concurrent-write note: because parallel branches write extra keys not covered by reducers (e.g. nme_analysis_stored, per-store booleans), those are simple total=False keys; the load-bearing cross-branch values (nme_analysis_parsed, patient_summary_parsed, validation_scores, audit fields) use take_last.
+
+7. LLM configuration summary
+Provider/client: utils/utils.py:load_chat_model(model_name, temperature=0.0, thinking_budget=0, thinking_level=None) → langchain_google_genai.ChatGoogleGenerativeAI with vertexai=True, location="global", project from GOOGLE_CLOUD_CREDENTIALS_JSON service account (cached by SHA256). timeout=settings.LLM_TIMEOUT_SECONDS, max_retries=settings.LLM_MAX_RETRIES.
+Model-name format "provider/model"; only gemini provider supported. For gemini-3* models it sets thinking_level (minimal/low/medium); older models use thinking_budget.
+Wrapper: utils/llm_utils.py:process_file_with_llm (multimodal PDF) and process_text_with_llm (text). Rate limiter InMemoryRateLimiter(10 rps); retry/backoff on 429/500/503; continuation loop for MAX_TOKENS (up to MAX_CONTINUATIONS=12) using truncate points + `previous_json` re-injection; response cleaned via clean_json_response + json_repair.
+Temperature is globally 0.0 (DEFAULT_TEMPERATURE) — never overridden per agent.
+Per-agent model config: set at node construction in data_extraction_agent.py (e.g. bills → 2.5-flash budget 8000; discharge/prescription/bank → 3-flash; claim form/IDs → 2.5-flash budget 0), and inside nodes for segregation (3-flash LOW) and audit (3-flash OPD / 3.1-pro non-OPD, MEDIUM). Overrides per claim type via FlowConfig.agent_overrides (AgentConfig supports system_prompt, continuation_prompt, continuation_system_prompt, model, thinking_budget, thinking_level) — currently used for audit_agent (OPD→flash) and available for segregation_agent.
+Cost/usage tracking: every invocation logged + persisted to claim_llm_usage via pricing/estimated_vertex_cost.py + pricing/rate_card_resolve.py (vertex_rate_card.json), gated by settings.ENABLE_LLM_USAGE_PERSISTENCE.
+Docs: there is a human-written overview at healthpay/docs/backend/lang-graph.md, but it is partly stale (it lists older models like gemini-1.5-flash/gpt-4o-mini and OpenAI as primary provider — the actual code uses only Vertex Gemini 2.5/3.x). Trust the code, not that doc, for models. Cursor rule .cursor/rules/lang_graph.mdc also documents conventions.

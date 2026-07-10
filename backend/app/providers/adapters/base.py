@@ -75,7 +75,12 @@ class ProviderAdapter:
                 )
 
     def normalize(
-        self, *, system: str, instruction: str, documents: list[DocumentInput]
+        self,
+        *,
+        system: str,
+        instruction: str,
+        documents: list[DocumentInput],
+        config: dict[str, Any] | None = None,
     ) -> NormalizedContent:  # pragma: no cover - overridden
         raise NotImplementedError
 
@@ -95,8 +100,14 @@ class TextOnlyAdapter(ProviderAdapter):
     """
 
     def normalize(
-        self, *, system: str, instruction: str, documents: list[DocumentInput]
+        self,
+        *,
+        system: str,
+        instruction: str,
+        documents: list[DocumentInput],
+        config: dict[str, Any] | None = None,
     ) -> NormalizedContent:
+        del config  # text-only tasks send no images; nothing to compress.
         self.gate(documents)
         return NormalizedContent(
             system=system,

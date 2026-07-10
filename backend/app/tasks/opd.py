@@ -29,7 +29,13 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from app.tasks.base import Task
+from app.tasks.base import ReferenceRuntime, Task, TransformTask
+from app.tasks.prompts.opd_claim_forms_reference import CLAIM_FORM_SYSTEM_PROMPT
+from app.tasks.prompts.opd_documents_reference import (
+    CHEQUE_BANK_SYSTEM_PROMPT,
+    IDENTITY_DOCUMENT_SYSTEM_PROMPT,
+    PRESCRIPTION_SYSTEM_PROMPT,
+)
 from app.tasks.prompts.opd_healthpay import (
     AUDIT_OPD_INSTRUCTION,
     AUDIT_SYSTEM_PROMPT_OPD,
@@ -50,6 +56,8 @@ from app.tasks.prompts.opd_healthpay import (
     SEGREGATION_INSTRUCTION,
     SEGREGATION_PROMPT,
 )
+from app.tasks.prompts.opd_icd_reference import EXTRACT_ICD_CODES_SYSTEM_PROMPT
+from app.tasks.prompts.opd_superclaims import DOCUMENT_INSTRUCTION, ICD_INSTRUCTION
 from app.tasks.schemas.opd_healthpay import (
     AuditAnalysisOutput,
     BenefitPlanSelectionOutput,
@@ -59,6 +67,14 @@ from app.tasks.schemas.opd_healthpay import (
     ItemizedBillsOutput,
     ItemsCategorisationOutput,
     NMEAnalysisResponse,
+)
+from app.tasks.schemas.opd_superclaims import (
+    BankDetailsOutput,
+    ClaimFormOutput,
+    ExtractIcdCodesOutput,
+    IdentityDocumentOutput,
+    PatientSummaryOutput,
+    PrescriptionOutput,
 )
 
 # ---------------------------------------------------------------------------
@@ -73,6 +89,9 @@ SEGREGATION = Task(
     schema=DocumentSegregatorResponse,
     requires_documents=True,
     document_types=frozenset(),  # runs on the whole packet
+    reference_runtime=ReferenceRuntime(
+        model_id="gemini-3-flash", thinking_level="low", timeout_s=120
+    ),
 )
 
 ITEMIZED_BILLS = Task(
@@ -82,6 +101,9 @@ ITEMIZED_BILLS = Task(
     schema=ItemizedBillsOutput,
     requires_documents=True,
     document_types=frozenset({"itemized_bill"}),
+    depends_on=("segregation",),
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=8000),
+    gold_feed_keys=("segregation",),
 )
 
 CONSOLIDATED_BILLS = Task(
@@ -91,6 +113,9 @@ CONSOLIDATED_BILLS = Task(
     schema=ConsolidatedBillsOutput,
     requires_documents=True,
     document_types=frozenset({"consolidated_bill"}),
+    depends_on=("segregation",),
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=8000),
+    gold_feed_keys=("segregation",),
 )
 
 AUDIT_OPD = Task(
@@ -101,6 +126,26 @@ AUDIT_OPD = Task(
     instruction=AUDIT_OPD_INSTRUCTION,
     schema=AuditAnalysisOutput,
     requires_documents=True,
+    depends_on=(
+        "segregation",
+        "nme_analysis",
+        "patient_summary",
+        "benefit_plan",
+        "extract_icd_codes",
+    ),
+    reference_runtime=ReferenceRuntime(
+        model_id="gemini-3-flash",
+        thinking_level="low",
+        max_output_tokens=16000,
+        timeout_s=300,
+    ),
+    gold_feed_keys=(
+        "segregation",
+        "nme_analysis",
+        "patient_summary",
+        "benefit_plan",
+        "extract_icd_codes",
+    ),
 )
 
 # ---------------------------------------------------------------------------
@@ -113,6 +158,9 @@ ITEMS_CATEGORISATION = Task(
     schema=ItemsCategorisationOutput,
     requires_documents=False,
     is_text_task=True,
+    depends_on=("merge_bills",),
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=8000),
+    gold_feed_keys=("merge_bills",),
 )
 
 NME_ANALYSIS = Task(
@@ -122,6 +170,9 @@ NME_ANALYSIS = Task(
     schema=NMEAnalysisResponse,
     requires_documents=False,
     is_text_task=True,
+    depends_on=("items_categorisation",),
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=8000),
+    gold_feed_keys=("items_categorisation",),
 )
 
 POLICY_EXTRACTION = Task(
@@ -131,6 +182,8 @@ POLICY_EXTRACTION = Task(
     schema=EkincarePolicyExtractionOutput,
     requires_documents=False,
     is_text_task=True,
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=0),
+    gold_feed_keys=("policy",),
 )
 
 BENEFIT_PLAN = Task(
@@ -140,6 +193,65 @@ BENEFIT_PLAN = Task(
     schema=BenefitPlanSelectionOutput,
     requires_documents=False,
     is_text_task=True,
+    depends_on=("items_categorisation", "policy_extraction", "prescription"),
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=2048),
+    gold_feed_keys=("items_categorisation", "policy_extraction", "prescription"),
+)
+
+CLAIM_FORM = Task(
+    name="claim_form",
+    system_prompt=CLAIM_FORM_SYSTEM_PROMPT,
+    instruction=DOCUMENT_INSTRUCTION,
+    schema=ClaimFormOutput,
+    document_types=frozenset({"claim_forms"}),
+    depends_on=("segregation",),
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=0),
+    gold_feed_keys=("segregation",),
+)
+
+PRESCRIPTION = Task(
+    name="prescription",
+    system_prompt=PRESCRIPTION_SYSTEM_PROMPT,
+    instruction=DOCUMENT_INSTRUCTION,
+    schema=PrescriptionOutput,
+    document_types=frozenset({"prescription"}),
+    depends_on=("segregation",),
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=0),
+    gold_feed_keys=("segregation",),
+)
+
+IDENTITY_DOCUMENT = Task(
+    name="identity_document",
+    system_prompt=IDENTITY_DOCUMENT_SYSTEM_PROMPT,
+    instruction=DOCUMENT_INSTRUCTION,
+    schema=IdentityDocumentOutput,
+    document_types=frozenset({"identity_document"}),
+    depends_on=("segregation",),
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=0),
+    gold_feed_keys=("segregation",),
+)
+
+CHEQUE_BANK = Task(
+    name="cheque_bank",
+    system_prompt=CHEQUE_BANK_SYSTEM_PROMPT,
+    instruction=DOCUMENT_INSTRUCTION,
+    schema=BankDetailsOutput,
+    document_types=frozenset({"cheque_or_bank_details"}),
+    depends_on=("segregation",),
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=0),
+    gold_feed_keys=("segregation",),
+)
+
+EXTRACT_ICD_CODES = Task(
+    name="extract_icd_codes",
+    system_prompt=EXTRACT_ICD_CODES_SYSTEM_PROMPT,
+    instruction=ICD_INSTRUCTION,
+    schema=ExtractIcdCodesOutput,
+    requires_documents=False,
+    is_text_task=True,
+    depends_on=("prescription", "merge_bills"),
+    reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=0),
+    gold_feed_keys=("prescription", "merge_bills"),
 )
 
 
@@ -304,6 +416,63 @@ def build_text_inputs(
     }
 
 
+def _merge_transform(upstream: dict[str, Any]) -> dict[str, Any]:
+    return merge_bills(upstream.get("itemized_bills"), upstream.get("consolidated_bills"))
+
+
+def _patient_summary_transform(upstream: dict[str, Any]) -> dict[str, Any]:
+    claim = upstream.get("claim_form") or {}
+    clinical = upstream.get("prescription") or {}
+    return {
+        "patient_summary": {
+            "patient_details": claim.get("part_a", claim),
+            "hospitalization_details": claim.get("part_b", {}),
+            "clinical_details": clinical.get("claims_digitization_details", clinical),
+            "past_history_details": {},
+            "bills": upstream.get("merge_bills") or {},
+            "bank_details": upstream.get("cheque_bank") or {},
+            "identity_details": upstream.get("identity_document") or {},
+        }
+    }
+
+
+MERGE_BILLS = TransformTask(
+    name="merge_bills",
+    system_prompt="",
+    instruction="",
+    schema=ItemizedBillsOutput,
+    requires_documents=False,
+    deterministic=True,
+    depends_on=("itemized_bills", "consolidated_bills"),
+    gold_feed_keys=("itemized_bills", "consolidated_bills"),
+    transform=_merge_transform,
+)
+
+PATIENT_SUMMARY = TransformTask(
+    name="patient_summary",
+    system_prompt="",
+    instruction="",
+    schema=PatientSummaryOutput,
+    requires_documents=False,
+    deterministic=True,
+    depends_on=(
+        "claim_form",
+        "prescription",
+        "merge_bills",
+        "cheque_bank",
+        "identity_document",
+    ),
+    gold_feed_keys=(
+        "claim_form",
+        "prescription",
+        "merge_bills",
+        "cheque_bank",
+        "identity_document",
+    ),
+    transform=_patient_summary_transform,
+)
+
+
 OPD_TASKS: dict[str, Task] = {
     t.name: t
     for t in (
@@ -311,8 +480,15 @@ OPD_TASKS: dict[str, Task] = {
         POLICY_EXTRACTION,
         ITEMIZED_BILLS,
         CONSOLIDATED_BILLS,
+        CLAIM_FORM,
+        PRESCRIPTION,
+        CHEQUE_BANK,
+        IDENTITY_DOCUMENT,
+        MERGE_BILLS,
         ITEMS_CATEGORISATION,
         NME_ANALYSIS,
+        EXTRACT_ICD_CODES,
+        PATIENT_SUMMARY,
         BENEFIT_PLAN,
         AUDIT_OPD,
     )
@@ -325,17 +501,34 @@ OPD_PIPE_ORDER: list[str] = [
     "policy_extraction",
     "itemized_bills",
     "consolidated_bills",
+    "claim_form",
+    "prescription",
+    "cheque_bank",
+    "identity_document",
+    "merge_bills",
     "items_categorisation",
     "nme_analysis",
+    "extract_icd_codes",
+    "patient_summary",
     "benefit_plan",
     "audit",
 ]
 
 # Document-driven tasks the smoke runs directly on the claim PDF.
-OPD_DOCUMENT_TASKS: list[str] = ["segregation", "itemized_bills", "consolidated_bills", "audit"]
+OPD_DOCUMENT_TASKS: list[str] = [
+    "segregation",
+    "itemized_bills",
+    "consolidated_bills",
+    "claim_form",
+    "prescription",
+    "cheque_bank",
+    "identity_document",
+    "audit",
+]
 OPD_TEXT_TASKS: list[str] = [
     "policy_extraction",
     "items_categorisation",
     "nme_analysis",
+    "extract_icd_codes",
     "benefit_plan",
 ]

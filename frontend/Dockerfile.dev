@@ -1,0 +1,14 @@
+# Development image — hot-reloading Vite dev server.
+# Production deploys should use ./Dockerfile (static build behind nginx).
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
