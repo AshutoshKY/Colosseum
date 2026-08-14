@@ -93,6 +93,9 @@ class Settings(BaseSettings):
     qwen_vl_base_url: str = "http://15.252.27.168:8000/v1"
     qwen_vl_api_key: str = "EMPTY"
 
+    # ---- OpenRouter (single gateway fronting many upstream vendors) ----
+    openrouter_api_key: str | None = None
+
     # ---- Pricing ----
     pricing_version: str = "2026-06"
 

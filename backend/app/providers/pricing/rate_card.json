@@ -1,76 +1,395 @@
 {
   "version": "colosseum-2026-06-phase2",
   "source": "Seeded from superclaims-ai vertex_rate_card.json; extended multi-provider (Vertex Model Garden partners + xAI + external) with thinking + cache_read rates. Approximate public list prices per 1M tokens (USD). Cross-checked against LiteLLM model_cost where available.",
-  "notes": "Estimates from public prices + reported token counts, NOT provider invoices. Self-deploy models (gemma-self-deploy) bill on VM uptime, NOT per-token — tracked separately and flagged. Unknown rates are marked input/output 0 with a note; pricing_version is recorded on every run.",
+  "notes": "Estimates from public prices + reported token counts, NOT provider invoices. Self-deploy models (gemma-self-deploy) bill on VM uptime, NOT per-token \u2014 tracked separately and flagged. Unknown rates are marked input/output 0 with a note; pricing_version is recorded on every run.",
   "region_multipliers": {
     "default": 1.0,
     "regional": 1.1
   },
   "models": {
-    "gemini-3.1-pro-preview": {"input_usd_per_million": 2.0, "output_usd_per_million": 12.0, "cache_read_usd_per_million": 0.2, "thinking_usd_per_million": 12.0},
-    "gemini-3-flash-preview": {"input_usd_per_million": 0.5, "output_usd_per_million": 3.0, "cache_read_usd_per_million": 0.05, "thinking_usd_per_million": 3.0},
-    "gemini-3.1-flash-lite": {"input_usd_per_million": 0.25, "output_usd_per_million": 1.5, "cache_read_usd_per_million": 0.025, "thinking_usd_per_million": 1.5},
-    "gemini-2.5-pro": {"input_usd_per_million": 1.25, "output_usd_per_million": 10.0, "cache_read_usd_per_million": 0.13, "thinking_usd_per_million": 10.0},
-    "gemini-2.5-flash": {"input_usd_per_million": 0.3, "output_usd_per_million": 2.5, "cache_read_usd_per_million": 0.03, "thinking_usd_per_million": 2.5},
-    "gemini-2.5-flash-lite": {"input_usd_per_million": 0.1, "output_usd_per_million": 0.4, "cache_read_usd_per_million": 0.01, "thinking_usd_per_million": 0.4},
-
-    "claude-opus-4-8": {"input_usd_per_million": 5.0, "output_usd_per_million": 25.0, "cache_read_usd_per_million": 0.5, "thinking_usd_per_million": 25.0},
-    "claude-opus-4-7": {"input_usd_per_million": 5.0, "output_usd_per_million": 25.0, "cache_read_usd_per_million": 0.5, "thinking_usd_per_million": 25.0},
-    "claude-opus-4-6": {"input_usd_per_million": 5.0, "output_usd_per_million": 25.0, "cache_read_usd_per_million": 0.5, "thinking_usd_per_million": 25.0},
-    "claude-opus-4-5": {"input_usd_per_million": 5.0, "output_usd_per_million": 25.0, "cache_read_usd_per_million": 0.5, "thinking_usd_per_million": 25.0},
-    "claude-opus-4-1": {"input_usd_per_million": 15.0, "output_usd_per_million": 75.0, "cache_read_usd_per_million": 1.5, "thinking_usd_per_million": 75.0},
-    "claude-opus-4": {"input_usd_per_million": 15.0, "output_usd_per_million": 75.0, "cache_read_usd_per_million": 1.5, "thinking_usd_per_million": 75.0},
-    "claude-sonnet-4-6": {"input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cache_read_usd_per_million": 0.3, "thinking_usd_per_million": 15.0},
-    "claude-sonnet-4-5": {"input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cache_read_usd_per_million": 0.3, "thinking_usd_per_million": 15.0},
-    "claude-sonnet-4": {"input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cache_read_usd_per_million": 0.3, "thinking_usd_per_million": 15.0},
-    "claude-haiku-4-5": {"input_usd_per_million": 1.0, "output_usd_per_million": 5.0, "cache_read_usd_per_million": 0.1, "thinking_usd_per_million": 5.0},
-    "claude-3-7-sonnet": {"input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cache_read_usd_per_million": 0.3, "thinking_usd_per_million": 15.0},
-    "claude-3-5-sonnet": {"input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cache_read_usd_per_million": 0.3},
-    "claude-3-5-haiku": {"input_usd_per_million": 0.8, "output_usd_per_million": 4.0, "cache_read_usd_per_million": 0.08},
-
-    "deepseek-r1": {"input_usd_per_million": 1.35, "output_usd_per_million": 5.4, "cache_read_usd_per_million": 0.14, "thinking_usd_per_million": 5.4},
-    "deepseek-v3": {"input_usd_per_million": 0.27, "output_usd_per_million": 1.1, "cache_read_usd_per_million": 0.07, "thinking_usd_per_million": 1.1},
-
-    "qwen3": {"input_usd_per_million": 0.25, "output_usd_per_million": 1.0, "cache_read_usd_per_million": 0.1, "thinking_usd_per_million": 1.0},
-    "qwen3-coder": {"input_usd_per_million": 0.3, "output_usd_per_million": 1.2, "cache_read_usd_per_million": 0.1},
-    "self_deploy_qwen3_vl_8b": {"input_usd_per_million": 0, "output_usd_per_million": 0, "note": "Self-hosted vLLM; VM-uptime priced, not per-token."},
-
-    "bedrock_claude_sonnet_4_5": {"input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cache_read_usd_per_million": 0.3, "thinking_usd_per_million": 15.0},
-    "bedrock_nova_pro": {"input_usd_per_million": 0.84, "output_usd_per_million": 3.36},
-    "bedrock_nova_lite": {"input_usd_per_million": 0.063, "output_usd_per_million": 0.252},
-    "bedrock_nova_micro": {"input_usd_per_million": 0.037, "output_usd_per_million": 0.148},
-    "bedrock_llama_3_2_90b": {"input_usd_per_million": 2.0, "output_usd_per_million": 2.0},
-    "bedrock_mistral_large": {"input_usd_per_million": 3.0, "output_usd_per_million": 9.0},
-
-    "glm-5": {"input_usd_per_million": 1.0, "output_usd_per_million": 3.2, "cache_read_usd_per_million": 0.2, "thinking_usd_per_million": 3.2},
-    "glm-4.7": {"input_usd_per_million": 0.6, "output_usd_per_million": 2.2, "cache_read_usd_per_million": 0.11, "thinking_usd_per_million": 2.2},
-    "glm-4.6": {"input_usd_per_million": 0.6, "output_usd_per_million": 2.2, "cache_read_usd_per_million": 0.11, "thinking_usd_per_million": 2.2},
-
-    "kimi-k2": {"input_usd_per_million": 0.6, "output_usd_per_million": 2.5, "cache_read_usd_per_million": 0.15, "thinking_usd_per_million": 2.5},
-
-    "grok-4": {"input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cache_read_usd_per_million": 0.75, "thinking_usd_per_million": 15.0},
-    "grok-4-fast": {"input_usd_per_million": 0.2, "output_usd_per_million": 0.5, "cache_read_usd_per_million": 0.05, "thinking_usd_per_million": 0.5},
-    "grok-3": {"input_usd_per_million": 3.0, "output_usd_per_million": 15.0, "cache_read_usd_per_million": 0.75},
-    "grok-3-mini": {"input_usd_per_million": 0.3, "output_usd_per_million": 0.5, "cache_read_usd_per_million": 0.075, "thinking_usd_per_million": 0.5},
-
-    "mistral-small": {"input_usd_per_million": 0.1, "output_usd_per_million": 0.3, "cache_read_usd_per_million": 0.1},
-    "mistral-medium": {"input_usd_per_million": 0.4, "output_usd_per_million": 2.0, "cache_read_usd_per_million": 0.1},
-    "mistral-large": {"input_usd_per_million": 2.0, "output_usd_per_million": 6.0, "cache_read_usd_per_million": 0.5},
-    "mistral-nemo": {"input_usd_per_million": 0.15, "output_usd_per_million": 0.15, "cache_read_usd_per_million": 0.05},
-
-    "llama-3": {"input_usd_per_million": 0.5, "output_usd_per_million": 0.7, "cache_read_usd_per_million": 0.1},
-    "llama-4-scout": {"input_usd_per_million": 0.25, "output_usd_per_million": 0.7, "cache_read_usd_per_million": 0.1},
-    "llama-4-maverick": {"input_usd_per_million": 0.35, "output_usd_per_million": 1.15, "cache_read_usd_per_million": 0.1},
-
-    "gemma": {"input_usd_per_million": 0.1, "output_usd_per_million": 0.2, "cache_read_usd_per_million": 0.05},
-    "gemma-self-deploy": {"input_usd_per_million": 0, "output_usd_per_million": 0, "note": "VM-uptime priced (self-deploy GPU/TPU endpoint), NOT per-token. Track separately."},
-
-    "gpt-oss-120b": {"input_usd_per_million": 0.15, "output_usd_per_million": 0.6, "cache_read_usd_per_million": 0.05, "thinking_usd_per_million": 0.6},
-    "gpt-oss-20b": {"input_usd_per_million": 0.05, "output_usd_per_million": 0.2, "cache_read_usd_per_million": 0.02, "thinking_usd_per_million": 0.2},
-
-    "minimax-m2": {"input_usd_per_million": 0.3, "output_usd_per_million": 1.2, "cache_read_usd_per_million": 0.1, "thinking_usd_per_million": 1.2},
-    "jamba-1.5-large": {"input_usd_per_million": 2.0, "output_usd_per_million": 8.0, "cache_read_usd_per_million": 0.5},
-    "jamba-1.5-mini": {"input_usd_per_million": 0.2, "output_usd_per_million": 0.4, "cache_read_usd_per_million": 0.05}
+    "gemini-2.5-pro": {
+      "input_usd_per_million": 1.25,
+      "output_usd_per_million": 10.0,
+      "cache_read_usd_per_million": 0.13,
+      "thinking_usd_per_million": 10.0
+    },
+    "gemini-2.5-flash": {
+      "input_usd_per_million": 0.3,
+      "output_usd_per_million": 2.5,
+      "cache_read_usd_per_million": 0.03,
+      "thinking_usd_per_million": 2.5
+    },
+    "gemini-2.5-flash-lite": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.4,
+      "cache_read_usd_per_million": 0.01,
+      "thinking_usd_per_million": 0.4
+    },
+    "gemini-2.0-flash": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.4,
+      "cache_read_usd_per_million": 0.025,
+      "thinking_usd_per_million": 0.4
+    },
+    "gemini-2.0-flash-lite": {
+      "input_usd_per_million": 0.075,
+      "output_usd_per_million": 0.3,
+      "cache_read_usd_per_million": 0.02,
+      "thinking_usd_per_million": 0.3
+    },
+    "gemini-2.0-pro": {
+      "input_usd_per_million": 1.25,
+      "output_usd_per_million": 10.0,
+      "cache_read_usd_per_million": 0.13,
+      "thinking_usd_per_million": 10.0
+    },
+    "gemini-1.5-pro": {
+      "input_usd_per_million": 1.25,
+      "output_usd_per_million": 5.0,
+      "cache_read_usd_per_million": 0.3,
+      "thinking_usd_per_million": 5.0
+    },
+    "gemini-1.5-flash": {
+      "input_usd_per_million": 0.075,
+      "output_usd_per_million": 0.3,
+      "cache_read_usd_per_million": 0.02,
+      "thinking_usd_per_million": 0.3
+    },
+    "gemini-1.5-flash-8b": {
+      "input_usd_per_million": 0.0375,
+      "output_usd_per_million": 0.15,
+      "cache_read_usd_per_million": 0.01,
+      "thinking_usd_per_million": 0.15
+    },
+    "claude-3-opus": {
+      "input_usd_per_million": 15.0,
+      "output_usd_per_million": 75.0,
+      "cache_read_usd_per_million": 1.5
+    },
+    "claude-3-haiku": {
+      "input_usd_per_million": 0.25,
+      "output_usd_per_million": 1.25,
+      "cache_read_usd_per_million": 0.025
+    },
+    "llama-3.3-70b": {
+      "input_usd_per_million": 0.7,
+      "output_usd_per_million": 0.8,
+      "cache_read_usd_per_million": 0.1
+    },
+    "llama-3.2-vision": {
+      "input_usd_per_million": 0.6,
+      "output_usd_per_million": 0.6,
+      "cache_read_usd_per_million": 0.1
+    },
+    "llama-3.2-text": {
+      "input_usd_per_million": 0.15,
+      "output_usd_per_million": 0.15,
+      "cache_read_usd_per_million": 0.03
+    },
+    "qwen-2.5": {
+      "input_usd_per_million": 0.2,
+      "output_usd_per_million": 0.6,
+      "cache_read_usd_per_million": 0.05
+    },
+    "qwen-2.5-coder": {
+      "input_usd_per_million": 0.25,
+      "output_usd_per_million": 0.8,
+      "cache_read_usd_per_million": 0.05
+    },
+    "claude-opus-4-8": {
+      "input_usd_per_million": 5.0,
+      "output_usd_per_million": 25.0,
+      "cache_read_usd_per_million": 0.5,
+      "thinking_usd_per_million": 25.0
+    },
+    "claude-opus-4-7": {
+      "input_usd_per_million": 5.0,
+      "output_usd_per_million": 25.0,
+      "cache_read_usd_per_million": 0.5,
+      "thinking_usd_per_million": 25.0
+    },
+    "claude-opus-4-6": {
+      "input_usd_per_million": 5.0,
+      "output_usd_per_million": 25.0,
+      "cache_read_usd_per_million": 0.5,
+      "thinking_usd_per_million": 25.0
+    },
+    "claude-opus-4-5": {
+      "input_usd_per_million": 5.0,
+      "output_usd_per_million": 25.0,
+      "cache_read_usd_per_million": 0.5,
+      "thinking_usd_per_million": 25.0
+    },
+    "claude-opus-4-1": {
+      "input_usd_per_million": 15.0,
+      "output_usd_per_million": 75.0,
+      "cache_read_usd_per_million": 1.5,
+      "thinking_usd_per_million": 75.0
+    },
+    "claude-opus-4": {
+      "input_usd_per_million": 15.0,
+      "output_usd_per_million": 75.0,
+      "cache_read_usd_per_million": 1.5,
+      "thinking_usd_per_million": 75.0
+    },
+    "claude-sonnet-4-6": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "cache_read_usd_per_million": 0.3,
+      "thinking_usd_per_million": 15.0
+    },
+    "claude-sonnet-4-5": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "cache_read_usd_per_million": 0.3,
+      "thinking_usd_per_million": 15.0
+    },
+    "claude-sonnet-4": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "cache_read_usd_per_million": 0.3,
+      "thinking_usd_per_million": 15.0
+    },
+    "claude-haiku-4-5": {
+      "input_usd_per_million": 1.0,
+      "output_usd_per_million": 5.0,
+      "cache_read_usd_per_million": 0.1,
+      "thinking_usd_per_million": 5.0
+    },
+    "claude-3-7-sonnet": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "cache_read_usd_per_million": 0.3,
+      "thinking_usd_per_million": 15.0
+    },
+    "claude-3-5-sonnet": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "cache_read_usd_per_million": 0.3
+    },
+    "claude-3-5-haiku": {
+      "input_usd_per_million": 0.8,
+      "output_usd_per_million": 4.0,
+      "cache_read_usd_per_million": 0.08
+    },
+    "deepseek-r1": {
+      "input_usd_per_million": 1.35,
+      "output_usd_per_million": 5.4,
+      "cache_read_usd_per_million": 0.14,
+      "thinking_usd_per_million": 5.4
+    },
+    "deepseek-v3": {
+      "input_usd_per_million": 0.27,
+      "output_usd_per_million": 1.1,
+      "cache_read_usd_per_million": 0.07,
+      "thinking_usd_per_million": 1.1
+    },
+    "qwen3": {
+      "input_usd_per_million": 0.25,
+      "output_usd_per_million": 1.0,
+      "cache_read_usd_per_million": 0.1,
+      "thinking_usd_per_million": 1.0
+    },
+    "qwen3-coder": {
+      "input_usd_per_million": 0.3,
+      "output_usd_per_million": 1.2,
+      "cache_read_usd_per_million": 0.1
+    },
+    "self_deploy_qwen3_vl_8b": {
+      "input_usd_per_million": 0,
+      "output_usd_per_million": 0,
+      "note": "Self-hosted vLLM; VM-uptime priced, not per-token."
+    },
+    "bedrock_claude_sonnet_4_5": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "cache_read_usd_per_million": 0.3,
+      "thinking_usd_per_million": 15.0
+    },
+    "bedrock_nova_pro": {
+      "input_usd_per_million": 0.84,
+      "output_usd_per_million": 3.36
+    },
+    "bedrock_nova_lite": {
+      "input_usd_per_million": 0.063,
+      "output_usd_per_million": 0.252
+    },
+    "bedrock_nova_micro": {
+      "input_usd_per_million": 0.037,
+      "output_usd_per_million": 0.148
+    },
+    "bedrock_llama_3_2_90b": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 2.0
+    },
+    "bedrock_mistral_large": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 9.0
+    },
+    "glm-5": {
+      "input_usd_per_million": 1.0,
+      "output_usd_per_million": 3.2,
+      "cache_read_usd_per_million": 0.2,
+      "thinking_usd_per_million": 3.2
+    },
+    "glm-4.7": {
+      "input_usd_per_million": 0.6,
+      "output_usd_per_million": 2.2,
+      "cache_read_usd_per_million": 0.11,
+      "thinking_usd_per_million": 2.2
+    },
+    "glm-4.6": {
+      "input_usd_per_million": 0.6,
+      "output_usd_per_million": 2.2,
+      "cache_read_usd_per_million": 0.11,
+      "thinking_usd_per_million": 2.2
+    },
+    "kimi-k2": {
+      "input_usd_per_million": 0.6,
+      "output_usd_per_million": 2.5,
+      "cache_read_usd_per_million": 0.15,
+      "thinking_usd_per_million": 2.5
+    },
+    "grok-4": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "cache_read_usd_per_million": 0.75,
+      "thinking_usd_per_million": 15.0
+    },
+    "grok-4-fast": {
+      "input_usd_per_million": 0.2,
+      "output_usd_per_million": 0.5,
+      "cache_read_usd_per_million": 0.05,
+      "thinking_usd_per_million": 0.5
+    },
+    "grok-3": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "cache_read_usd_per_million": 0.75
+    },
+    "grok-3-mini": {
+      "input_usd_per_million": 0.3,
+      "output_usd_per_million": 0.5,
+      "cache_read_usd_per_million": 0.075,
+      "thinking_usd_per_million": 0.5
+    },
+    "mistral-small": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.3,
+      "cache_read_usd_per_million": 0.1
+    },
+    "mistral-medium": {
+      "input_usd_per_million": 0.4,
+      "output_usd_per_million": 2.0,
+      "cache_read_usd_per_million": 0.1
+    },
+    "mistral-large": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 6.0,
+      "cache_read_usd_per_million": 0.5
+    },
+    "mistral-nemo": {
+      "input_usd_per_million": 0.15,
+      "output_usd_per_million": 0.15,
+      "cache_read_usd_per_million": 0.05
+    },
+    "llama-3": {
+      "input_usd_per_million": 0.5,
+      "output_usd_per_million": 0.7,
+      "cache_read_usd_per_million": 0.1
+    },
+    "llama-4-scout": {
+      "input_usd_per_million": 0.25,
+      "output_usd_per_million": 0.7,
+      "cache_read_usd_per_million": 0.1
+    },
+    "llama-4-maverick": {
+      "input_usd_per_million": 0.35,
+      "output_usd_per_million": 1.15,
+      "cache_read_usd_per_million": 0.1
+    },
+    "gemma": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.2,
+      "cache_read_usd_per_million": 0.05
+    },
+    "gemma-self-deploy": {
+      "input_usd_per_million": 0,
+      "output_usd_per_million": 0,
+      "note": "VM-uptime priced (self-deploy GPU/TPU endpoint), NOT per-token. Track separately."
+    },
+    "gpt-oss-120b": {
+      "input_usd_per_million": 0.15,
+      "output_usd_per_million": 0.6,
+      "cache_read_usd_per_million": 0.05,
+      "thinking_usd_per_million": 0.6
+    },
+    "gpt-oss-20b": {
+      "input_usd_per_million": 0.05,
+      "output_usd_per_million": 0.2,
+      "cache_read_usd_per_million": 0.02,
+      "thinking_usd_per_million": 0.2
+    },
+    "minimax-m2": {
+      "input_usd_per_million": 0.3,
+      "output_usd_per_million": 1.2,
+      "cache_read_usd_per_million": 0.1,
+      "thinking_usd_per_million": 1.2
+    },
+    "jamba-1.5-large": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 8.0,
+      "cache_read_usd_per_million": 0.5
+    },
+    "jamba-1.5-mini": {
+      "input_usd_per_million": 0.2,
+      "output_usd_per_million": 0.4,
+      "cache_read_usd_per_million": 0.05
+    },
+    "openrouter-gpt-4o": {
+      "input_usd_per_million": 2.5,
+      "output_usd_per_million": 10.0
+    },
+    "openrouter-gpt-4o-mini": {
+      "input_usd_per_million": 0.15,
+      "output_usd_per_million": 0.6
+    },
+    "openrouter-gpt-4.1": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 8.0
+    },
+    "openrouter-gpt-4.1-mini": {
+      "input_usd_per_million": 0.4,
+      "output_usd_per_million": 1.6
+    },
+    "openrouter-claude-sonnet-4": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0
+    },
+    "openrouter-gemini-2.5-flash": {
+      "input_usd_per_million": 0.3,
+      "output_usd_per_million": 2.5
+    },
+    "openrouter-gemini-2.5-pro": {
+      "input_usd_per_million": 1.25,
+      "output_usd_per_million": 10.0
+    },
+    "openrouter-llama-3.3-70b": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.32
+    },
+    "openrouter-deepseek-chat": {
+      "input_usd_per_million": 0.2,
+      "output_usd_per_million": 0.8
+    },
+    "openrouter-mistral-large": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 6.0
+    },
+    "openrouter-qwen-2.5-72b": {
+      "input_usd_per_million": 0.36,
+      "output_usd_per_million": 0.4
+    }
   },
   "aliases": {
     "gemini-3-flash": "gemini-3-flash-preview",

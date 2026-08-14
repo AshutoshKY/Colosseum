@@ -30,15 +30,11 @@ def test_qwen_vl_uses_its_per_model_endpoint_env(monkeypatch):
     assert kwargs["api_key"] == "test-key"
 
 
-def test_gemini_31_thinking_level_maps_to_litellm_reasoning_effort():
-    cap = get_capability("gemini-3.1-pro")
-    assert cap.transport_model == "vertex_ai/gemini-3.1-pro-preview"
-    assert cap.thinking == "level"
-    kwargs = ModelGateway(trace=False)._provider_kwargs(cap, {"thinking_level": "low"})
-    assert kwargs["reasoning_effort"] == "low"
-    assert kwargs["vertex_location"] == "global"
-    assert kwargs["temperature"] == 1.0
-    assert "thinking" not in kwargs
+def test_claude_37_sonnet_on_vertex_capabilities():
+    cap = get_capability("vertex_ai/claude-3-7-sonnet@20250219")
+    assert cap.thinking is True
+    assert cap.vision is True
+    assert cap.pdf_native is True
 
 
 @pytest.mark.live

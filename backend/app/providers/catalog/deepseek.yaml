@@ -27,22 +27,40 @@ models:
     display_name: DeepSeek R1 (0528, Vertex)
     version: "r1-0528"
     variant: thinking
+    release_date: "2025-05-28"
     pricing_ref: deepseek-r1
     enabled: true
     verified: true
     reason: null
     notes: "VERIFIED callable on vertex-internal-testing (Phase 2.5 live probe, June 2026). Text-only: gated out of image/PDF tasks; json_mode + repair ladder."
+  - model_id: vertex_ai/deepseek-ai/deepseek-r1-maas
+    display_name: DeepSeek R1 (Vertex)
+    version: "r1"
+    variant: thinking
+    release_date: "2025-01-20"
+    pricing_ref: deepseek-r1
+    notes: "Text-only: gated out of image/PDF tasks; json_mode + repair ladder."
+  - model_id: vertex_ai/deepseek-ai/deepseek-v3-maas
+    display_name: DeepSeek V3 (Vertex)
+    version: "v3"
+    variant: instruct
+    thinking: false
+    release_date: "2024-12-26"
+    pricing_ref: deepseek-v3
+    notes: "Text-only: gated out of image/PDF tasks; json_mode + repair ladder."
   - model_id: vertex_ai/deepseek-ai/deepseek-v3.1-maas
     display_name: DeepSeek V3.1 (Vertex)
     version: "v3.1"
     variant: instruct
     thinking: false
+    release_date: "2025-06-15"
     pricing_ref: deepseek-v3
   - model_id: vertex_ai/deepseek-ai/deepseek-v3.2-maas
     display_name: DeepSeek V3.2 (Vertex)
     version: "v3.2"
     variant: instruct
     thinking: false
+    release_date: "2025-09-10"
     pricing_ref: deepseek-v3
   # OCR member is vision-capable (document images) — the exception to text-only.
   - model_id: vertex_ai/deepseek-ai/deepseek-ocr-maas
@@ -52,5 +70,6 @@ models:
     modalities: [text, image]
     vision: true
     thinking: false
+    release_date: "2025-08-15"
     pricing_ref: deepseek-v3
     notes: "vision OCR member; PDF via rasterized images. Still gated off until verified."

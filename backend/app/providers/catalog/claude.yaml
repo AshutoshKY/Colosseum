@@ -31,65 +31,96 @@ models:
     display_name: Claude Opus 4.8 (Vertex)
     version: "4.8"
     variant: opus
+    release_date: "2026-06-10"
     pricing_ref: claude-opus-4-8
   - model_id: vertex_ai/claude-opus-4-7@default
     display_name: Claude Opus 4.7 (Vertex)
     version: "4.7"
     variant: opus
+    release_date: "2026-04-15"
     pricing_ref: claude-opus-4-7
   - model_id: vertex_ai/claude-opus-4-6@default
     display_name: Claude Opus 4.6 (Vertex)
     version: "4.6"
     variant: opus
+    release_date: "2026-02-17"
     pricing_ref: claude-opus-4-6
   - model_id: vertex_ai/claude-opus-4-5@20251101
     display_name: Claude Opus 4.5 (Vertex)
     version: "4.5"
     variant: opus
+    release_date: "2025-11-01"
     pricing_ref: claude-opus-4-5
   - model_id: vertex_ai/claude-opus-4-1@20250805
     display_name: Claude Opus 4.1 (Vertex)
     version: "4.1"
     variant: opus
+    release_date: "2025-08-05"
     pricing_ref: claude-opus-4-1
   - model_id: vertex_ai/claude-opus-4@20250514
     display_name: Claude Opus 4 (Vertex)
     version: "4.0"
     variant: opus
+    release_date: "2025-05-14"
     pricing_ref: claude-opus-4
   - model_id: vertex_ai/claude-sonnet-4-6@default
     display_name: Claude Sonnet 4.6 (Vertex)
     version: "4.6"
     variant: sonnet
+    release_date: "2026-02-17"
     pricing_ref: claude-sonnet-4-6
   - model_id: vertex_ai/claude-sonnet-4-5@20250929
     display_name: Claude Sonnet 4.5 (Vertex)
     version: "4.5"
     variant: sonnet
+    release_date: "2025-09-29"
     pricing_ref: claude-sonnet-4-5
   - model_id: vertex_ai/claude-sonnet-4@20250514
     display_name: Claude Sonnet 4 (Vertex)
     version: "4.0"
     variant: sonnet
+    release_date: "2025-05-14"
     pricing_ref: claude-sonnet-4
   - model_id: vertex_ai/claude-haiku-4-5@20251001
     display_name: Claude Haiku 4.5 (Vertex)
     version: "4.5"
     variant: haiku
+    release_date: "2025-10-01"
     pricing_ref: claude-haiku-4-5
-  # --- Claude 3.x (legacy, present in Model Garden) ---
+  # --- Claude 3.x (present in Model Garden) ---
   - model_id: vertex_ai/claude-3-7-sonnet@20250219
     display_name: Claude 3.7 Sonnet (Vertex)
     version: "3.7"
     variant: sonnet
+    release_date: "2025-02-19"
     pricing_ref: claude-3-7-sonnet
+  - model_id: vertex_ai/claude-3-5-sonnet-v2@20241022
+    display_name: Claude 3.5 Sonnet v2 (Vertex)
+    version: "3.5-v2"
+    variant: sonnet
+    release_date: "2024-10-22"
+    pricing_ref: claude-3-5-sonnet
   - model_id: vertex_ai/claude-3-5-sonnet@20240620
     display_name: Claude 3.5 Sonnet (Vertex)
     version: "3.5"
     variant: sonnet
+    release_date: "2024-06-20"
     pricing_ref: claude-3-5-sonnet
   - model_id: vertex_ai/claude-3-5-haiku@20241022
     display_name: Claude 3.5 Haiku (Vertex)
     version: "3.5"
     variant: haiku
+    release_date: "2024-10-22"
     pricing_ref: claude-3-5-haiku
+  - model_id: vertex_ai/claude-3-opus@20240229
+    display_name: Claude 3 Opus (Vertex)
+    version: "3.0"
+    variant: opus
+    release_date: "2024-02-29"
+    pricing_ref: claude-3-opus
+  - model_id: vertex_ai/claude-3-haiku@20240307
+    display_name: Claude 3 Haiku (Vertex)
+    version: "3.0"
+    variant: haiku
+    release_date: "2024-03-07"
+    pricing_ref: claude-3-haiku

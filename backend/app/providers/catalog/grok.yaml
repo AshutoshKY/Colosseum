@@ -35,24 +35,28 @@ groups:
         version: "4.20"
         variant: reasoning
         thinking: true
+        release_date: "2026-03-09"
         pricing_ref: grok-4
       - model_id: vertex_ai/xai/grok-4.20-non-reasoning
         display_name: Grok 4.20 Non-Reasoning (Vertex)
         version: "4.20"
         variant: non-reasoning
         thinking: false
+        release_date: "2026-03-09"
         pricing_ref: grok-4
       - model_id: vertex_ai/xai/grok-4.1-fast-reasoning
         display_name: Grok 4.1 Fast Reasoning (Vertex)
         version: "4.1-fast"
         variant: reasoning
         thinking: true
+        release_date: "2025-11-20"
         pricing_ref: grok-4-fast
       - model_id: vertex_ai/xai/grok-4.1-fast-non-reasoning
         display_name: Grok 4.1 Fast Non-Reasoning (Vertex)
         version: "4.1-fast"
         variant: non-reasoning
         thinking: false
+        release_date: "2025-11-20"
         pricing_ref: grok-4-fast
 
   # ---- External xAI API (no key yet) ----
@@ -78,46 +82,54 @@ groups:
         version: "4.3"
         variant: reasoning
         thinking: true
+        release_date: "2026-05-15"
         pricing_ref: grok-4
       - model_id: xai/grok-4.20-0309-reasoning
         display_name: Grok 4.20 Reasoning (xAI)
         version: "4.20"
         variant: reasoning
         thinking: true
+        release_date: "2026-03-09"
         pricing_ref: grok-4
       - model_id: xai/grok-4.20-beta-0309-non-reasoning
         display_name: Grok 4.20 Non-Reasoning (xAI)
         version: "4.20"
         variant: non-reasoning
         thinking: false
+        release_date: "2026-03-09"
         pricing_ref: grok-4
       - model_id: xai/grok-4-fast-reasoning
         display_name: Grok 4 Fast Reasoning (xAI)
         version: "4-fast"
         variant: reasoning
         thinking: true
+        release_date: "2025-10-15"
         pricing_ref: grok-4-fast
       - model_id: xai/grok-4-fast-non-reasoning
         display_name: Grok 4 Fast Non-Reasoning (xAI)
         version: "4-fast"
         variant: non-reasoning
         thinking: false
+        release_date: "2025-10-15"
         pricing_ref: grok-4-fast
       - model_id: xai/grok-4-0709
         display_name: Grok 4 (xAI)
         version: "4"
         variant: reasoning
         thinking: true
+        release_date: "2025-07-09"
         pricing_ref: grok-4
       - model_id: xai/grok-3
         display_name: Grok 3 (xAI)
         version: "3"
         variant: reasoning
         thinking: true
+        release_date: "2025-02-17"
         pricing_ref: grok-3
       - model_id: xai/grok-3-mini
         display_name: Grok 3 Mini (xAI)
         version: "3-mini"
         variant: reasoning
         thinking: true
+        release_date: "2025-02-17"
         pricing_ref: grok-3-mini

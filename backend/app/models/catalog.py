@@ -15,7 +15,7 @@ class ModelCatalog(SQLModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
     model_id: str = Field(index=True, unique=True, description="LiteLLM model id, e.g. vertex_ai/gemini-2.5-flash")
-    provider: str = Field(index=True, description="vertex_ai | vertex_partner | xai | openai_compatible")
+    provider: str = Field(index=True, description="vertex_ai | vertex_partner | xai | openai_compatible | openrouter | bedrock")
     display_name: str
     access: str = Field(default="maas", description="maas | self_deploy")
     capabilities: dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSONB_VARIANT))

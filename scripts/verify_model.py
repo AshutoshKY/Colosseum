@@ -19,7 +19,7 @@ class _Ok(BaseModel):
 async def verify(model_id: str, thinking_level: str | None = None) -> bool:
     from app.providers.registry import get_capability
     cap = get_capability(model_id)
-    max_tokens = 2048 if cap.thinking else 32
+    max_tokens = 2048 if cap.thinking else 512
     result = await ModelGateway(trace=False).structured(
         model_id=model_id,
         system="Return the requested JSON only.",

@@ -34,11 +34,27 @@ class EstimatedCost:
     pricing_ref: str | None
 
 
+# In-memory pricing overlay for models resolved dynamically at runtime (e.g. any OpenRouter id
+# picked via search that isn't hand-listed in the JSON card). Merged on top of the file card so
+# ``estimate_cost`` prices them without a file edit. Keyed by pricing_ref -> rate dict.
+_DYNAMIC_MODELS: dict[str, dict[str, Any]] = {}
+
+
+def register_dynamic_model(pricing_ref: str, rates: dict[str, Any]) -> None:
+    """Register/overwrite a runtime pricing_ref (idempotent)."""
+    _DYNAMIC_MODELS[pricing_ref] = rates
+
+
 def load_rate_card() -> dict[str, Any]:
     override = os.getenv("COLOSSEUM_RATE_CARD_JSON", "").strip()
     if override:
-        return cast(dict[str, Any], json.loads(override))
-    return cast(dict[str, Any], json.loads(_RATE_CARD_PATH.read_text(encoding="utf-8")))
+        card = cast(dict[str, Any], json.loads(override))
+    else:
+        card = cast(dict[str, Any], json.loads(_RATE_CARD_PATH.read_text(encoding="utf-8")))
+    if _DYNAMIC_MODELS:
+        # Runtime-registered models win only where the file card is silent.
+        card["models"] = {**_DYNAMIC_MODELS, **(card.get("models") or {})}
+    return card
 
 
 def resolve_pricing_ref(pricing_ref: str | None, card: dict[str, Any]) -> str | None:

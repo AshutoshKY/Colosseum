@@ -37,69 +37,58 @@ models:
     display_name: Gemini 2.5 Flash
     version: "2.5"
     variant: flash
+    release_date: "2025-03-20"
     pricing_ref: gemini-2.5-flash
   - model_id: vertex_ai/gemini-2.5-pro
     display_name: Gemini 2.5 Pro
     version: "2.5"
     variant: pro
+    release_date: "2025-03-20"
     pricing_ref: gemini-2.5-pro
   - model_id: vertex_ai/gemini-2.5-flash-lite
     display_name: Gemini 2.5 Flash-Lite
     version: "2.5"
     variant: flash-lite
+    release_date: "2025-03-20"
     pricing_ref: gemini-2.5-flash-lite
 
-  # --- Gemini 3.x ---
-  # Phase 2.5 live probe (June 19 2026) on vertex-internal-testing: every gemini-3.x id below
-  # returns litellm.NotFoundError (Vertex 404 — model not available on this project/region).
-  # Gated off until the project is granted access. Only Gemini 2.5 (flash/pro/flash-lite) is
-  # verified callable here.
-  - model_id: vertex_ai/gemini-3-flash-preview
-    display_name: Gemini 3 Flash
-    version: "3"
+  # --- Gemini 2.0 ---
+  - model_id: vertex_ai/gemini-2.0-flash
+    display_name: Gemini 2.0 Flash
+    version: "2.0"
     variant: flash
-    pricing_ref: gemini-3-flash-preview
-    vertex_location: global
-    enabled: true
-    verified: true
-    reason: null
-  - model_id: vertex_ai/gemini-3-pro-preview
-    litellm_model: vertex_ai/gemini-3.1-pro-preview
-    display_name: Gemini 3 Pro
-    version: "3"
-    variant: pro
-    pricing_ref: gemini-3.1-pro-preview
-    vertex_location: global
-    enabled: true
-    verified: true
-    reason: null
-  - model_id: gemini-3.1-pro
-    litellm_model: vertex_ai/gemini-3.1-pro-preview
-    display_name: Gemini 3.1 Pro
-    version: "3.1"
-    variant: pro
-    pricing_ref: gemini-3.1-pro-preview
-    thinking: level
-    vertex_location: global
-    enabled: true
-    verified: true
-    reason: null
-    notes: "VERIFIED July 2026 on the layered superclaims-ai Vertex credentials at the global endpoint; level-style thinking."
-  - model_id: vertex_ai/gemini-3.1-flash-lite
-    display_name: Gemini 3.1 Flash-Lite
-    version: "3.1"
+    release_date: "2024-12-11"
+    pricing_ref: gemini-2.0-flash
+  - model_id: vertex_ai/gemini-2.0-flash-lite
+    display_name: Gemini 2.0 Flash-Lite
+    version: "2.0"
     variant: flash-lite
-    pricing_ref: gemini-3.1-flash-lite
-    vertex_location: global
-    enabled: true
-    verified: true
-    reason: null
-  - model_id: vertex_ai/gemini-3.5-flash
-    display_name: Gemini 3.5 Flash
-    version: "3.5"
+    release_date: "2025-02-05"
+    pricing_ref: gemini-2.0-flash-lite
+  - model_id: vertex_ai/gemini-2.0-pro-exp
+    display_name: Gemini 2.0 Pro Experimental
+    version: "2.0"
+    variant: pro
+    release_date: "2025-02-05"
+    pricing_ref: gemini-2.0-pro
+
+  # --- Gemini 1.5 ---
+  - model_id: vertex_ai/gemini-1.5-pro
+    display_name: Gemini 1.5 Pro
+    version: "1.5"
+    variant: pro
+    release_date: "2024-02-15"
+    pricing_ref: gemini-1.5-pro
+  - model_id: vertex_ai/gemini-1.5-flash
+    display_name: Gemini 1.5 Flash
+    version: "1.5"
     variant: flash
-    pricing_ref: gemini-3-flash-preview
-    vertex_location: global
-    enabled: true
-    verified: true
-    reason: null
+    release_date: "2024-05-14"
+    pricing_ref: gemini-1.5-flash
+  - model_id: vertex_ai/gemini-1.5-flash-8b
+    display_name: Gemini 1.5 Flash 8B
+    version: "1.5"
+    variant: flash-8b
+    release_date: "2024-10-03"
+    pricing_ref: gemini-1.5-flash-8b
+

@@ -27,6 +27,7 @@ models:
     display_name: Qwen3 235B A22B Instruct (Vertex)
     version: "3-235b"
     variant: instruct
+    release_date: "2025-07-20"
     pricing_ref: qwen3
     enabled: true
     verified: true
@@ -36,6 +37,7 @@ models:
     display_name: Qwen3 Coder 480B A35B (Vertex)
     version: "3-coder-480b"
     variant: instruct
+    release_date: "2025-07-20"
     pricing_ref: qwen3-coder
     enabled: true
     verified: true
@@ -45,6 +47,7 @@ models:
     display_name: Qwen3 Next 80B A3B Instruct (Vertex)
     version: "3-next-80b"
     variant: instruct
+    release_date: "2025-07-20"
     pricing_ref: qwen3
     enabled: true
     verified: true
@@ -56,11 +59,43 @@ models:
     version: "3-next-80b"
     variant: thinking
     thinking: true
+    release_date: "2025-07-20"
     pricing_ref: qwen3
     enabled: true
     verified: true
     reason: null
     notes: "VERIFIED callable on vertex-internal-testing (July 2026). Text-only: gated out of image/PDF tasks; json_mode (MD_JSON) + repair ladder."
+
+  # --- Qwen 2.5 on Vertex ---
+  - model_id: vertex_ai/qwen/qwen2.5-72b-instruct-maas
+    display_name: Qwen 2.5 72B Instruct (Vertex)
+    version: "2.5-72b"
+    variant: instruct
+    release_date: "2024-09-19"
+    pricing_ref: qwen-2.5
+    notes: "Text-only: gated out of image/PDF tasks; json_mode (MD_JSON) + repair ladder."
+  - model_id: vertex_ai/qwen/qwen2.5-coder-32b-instruct-maas
+    display_name: Qwen 2.5 Coder 32B (Vertex)
+    version: "2.5-coder-32b"
+    variant: instruct
+    release_date: "2024-11-12"
+    pricing_ref: qwen-2.5-coder
+    notes: "Text-only: gated out of image/PDF tasks; json_mode (MD_JSON) + repair ladder."
+  - model_id: vertex_ai/qwen/qwen2.5-7b-instruct-maas
+    display_name: Qwen 2.5 7B Instruct (Vertex)
+    version: "2.5-7b"
+    variant: instruct
+    release_date: "2024-09-19"
+    pricing_ref: qwen-2.5
+    notes: "Text-only: gated out of image/PDF tasks; json_mode (MD_JSON) + repair ladder."
+  - model_id: vertex_ai/qwen/qwq-32b-preview-maas
+    display_name: QwQ 32B Preview (Vertex)
+    version: "qwq-32b"
+    variant: thinking
+    thinking: true
+    release_date: "2024-11-28"
+    pricing_ref: qwen-2.5
+    notes: "Reasoning model; text-only: gated out of image/PDF tasks."
 
   # Self-deployed vLLM endpoint. Provider/access override the Vertex group defaults.
   - model_id: qwen3-vl-8b
@@ -70,6 +105,7 @@ models:
     access: self_deploy
     version: "3-vl-8b"
     variant: vision
+    release_date: "2025-06-15"
     base_url_env: QWEN_VL_BASE_URL
     api_key_env: QWEN_VL_API_KEY
     modalities: [text, image]

@@ -25,17 +25,45 @@ groups:
       enabled: false
       verified: false
       reason: "not verified callable on project (Gemma MaaS enablement unconfirmed; no gcloud)"
-      notes: "Gemma 4 26B MoE multimodal MaaS; weak SO -> repair ladder; PDF via images."
+      notes: "Gemma multimodal MaaS; weak SO -> repair ladder; PDF via images."
     models:
       - model_id: vertex_ai/google/gemma-4-26b-a4b-it-maas
         display_name: Gemma 4 26B A4B IT (Vertex MaaS)
         version: "4-26b"
         variant: vision
+        release_date: "2026-04-10"
         pricing_ref: gemma
         enabled: true
         verified: true
         reason: null
         notes: "VERIFIED callable on vertex-internal-testing (July 2026). Multimodal MaaS; json_mode (MD_JSON) + repair ladder; PDF via images."
+      - model_id: vertex_ai/google/gemma-2-27b-it
+        display_name: Gemma 2 27B IT (Vertex)
+        version: "2-27b"
+        variant: text
+        modalities: [text]
+        vision: false
+        release_date: "2024-06-27"
+        pricing_ref: gemma
+        notes: "Gemma 2 27B text-only."
+      - model_id: vertex_ai/google/gemma-2-9b-it
+        display_name: Gemma 2 9B IT (Vertex)
+        version: "2-9b"
+        variant: text
+        modalities: [text]
+        vision: false
+        release_date: "2024-06-27"
+        pricing_ref: gemma
+        notes: "Gemma 2 9B text-only."
+      - model_id: vertex_ai/google/gemma-2-2b-it
+        display_name: Gemma 2 2B IT (Vertex)
+        version: "2-2b"
+        variant: text
+        modalities: [text]
+        vision: false
+        release_date: "2024-06-27"
+        pricing_ref: gemma
+        notes: "Gemma 2 2B text-only."
 
   # ---- Gemma 3 (self-deploy only) ----
   - provider: vertex_partner
@@ -57,16 +85,19 @@ groups:
         display_name: Gemma 3 27B IT (self-deploy)
         version: "3-27b"
         variant: vision
+        release_date: "2025-02-15"
         pricing_ref: gemma-self-deploy
       - model_id: vertex_ai/google/gemma-3-12b-it
         display_name: Gemma 3 12B IT (self-deploy)
         version: "3-12b"
         variant: vision
+        release_date: "2025-02-15"
         pricing_ref: gemma-self-deploy
       - model_id: vertex_ai/google/gemma-3-4b-it
         display_name: Gemma 3 4B IT (self-deploy)
         version: "3-4b"
         variant: vision
+        release_date: "2025-02-15"
         pricing_ref: gemma-self-deploy
 
   # ---- gpt-oss (OpenAI open weights) ----
@@ -89,11 +120,13 @@ groups:
         display_name: gpt-oss 120B (Vertex MaaS)
         version: "120b"
         variant: thinking
+        release_date: "2025-07-10"
         pricing_ref: gpt-oss-120b
       - model_id: vertex_ai/openai/gpt-oss-20b-maas
         display_name: gpt-oss 20B (Vertex MaaS)
         version: "20b"
         variant: thinking
+        release_date: "2025-07-10"
         pricing_ref: gpt-oss-20b
 
   # ---- MiniMax / AI21 Jamba ----
@@ -118,6 +151,7 @@ groups:
         variant: thinking
         thinking: true
         vertex_location: global
+        release_date: "2025-10-20"
         pricing_ref: minimax-m2
         enabled: true
         verified: true
@@ -128,10 +162,12 @@ groups:
         version: "1.5-large"
         variant: text
         context_window: 256000
+        release_date: "2024-08-22"
         pricing_ref: jamba-1.5-large
       - model_id: vertex_ai/jamba-1.5-mini@001
         display_name: AI21 Jamba 1.5 Mini (Vertex)
         version: "1.5-mini"
         variant: text
         context_window: 256000
+        release_date: "2024-08-22"
         pricing_ref: jamba-1.5-mini

@@ -6,6 +6,7 @@ from app.providers.pricing.estimator import (
     EstimatedCost,
     estimate_cost,
     load_rate_card,
+    register_dynamic_model,
     resolve_pricing_ref,
 )
 
@@ -13,5 +14,6 @@ __all__ = [
     "EstimatedCost",
     "estimate_cost",
     "load_rate_card",
+    "register_dynamic_model",
     "resolve_pricing_ref",
 ]

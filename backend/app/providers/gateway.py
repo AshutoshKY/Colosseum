@@ -75,6 +75,7 @@ class GatewayResult:
     # What was actually sent to the model (persisted for full reproducibility).
     prompt_system: str | None = None
     prompt_instruction: str | None = None
+    prompt_version: str | None = None
     document_count: int = 0
 
 
@@ -100,6 +101,7 @@ class ModelGateway:
         schema: type[T],
         documents: list[DocumentInput] | None = None,
         config: dict[str, Any] | None = None,
+        prompt_version: str | None = None,
     ) -> GatewayResult:
         """Run a structured-output call through the model-agnostic pipeline."""
         capability = get_capability(model_id)
@@ -116,7 +118,7 @@ class ModelGateway:
                 config=config,
             )
         except CapabilityGateError as gate:
-            logger.info("model %s gated out: %s", model_id, gate.reason)
+            logger.warning("model %s gated out; no LLM call made: %s", model_id, gate.reason)
             return GatewayResult(
                 model_id=model_id,
                 parsed=None,
@@ -129,6 +131,7 @@ class ModelGateway:
                 structured_method=capability.structured_method.value,
                 prompt_system=system,
                 prompt_instruction=instruction,
+                prompt_version=prompt_version,
                 document_count=len(documents),
             )
 
@@ -193,6 +196,7 @@ class ModelGateway:
             adapter_notes=normalized.notes,
             prompt_system=normalized.system,
             prompt_instruction=instruction,
+            prompt_version=prompt_version,
             document_count=len(documents),
         )
 
@@ -375,6 +379,17 @@ class ModelGateway:
             ):
                 kwargs["api_base"] = base
 
+        elif provider == "openrouter":
+            # OpenRouter fronts many upstream vendors behind one OpenAI-compatible gateway.
+            # LiteLLM's ``openrouter/`` transport prefix already knows the base URL; we only
+            # inject the key (``OPENROUTER_API_KEY``). Absent -> the call fails and the model
+            # stays gated. Its own provider (not ``openai_compatible``) so the UI segregates it.
+            key_env = capability.api_key_env or "OPENROUTER_API_KEY"
+            if key := os.environ.get(key_env) or getattr(
+                self.settings, key_env.lower(), None
+            ):
+                kwargs["api_key"] = key
+
         elif provider == "bedrock":
             token = self.settings.aws_bearer_token_bedrock or os.environ.get(
                 "AWS_BEARER_TOKEN_BEDROCK"
@@ -386,13 +401,21 @@ class ModelGateway:
             # LiteLLM reads AWS_BEARER_TOKEN_BEDROCK directly and uses it as the API key.
             kwargs["api_key"] = token
             kwargs["aws_region_name"] = self.region or self.settings.aws_region_name
+            # Bedrock on-demand throughput quotas are low by default; retry 429s/throttling
+            # with exponential backoff instead of failing the run immediately.
+            kwargs["num_retries"] = config.get("num_retries", 5)
+            kwargs["retry_strategy"] = "exponential_backoff_retry"
 
         # Reasoning/thinking budget (provider-agnostic LiteLLM param) when requested + supported.
         if capability.thinking == "level" and (
             level := config.get("thinking_level")
         ) is not None:
             kwargs["reasoning_effort"] = level
-        elif capability.thinking and (budget := config.get("thinking_budget")) is not None:
+        elif (
+            capability.thinking
+            and provider not in {"vertex_ai", "vertex_partner"}
+            and (budget := config.get("thinking_budget")) is not None
+        ):
             kwargs["thinking"] = {"type": "enabled", "budget_tokens": int(budget)}
 
         return kwargs

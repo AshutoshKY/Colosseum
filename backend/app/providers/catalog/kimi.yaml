@@ -27,6 +27,7 @@ groups:
         display_name: Kimi K2 Thinking (Vertex)
         version: "k2"
         variant: thinking
+        release_date: "2025-07-15"
         pricing_ref: kimi-k2
 
   # ---- External Moonshot OpenAI-compatible (no key yet) ----
@@ -48,16 +49,19 @@ groups:
         display_name: Kimi K2 Thinking (Moonshot)
         version: "k2"
         variant: thinking
+        release_date: "2025-07-15"
         pricing_ref: kimi-k2
       - model_id: openai_compatible/moonshot/kimi-k2
         display_name: Kimi K2 Instruct (Moonshot)
         version: "k2"
         variant: instruct
         thinking: false
+        release_date: "2025-05-10"
         pricing_ref: kimi-k2
       - model_id: openai_compatible/moonshot/kimi-k2.5
         display_name: Kimi K2.5 (Moonshot)
         version: "k2.5"
         variant: instruct
         thinking: false
+        release_date: "2025-11-15"
         pricing_ref: kimi-k2

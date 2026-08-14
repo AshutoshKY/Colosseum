@@ -33,14 +33,35 @@ for _cap, _meta in load_catalog():
 
 
 def get_capability(model_id: str) -> ModelCapability:
-    """Return the capability profile for ``model_id`` or raise ``KeyError``."""
-    try:
-        return registry[model_id]
-    except KeyError as exc:  # noqa: TRY003
-        raise KeyError(
-            f"Model '{model_id}' is not in the registry. "
-            f"Add it to a providers/catalog/*.yaml file and docs/models-and-caveats.md first."
-        ) from exc
+    """Return the capability profile for ``model_id`` or raise ``KeyError``.
+
+    Static catalog entries win. Any other ``openrouter/*`` id is resolved *dynamically* from the
+    live OpenRouter catalog (text-only, json_mode + repair ladder, priced from the live feed) and
+    cached, so users can pick from OpenRouter's full ~345-model fleet via search without a YAML
+    edit. Resolved dynamic capabilities are memoized into the registry.
+    """
+    cap = registry.get(model_id)
+    if cap is not None:
+        return cap
+
+    if model_id.startswith("openrouter/"):
+        from app.providers.openrouter import synthesize_capability
+
+        dynamic = synthesize_capability(model_id)
+        if dynamic is not None:
+            registry[model_id] = dynamic
+            catalog_meta[model_id] = {
+                "family": "openrouter",
+                "version": model_id.split("/")[-1],
+                "variant": "dynamic",
+                "reason": None,
+            }
+            return dynamic
+
+    raise KeyError(  # noqa: TRY003
+        f"Model '{model_id}' is not in the registry. "
+        f"Add it to a providers/catalog/*.yaml file and docs/models-and-caveats.md first."
+    )
 
 
 def is_registered(model_id: str) -> bool:
@@ -87,3 +108,23 @@ def gate_reason(model_id: str) -> str | None:
     if cap is None or cap.enabled:
         return None
     return catalog_meta.get(model_id, {}).get("reason")
+
+
+def register_model(capability: ModelCapability, meta: dict | None = None) -> None:
+    """Register or update a model capability profile at runtime."""
+    registry[capability.model_id] = capability
+    catalog_meta[capability.model_id] = meta or {
+        "family": capability.provider.value,
+        "version": "custom",
+        "variant": "custom",
+        "reason": None,
+    }
+
+
+def unregister_model(model_id: str) -> bool:
+    """Unregister a dynamic model profile if present."""
+    if model_id in registry:
+        del registry[model_id]
+        catalog_meta.pop(model_id, None)
+        return True
+    return False

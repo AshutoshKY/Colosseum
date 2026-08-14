@@ -20,6 +20,7 @@ class Provider(str, Enum):
     vertex_partner = "vertex_partner"
     xai = "xai"
     openai_compatible = "openai_compatible"
+    openrouter = "openrouter"
     bedrock = "bedrock"
 
 
@@ -110,6 +111,10 @@ class ModelCapability(BaseModel):
     verified: bool = Field(
         default=False,
         description="Capability flags confirmed live against provider docs (not assumed).",
+    )
+    release_date: str | None = Field(
+        default=None,
+        description="Release / launch date of the model (e.g. '2024-05-14').",
     )
     notes: str | None = None
 

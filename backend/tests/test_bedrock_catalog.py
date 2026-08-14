@@ -13,20 +13,33 @@ from app.providers.registry import get_capability, list_models
 from pydantic import BaseModel
 
 
-def test_bedrock_catalog_entries_are_gated_until_live_verification():
+def test_bedrock_catalog_entries_are_live_verified():
+    # The catalog was live-probed against ap-south-1 (2026-07-13): every entry is callable
+    # (200 or 429), so all ship enabled + verified.
     caps = list_models(provider=Provider.bedrock)
     assert {cap.model_id for cap in caps} >= {
-        "bedrock-claude-sonnet-4-5",
+        "bedrock-qwen3-vl-235b",
         "bedrock-nova-pro",
         "bedrock-nova-lite",
         "bedrock-nova-micro",
     }
-    assert all(not cap.enabled and not cap.verified for cap in caps)
-    claude = get_capability("bedrock-claude-sonnet-4-5")
-    assert claude.transport_model.startswith("bedrock/")
-    assert claude.provider is Provider.bedrock
+    assert all(cap.enabled and cap.verified for cap in caps)
+    # Every transport id is a bedrock/ route; profile-gated models carry an apac./global. prefix.
+    assert all(cap.transport_model.startswith("bedrock/") for cap in caps)
+
+    # Qwen3-VL — the model the original request targeted; correct id has no -instruct suffix.
+    qwen_vl = get_capability("bedrock-qwen3-vl-235b")
+    assert qwen_vl.transport_model == "bedrock/qwen.qwen3-vl-235b-a22b"
+    assert qwen_vl.provider is Provider.bedrock
+    assert qwen_vl.vision and not qwen_vl.pdf_native
+
+    claude = get_capability("bedrock-claude-opus-4-5")
+    assert claude.transport_model == "bedrock/global.anthropic.claude-opus-4-5-20251101-v1:0"
     assert claude.vision and not claude.pdf_native
     assert claude.structured_method is StructuredMethod.tools
+
+    # Nova on-demand goes through the apac. cross-region inference profile.
+    assert get_capability("bedrock-nova-pro").transport_model.startswith("bedrock/apac.")
 
 
 def test_bedrock_kwargs_require_token_and_include_region(monkeypatch):

@@ -57,6 +57,7 @@ _CAPABILITY_FIELDS = {
     "pricing_ref",
     "enabled",
     "verified",
+    "release_date",
     "notes",
     "base_url_env",
     "api_key_env",
@@ -117,8 +118,47 @@ def _iter_groups(doc: dict[str, Any]):
         yield family, doc
 
 
+_CUSTOM_MODELS_PATH = _CATALOG_DIR / "custom_models.json"
+
+
+def save_custom_model_to_disk(cap: ModelCapability, meta: dict[str, Any], pricing: dict[str, Any] | None = None) -> None:
+    """Persist a custom added model to custom_models.json so it survives container restarts."""
+    import json
+    data: dict[str, Any] = {}
+    if _CUSTOM_MODELS_PATH.exists():
+        try:
+            data = json.loads(_CUSTOM_MODELS_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            data = {}
+    data[cap.model_id] = {
+        "capability": cap.model_dump(mode="json"),
+        "meta": meta,
+        "pricing": pricing,
+    }
+    _CUSTOM_MODELS_PATH.write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+
+def delete_custom_model_from_disk(model_id: str) -> bool:
+    """Remove a custom model from custom_models.json."""
+    import json
+    if not _CUSTOM_MODELS_PATH.exists():
+        return False
+    try:
+        data = json.loads(_CUSTOM_MODELS_PATH.read_text(encoding="utf-8"))
+        if model_id in data:
+            del data[model_id]
+            _CUSTOM_MODELS_PATH.write_text(json.dumps(data, indent=2), encoding="utf-8")
+            return True
+    except Exception:
+        pass
+    return False
+
+
 def load_catalog() -> list[tuple[ModelCapability, dict[str, Any]]]:
     """Load every catalog YAML into ``(ModelCapability, grouping_meta)`` pairs."""
+    import json
+    from app.providers.pricing.estimator import register_dynamic_model
+
     out: list[tuple[ModelCapability, dict[str, Any]]] = []
     for path in sorted(_CATALOG_DIR.glob("*.yaml")):
         doc = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -144,7 +184,24 @@ def load_catalog() -> list[tuple[ModelCapability, dict[str, Any]]]:
                         update={"notes": (f"DISABLED: {meta['reason']}. " + note).strip()}
                     )
                 out.append((cap, meta))
+
+    # Load custom persisted models
+    if _CUSTOM_MODELS_PATH.exists():
+        try:
+            custom_data = json.loads(_CUSTOM_MODELS_PATH.read_text(encoding="utf-8"))
+            for mid, item in custom_data.items():
+                cap_dict = item.get("capability", {})
+                cap = ModelCapability.model_validate(cap_dict)
+                meta = item.get("meta", {"family": cap.provider.value, "version": "custom", "variant": "custom", "reason": None})
+                pricing = item.get("pricing")
+                if pricing and cap.pricing_ref:
+                    register_dynamic_model(cap.pricing_ref, pricing)
+                out.append((cap, meta))
+        except Exception:
+            pass
+
     return out
 
 
-__all__ = ["load_catalog"]
+__all__ = ["load_catalog", "save_custom_model_to_disk", "delete_custom_model_from_disk"]
+

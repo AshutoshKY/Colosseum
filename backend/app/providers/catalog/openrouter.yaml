@@ -1,0 +1,137 @@
+# OpenRouter — a single OpenAI-compatible gateway that fronts many upstream providers
+# (OpenAI, Anthropic, Google, Meta, DeepSeek, Mistral, Qwen, ...). LiteLLM has native routing
+# for the ``openrouter/<vendor>/<model>`` transport id and reads ``OPENROUTER_API_KEY``.
+#
+# OpenRouter is its OWN provider (``provider: openrouter``, not ``openai_compatible``) so the
+# UI/model-picker — which groups by provider — segregates it into a distinct "openrouter"
+# section. The gateway injects ``api_key`` from ``OPENROUTER_API_KEY``; LiteLLM already knows
+# the OpenRouter base URL from the ``openrouter/`` prefix (no ``base_url_env`` needed).
+#
+# Catalog ids stay Colosseum-native (``openrouter/<vendor>/<model>``) and ``litellm_model`` is
+# the same string (LiteLLM's ``openrouter/`` route). These are ENABLED + VERIFIED: the key was
+# smoke-tested live (July 2026). Individual models override the conservative text-only default
+# when their live OpenRouter capability profile confirms document/image support.
+
+family: openrouter
+
+groups:
+  - provider: openrouter
+    access: maas
+    defaults:
+      modalities: [text]
+      pdf_native: false
+      vision: false
+      structured_method: json_mode
+      needs_repair_fallback: true
+      thinking: false
+      api_key_env: OPENROUTER_API_KEY
+      enabled: true
+      verified: true
+      reason: null
+      notes: "VERIFIED callable via OpenRouter (OPENROUTER_API_KEY, July 2026). Models default to text-only unless they declare document/image support below; json_mode + repair ladder."
+    models:
+      # ---- OpenAI ----
+      - model_id: openrouter/openai/gpt-4o
+        litellm_model: openrouter/openai/gpt-4o
+        display_name: GPT-4o (OpenRouter)
+        version: gpt-4o
+        variant: instruct
+        release_date: "2024-05-13"
+        context_window: 128000
+        pricing_ref: openrouter-gpt-4o
+      - model_id: openrouter/openai/gpt-4o-mini
+        litellm_model: openrouter/openai/gpt-4o-mini
+        display_name: GPT-4o mini (OpenRouter)
+        version: gpt-4o-mini
+        variant: instruct
+        release_date: "2024-07-18"
+        context_window: 128000
+        pricing_ref: openrouter-gpt-4o-mini
+      - model_id: openrouter/openai/gpt-4.1
+        litellm_model: openrouter/openai/gpt-4.1
+        display_name: GPT-4.1 (OpenRouter)
+        version: gpt-4.1
+        variant: instruct
+        release_date: "2025-04-15"
+        context_window: 1047576
+        pricing_ref: openrouter-gpt-4.1
+      - model_id: openrouter/openai/gpt-4.1-mini
+        litellm_model: openrouter/openai/gpt-4.1-mini
+        display_name: GPT-4.1 mini (OpenRouter)
+        version: gpt-4.1-mini
+        variant: instruct
+        release_date: "2025-04-15"
+        context_window: 1047576
+        pricing_ref: openrouter-gpt-4.1-mini
+
+      # ---- Anthropic ----
+      - model_id: openrouter/anthropic/claude-sonnet-4
+        litellm_model: openrouter/anthropic/claude-sonnet-4
+        display_name: Claude Sonnet 4 (OpenRouter)
+        version: claude-sonnet-4
+        variant: instruct
+        modalities: [text, image, pdf]
+        pdf_native: true
+        vision: true
+        release_date: "2025-05-14"
+        context_window: 1000000
+        pricing_ref: openrouter-claude-sonnet-4
+
+      # ---- Google ----
+      - model_id: openrouter/google/gemini-2.5-flash
+        litellm_model: openrouter/google/gemini-2.5-flash
+        display_name: Gemini 2.5 Flash (OpenRouter)
+        version: gemini-2.5-flash
+        variant: instruct
+        release_date: "2025-03-20"
+        context_window: 1048576
+        pricing_ref: openrouter-gemini-2.5-flash
+      - model_id: openrouter/google/gemini-2.5-pro
+        litellm_model: openrouter/google/gemini-2.5-pro
+        display_name: Gemini 2.5 Pro (OpenRouter)
+        version: gemini-2.5-pro
+        variant: thinking
+        thinking: true
+        release_date: "2025-03-20"
+        context_window: 1048576
+        pricing_ref: openrouter-gemini-2.5-pro
+
+      # ---- Meta ----
+      - model_id: openrouter/meta-llama/llama-3.3-70b-instruct
+        litellm_model: openrouter/meta-llama/llama-3.3-70b-instruct
+        display_name: Llama 3.3 70B Instruct (OpenRouter)
+        version: llama-3.3-70b
+        variant: instruct
+        release_date: "2024-12-06"
+        context_window: 131072
+        pricing_ref: openrouter-llama-3.3-70b
+
+      # ---- DeepSeek ----
+      - model_id: openrouter/deepseek/deepseek-chat
+        litellm_model: openrouter/deepseek/deepseek-chat
+        display_name: DeepSeek Chat (OpenRouter)
+        version: deepseek-chat
+        variant: instruct
+        release_date: "2024-12-26"
+        context_window: 131072
+        pricing_ref: openrouter-deepseek-chat
+
+      # ---- Mistral ----
+      - model_id: openrouter/mistralai/mistral-large
+        litellm_model: openrouter/mistralai/mistral-large
+        display_name: Mistral Large (OpenRouter)
+        version: mistral-large
+        variant: instruct
+        release_date: "2024-11-18"
+        context_window: 128000
+        pricing_ref: openrouter-mistral-large
+
+      # ---- Qwen ----
+      - model_id: openrouter/qwen/qwen-2.5-72b-instruct
+        litellm_model: openrouter/qwen/qwen-2.5-72b-instruct
+        display_name: Qwen2.5 72B Instruct (OpenRouter)
+        version: qwen-2.5-72b
+        variant: instruct
+        release_date: "2024-09-19"
+        context_window: 131072
+        pricing_ref: openrouter-qwen-2.5-72b

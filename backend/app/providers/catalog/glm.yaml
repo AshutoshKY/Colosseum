@@ -30,11 +30,13 @@ groups:
         display_name: GLM-5 (Vertex)
         version: "5"
         variant: thinking
+        release_date: "2026-01-15"
         pricing_ref: glm-5
       - model_id: vertex_ai/zai-org/glm-4.7-maas
         display_name: GLM-4.7 (Vertex)
         version: "4.7"
         variant: thinking
+        release_date: "2025-10-20"
         pricing_ref: glm-4.7
 
   # ---- External z.ai OpenAI-compatible (no key yet) ----
@@ -56,16 +58,19 @@ groups:
         display_name: GLM-5 (z.ai)
         version: "5"
         variant: thinking
+        release_date: "2026-01-15"
         pricing_ref: glm-5
       - model_id: openai_compatible/zai/glm-4.7
         display_name: GLM-4.7 (z.ai)
         version: "4.7"
         variant: thinking
+        release_date: "2025-10-20"
         pricing_ref: glm-4.7
       - model_id: openai_compatible/zai/glm-4.6
         display_name: GLM-4.6 (z.ai)
         version: "4.6"
         variant: thinking
+        release_date: "2025-06-15"
         pricing_ref: glm-4.6
       # vision-language member (external)
       - model_id: openai_compatible/zai/glm-4.6v
@@ -74,5 +79,6 @@ groups:
         variant: vision
         modalities: [text, image]
         vision: true
+        release_date: "2025-06-15"
         pricing_ref: glm-4.6
         notes: "vision-language member; PDF via rasterized images."

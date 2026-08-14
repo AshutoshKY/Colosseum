@@ -28,6 +28,7 @@ models:
     variant: vision
     modalities: [text, image]
     vision: true
+    release_date: "2025-03-15"
     pricing_ref: mistral-small
   - model_id: vertex_ai/mistral-medium-3
     display_name: Mistral Medium 3 (Vertex)
@@ -35,27 +36,68 @@ models:
     variant: vision
     modalities: [text, image]
     vision: true
+    release_date: "2025-05-10"
     pricing_ref: mistral-medium
   - model_id: vertex_ai/mistral-large-2411
     display_name: Mistral Large (2411, Vertex)
     version: "large-2411"
     variant: text
+    release_date: "2024-11-18"
     pricing_ref: mistral-large
+  - model_id: vertex_ai/mistral-large-2407
+    display_name: Mistral Large (2407, Vertex)
+    version: "large-2407"
+    variant: text
+    release_date: "2024-07-24"
+    pricing_ref: mistral-large
+  - model_id: vertex_ai/mistral-small-2409
+    display_name: Mistral Small (2409, Vertex)
+    version: "small-2409"
+    variant: text
+    release_date: "2024-09-18"
+    pricing_ref: mistral-small
   - model_id: vertex_ai/mistral-nemo@2407
     display_name: Mistral Nemo (Vertex)
     version: "nemo-2407"
     variant: text
+    release_date: "2024-07-18"
     pricing_ref: mistral-nemo
   - model_id: vertex_ai/mistralai/codestral-2@001
     display_name: Codestral 2 (Vertex)
     version: "codestral-2"
     variant: text
+    release_date: "2025-01-15"
     pricing_ref: mistral-small
+  - model_id: vertex_ai/mistralai/codestral-2501
+    display_name: Codestral 2501 (Vertex)
+    version: "codestral-2501"
+    variant: text
+    release_date: "2025-01-15"
+    pricing_ref: mistral-small
+  - model_id: vertex_ai/pixtral-12b-2409
+    display_name: Pixtral 12B (Vertex)
+    version: "pixtral-12b"
+    variant: vision
+    modalities: [text, image]
+    vision: true
+    release_date: "2024-09-10"
+    pricing_ref: mistral-small
+    notes: "multimodal vision model; PDF via rasterized images."
+  - model_id: vertex_ai/pixtral-large-2411
+    display_name: Pixtral Large (Vertex)
+    version: "pixtral-large"
+    variant: vision
+    modalities: [text, image]
+    vision: true
+    release_date: "2024-11-18"
+    pricing_ref: mistral-large
+    notes: "flagship multimodal vision model; PDF via rasterized images."
   - model_id: vertex_ai/mistral-ocr-2505
     display_name: Mistral OCR (2505, Vertex)
     version: "ocr-2505"
     variant: vision
     modalities: [text, image]
     vision: true
+    release_date: "2025-05-20"
     pricing_ref: mistral-small
     notes: "dedicated document OCR (vision); PDF via rasterized images."
