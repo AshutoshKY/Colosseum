@@ -46,7 +46,9 @@ class ConcurrencySpec(BaseModel):
     per_provider: dict[str, int] = Field(
         default_factory=lambda: {
             "vertex_ai": 4,
+            "vertex_partner": 4,
             "openai_compatible": 8,
+            "openrouter": 8,
             "bedrock": 4,
             "xai": 2,
         }
@@ -109,8 +111,8 @@ class RunSpec(BaseModel):
             raise ValueError(f"Models are not enabled: {', '.join(disabled)}")
         if self.judge.enabled:
             judge_capability = get_capability(self.judge.model_id)
-            if not judge_capability.enabled:
-                raise ValueError(f"Judge model is not enabled: {self.judge.model_id}")
+            if not judge_capability.enabled or not judge_capability.verified:
+                raise ValueError(f"Judge model must be enabled and verified: {self.judge.model_id}")
         cells = len(self.document_ids) * len(self.model_ids) * len(self.selected_tasks)
         if cells > 100 and not self.confirm_large:
             raise ValueError(f"Run has {cells} cells; set confirm_large=true to continue")

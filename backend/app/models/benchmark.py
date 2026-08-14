@@ -64,6 +64,7 @@ class RunResult(SQLModel, table=True):
     # --- input (store everything: exact prompt + structured input sent to the model) ---
     prompt_system: str | None = Field(default=None)
     prompt_instruction: str | None = Field(default=None)
+    prompt_version: str | None = Field(default=None)
     document_count: int = Field(default=0)
 
     # --- output ---

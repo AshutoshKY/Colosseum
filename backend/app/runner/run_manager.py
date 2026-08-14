@@ -12,10 +12,15 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from typing import Any
 
+from sqlmodel import select
+
+from app.core.logging import get_logger
 from app.db import get_engine, session_scope
 from app.models import BenchmarkRun, RunStatus
 from app.runner.engine import EventSink, _counts, execute_run
 from app.runner.spec import RunSpec
+
+logger = get_logger(__name__)
 
 
 @dataclass(frozen=True)
@@ -58,13 +63,40 @@ class RunManager:
             session.flush()
             assert run.id is not None
             run_id = run.id
+        self._start(run_id, spec)
+        return run_id
+
+    def resume_incomplete_runs(self) -> list[int]:
+        """Resume durable runs left pending or running by a process restart."""
+        with session_scope(get_engine()) as session:
+            runs = session.exec(
+                select(BenchmarkRun).where(
+                    BenchmarkRun.status.in_([RunStatus.pending, RunStatus.running]),  # type: ignore[union-attr]
+                    BenchmarkRun.spec.is_not(None),  # type: ignore[union-attr]
+                )
+            ).all()
+            pending = [(run.id, run.spec) for run in runs if run.id is not None]
+
+        resumed: list[int] = []
+        for run_id, stored_spec in pending:
+            try:
+                spec = RunSpec.model_validate(stored_spec)
+            except Exception:  # noqa: BLE001 -- malformed historical specs must not block startup
+                logger.warning("cannot resume run %s: no valid stored spec", run_id)
+                continue
+            self._start(run_id, spec)
+            resumed.append(run_id)
+        return resumed
+
+    def _start(self, run_id: int, spec: RunSpec) -> None:
+        if run_id in self._tasks and not self._tasks[run_id].done():
+            return
         task = asyncio.create_task(
             execute_run(run_id, spec, _ManagerSink(self, run_id)),
             name=f"colosseum-run-{run_id}",
         )
         self._tasks[run_id] = task
         task.add_done_callback(lambda finished: self._finished(run_id, finished))
-        return run_id
 
     def status(self, run_id: int) -> RunSnapshot:
         with session_scope(get_engine()) as session:

@@ -35,14 +35,26 @@ logger = get_logger(__name__)
 # task/run override above this value still wins.
 SELF_DEPLOY_MIN_TIMEOUT_S = 1800.0
 
-# TODO(WS-C): remove once the OPD task objects carry these dependencies themselves.
 OPD_DEPENDS: dict[str, tuple[str, ...]] = {
     "segregation": (),
     "policy_extraction": (),
+    "claim_form": ("segregation",),
+    "identity_document": ("segregation",),
+    "prescription": ("segregation",),
+    "cheque_bank": ("segregation",),
     "itemized_bills": ("segregation",),
     "consolidated_bills": ("segregation",),
+    "merge_bills": ("itemized_bills",),
     "items_categorisation": ("merge_bills",),
     "nme_analysis": ("merge_bills", "items_categorisation"),
+    "extract_icd_codes": ("prescription", "merge_bills"),
+    "patient_summary": (
+        "claim_form",
+        "prescription",
+        "merge_bills",
+        "cheque_bank",
+        "identity_document",
+    ),
     "benefit_plan": (
         "merge_bills",
         "items_categorisation",
@@ -57,10 +69,23 @@ OPD_DEPENDS: dict[str, tuple[str, ...]] = {
     ),
 }
 OPD_GOLD_KEYS: dict[str, tuple[str, ...]] = {
+    "claim_form": ("segregation",),
+    "identity_document": ("segregation",),
+    "prescription": ("segregation",),
+    "cheque_bank": ("segregation",),
     "itemized_bills": ("segregation",),
     "consolidated_bills": ("segregation",),
+    "merge_bills": ("itemized_bills",),
     "items_categorisation": ("upstream_bills",),
     "nme_analysis": ("upstream_bills", "items_categorisation"),
+    "extract_icd_codes": ("prescription", "upstream_bills"),
+    "patient_summary": (
+        "claim_form",
+        "prescription",
+        "upstream_bills",
+        "cheque_bank",
+        "identity_document",
+    ),
     "benefit_plan": ("upstream_bills", "upstream_benefits", "policy_extraction"),
     "audit": (
         "segregation",
@@ -69,6 +94,14 @@ OPD_GOLD_KEYS: dict[str, tuple[str, ...]] = {
         "benefit_plan",
         "extract_icd_codes",
     ),
+}
+
+OPTIONAL_OPD_TASKS: set[str] = {
+    "cheque_bank",
+    "identity_document",
+    "claim_form",
+    "discharge_summary",
+    "consolidated_bills",
 }
 
 
@@ -83,6 +116,18 @@ class NullEventSink:
 
 class _UpstreamCellFailed(RuntimeError):
     pass
+
+
+def _final_run_status(session: Session, run_id: int) -> RunStatus:
+    """Return the truthful terminal status for a non-cancelled run.
+
+    A run is not completed merely because its worker finished.  Any failed cell, or a run
+    where every cell was skipped (so no model result exists), is a failed run.
+    """
+    counts = _counts(session, run_id)
+    if counts["failed"] or (counts["total"] and counts["skipped"] == counts["total"]):
+        return RunStatus.failed
+    return RunStatus.completed
 
 
 def execution_pack(spec: RunSpec) -> TaskPack:
@@ -133,13 +178,26 @@ def _cell_event(
 def _page_ranges(task: Task, resolver: UpstreamResolver) -> str | None:
     if not task.document_types:
         return None
-    segmentation = resolver.get("segregation")
-    pages = [
-        segment.get("pages")
-        for segment in segmentation.get("segments", [])
-        if segment.get("document_type") in task.document_types and segment.get("pages")
-    ]
-    return ",".join(pages) or None
+    try:
+        segmentation = resolver.get("segregation")
+    except MissingUpstreamData:
+        return None
+    if not isinstance(segmentation, dict):
+        return None
+    segments = segmentation.get("segments", [])
+    if not segments:
+        return None
+    pages = []
+    for segment in segments:
+        dtype = segment.get("document_type") or segment.get("segment_type")
+        prange = segment.get("pages") or segment.get("page_range")
+        if dtype in task.document_types and prange:
+            pages.append(str(prange))
+    if pages:
+        return ",".join(pages)
+    # If segregation ran and produced segments, but none match this document type,
+    # return "__NONE__" so we know not to run on the entire document.
+    return "__NONE__"
 
 
 def _opd_instruction(task: Task, resolver: UpstreamResolver) -> str:
@@ -185,6 +243,25 @@ def _opd_instruction(task: Task, resolver: UpstreamResolver) -> str:
             "clinical_context": optional("prescription", {}),
         }
         return task.render_instruction(benefit_context=json.dumps(context))
+    if task.name == "extract_icd_codes":
+        rx = optional("prescription", {})
+        clinical_details = rx.get("claims_digitization_details", rx) if isinstance(rx, dict) else {}
+        bill_items = []
+        for entry in (merged or {}).get("bills", []) or []:
+            bid = (entry.get("bill") or {}).get("bill_id") or (entry.get("bill") or {}).get("invoice_number") or entry.get("bill_id")
+            for it in entry.get("items", []) or []:
+                iname = it.get("item_name") or it.get("description")
+                if bid and iname:
+                    bill_items.append({"bill_id": str(bid), "item_name": str(iname)})
+        icd_payload = {
+            "diagnosis": clinical_details.get("diagnosis"),
+            "presenting_complaint": clinical_details.get("presenting_complaint"),
+            "temperature_f": clinical_details.get("temperature_f"),
+            "patient_age": clinical_details.get("patient_age"),
+            "prescribed_items": clinical_details.get("prescribed_items", []),
+            "bill_items": bill_items,
+        }
+        return task.render_instruction(context_json=json.dumps(icd_payload))
     context = {dep: optional(dep) for dep in task.depends_on}
     return task.render_instruction(context_json=json.dumps(context), **context)
 
@@ -215,12 +292,14 @@ def _opd_audit_system(template: str, resolver: UpstreamResolver) -> str:
     return template
 
 
+
 def _failure(
     session: Session,
     cell: RunCell,
     *,
     system: str | None,
     instruction: str | None,
+    prompt_version: str | None = None,
     error: str,
 ) -> RunResult:
     cell.status = RunStatus.failed
@@ -230,6 +309,7 @@ def _failure(
         cell_id=cell.id,
         prompt_system=system,
         prompt_instruction=instruction,
+        prompt_version=prompt_version,
         valid=False,
         error={"message": error},
     )
@@ -254,6 +334,7 @@ def _deterministic(
             parsed_output=output,
             valid=True,
             structured_method="deterministic",
+            prompt_version="code",
         )
     )
     session.flush()
@@ -266,6 +347,7 @@ async def _gateway_call(
     model_id: str,
     system: str,
     instruction: str,
+    prompt_version: str | None = None,
     task: Task,
     documents: list[Any],
     config: dict[str, Any],
@@ -280,6 +362,7 @@ async def _gateway_call(
                 schema=task.schema,
                 documents=documents,
                 config=config,
+                prompt_version=prompt_version,
             )
             if timeout:
                 async with asyncio.timeout(timeout):
@@ -356,6 +439,21 @@ async def execute_run(
                 )
             ).all()
             cells = {cell.task: cell.id for cell in cell_rows}
+            result_rows = session.exec(
+                select(RunResult).where(
+                    RunResult.cell_id.in_([cell.id for cell in cell_rows if cell.id is not None])  # type: ignore[union-attr]
+                )
+            ).all()
+            results_by_cell = {result.cell_id: result for result in result_rows}
+            # A process restart loses in-memory upstream outputs. Restore successful
+            # outputs from durable results so only unfinished cells are run again.
+            for cell in cell_rows:
+                status = cell.status.value if isinstance(cell.status, RunStatus) else str(cell.status)
+                result = results_by_cell.get(cell.id)
+                if status == RunStatus.succeeded.value and result and result.parsed_output is not None:
+                    live_outputs[cell.task] = result.parsed_output
+                elif status in {RunStatus.failed.value, RunStatus.skipped.value}:
+                    live_errors[cell.task] = cell.skip_reason or f"previous_{status}:{cell.task}"
             document_data = document.model_dump()
 
         for layer in plan.layers:
@@ -380,6 +478,9 @@ async def execute_run(
                     else:
                         cell = session.get(RunCell, cell_id)
                     assert cell is not None
+                    status = cell.status.value if isinstance(cell.status, RunStatus) else str(cell.status)
+                    if status in {RunStatus.succeeded.value, RunStatus.failed.value, RunStatus.skipped.value}:
+                        return
                     cell.status = RunStatus.running
                     session.add(cell)
                     session.flush()
@@ -393,18 +494,59 @@ async def execute_run(
                         document = DocumentSample.model_validate(document_data)
                         resolver = UpstreamResolver(session, document, gold, live_outputs)
                         failed_dependency = next(
-                            (dep for dep in task.depends_on if dep in live_errors), None
+                            (dep for dep in task.depends_on if dep in live_errors and dep not in OPTIONAL_OPD_TASKS), None
                         )
                         if failed_dependency:
                             raise _UpstreamCellFailed(live_errors[failed_dependency])
-                        upstream = {dep: resolver.get(dep) for dep in task.depends_on}
+                        upstream = {}
+                        for dep in task.depends_on:
+                            try:
+                                upstream[dep] = resolver.get(dep)
+                            except MissingUpstreamData:
+                                if dep in OPTIONAL_OPD_TASKS:
+                                    upstream[dep] = {}
+                                else:
+                                    raise
                         cell = session.get(RunCell, cells[task_name])
                         assert cell is not None
                         if task.deterministic:
                             output = _deterministic(session, cell, task, upstream)
                             live_outputs[task_name] = output
                             event = _cell_event(run_id, document, cell, latency_ms=0, cost_usd=0.0)
+                            await _emit(events, event)
+                            return
                         else:
+                            ranges = _page_ranges(task, resolver)
+                            if ranges == "__NONE__":
+                                empty_output: dict[str, Any] | None = None
+                                if task_name == "cheque_bank":
+                                    empty_output = {"bank_details": None}
+                                elif task_name == "identity_document":
+                                    empty_output = {"aadhaar": None, "pan": None}
+                                elif task_name == "claim_form":
+                                    empty_output = {"part_a": None, "part_b": None}
+                                elif task_name in {"itemized_bills", "consolidated_bills"}:
+                                    empty_output = {"bills": []}
+
+                                if empty_output is not None:
+                                    cell.status = RunStatus.succeeded
+                                    session.add(cell)
+                                    session.flush()
+                                    session.add(
+                                        RunResult(
+                                            cell_id=cell.id,
+                                            parsed_output=empty_output,
+                                            valid=True,
+                                            structured_method="no_document_pages",
+                                            prompt_version="skipped_no_pages",
+                                        )
+                                    )
+                                    session.flush()
+                                    live_outputs[task_name] = empty_output
+                                    event = _cell_event(run_id, document, cell, latency_ms=0, cost_usd=0.0)
+                                    await _emit(events, event)
+                                    return
+
                             prompt = resolve_prompt(
                                 session,
                                 spec.pack,
@@ -428,7 +570,7 @@ async def execute_run(
                             documents = (
                                 rendered_task.build_input(
                                     document.path,
-                                    page_ranges=_page_ranges(rendered_task, resolver),
+                                    page_ranges=ranges,
                                 ).documents
                                 if rendered_task.requires_documents
                                 else []
@@ -444,7 +586,9 @@ async def execute_run(
                     provider = effective_capability.provider.value
                     provider_limit = provider_limits.get(provider)
                     if provider_limit is None:
-                        provider_limit = provider_limits.setdefault(provider, asyncio.Semaphore(1))
+                        provider_limit = provider_limits.setdefault(
+                            provider, asyncio.Semaphore(min(spec.concurrency.global_, 4))
+                        )
                     # A self-deployed box can't parallelize; serialize per model so concurrent
                     # cells queue instead of all degrading past the timeout.
                     endpoint_limit: AbstractAsyncContextManager[Any] = (
@@ -458,6 +602,7 @@ async def execute_run(
                             model_id=effective_model_id,
                             system=system,
                             instruction=instruction,
+                            prompt_version=prompt.source,
                             task=task,
                             documents=documents,
                             config=config,
@@ -467,6 +612,24 @@ async def execute_run(
                         cell = session.get(RunCell, cells[task_name])
                         assert cell is not None
                         persist_cell_result(session, cell=cell, result=result)
+                        if result.skipped:
+                            logger.warning(
+                                "run %s cell %s (%s/%s) skipped; no model call made: %s",
+                                run_id,
+                                cell.id,
+                                task_name,
+                                effective_model_id,
+                                result.skip_reason,
+                            )
+                        elif result.error:
+                            logger.error(
+                                "run %s cell %s (%s/%s) model call failed: %s",
+                                run_id,
+                                cell.id,
+                                task_name,
+                                effective_model_id,
+                                result.error.get("message") or result.error,
+                            )
                         if result.parsed is not None:
                             live_outputs[task_name] = result.parsed.model_dump(mode="json")
                         else:
@@ -484,6 +647,7 @@ async def execute_run(
                 except MissingUpstreamData as exc:
                     error = f"missing_upstream:{exc.task}:{exc}"
                     live_errors[task_name] = error
+                    logger.error("run %s task %s failed: %s", run_id, task_name, error)
                     with session_scope(engine) as session:
                         document = DocumentSample.model_validate(document_data)
                         cell = session.get(RunCell, cells[task_name])
@@ -493,6 +657,7 @@ async def execute_run(
                 except _UpstreamCellFailed as exc:
                     error = str(exc)
                     live_errors[task_name] = error
+                    logger.error("run %s task %s skipped after upstream failure: %s", run_id, task_name, error)
                     with session_scope(engine) as session:
                         document = DocumentSample.model_validate(document_data)
                         cell = session.get(RunCell, cells[task_name])
@@ -502,6 +667,7 @@ async def execute_run(
                 except Exception as exc:  # noqa: BLE001 -- isolate failures to this chain/cell
                     error = str(exc) or exc.__class__.__name__
                     live_errors[task_name] = error
+                    logger.exception("run %s task %s failed", run_id, task_name)
                     with session_scope(engine) as session:
                         document = DocumentSample.model_validate(document_data)
                         cell = session.get(RunCell, cells[task_name])
@@ -519,8 +685,10 @@ async def execute_run(
             score_run(session, run_id)
             run = session.get(BenchmarkRun, run_id)
             assert run is not None
-            run.status = RunStatus.completed
+            run.status = _final_run_status(session, run_id)
             session.add(run)
+            if run.status == RunStatus.failed:
+                logger.error("run %s failed; counts=%s", run_id, _counts(session, run_id))
         if spec.judge.enabled:
             try:
                 from app.scoring.judge import judge_run

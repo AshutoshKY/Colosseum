@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import app.runner.engine as engine_module
 import pytest
-from app.models import BenchmarkRun, DocumentSample, RunCell, RunResult, RunStatus
+from app.models import BenchmarkRun, DocumentSample, GroundTruth, RunCell, RunResult, RunStatus
 from app.providers.gateway import GatewayResult
 from app.providers.pricing import EstimatedCost
 from app.providers.registry import get_capability, list_models
@@ -32,7 +32,9 @@ class FakeGateway:
         self.max_inflight = max(self.max_inflight, self.inflight)
         try:
             await asyncio.sleep(self.delay)
-            parsed = kwargs["schema"].model_validate({"segments": []})
+            parsed = kwargs["schema"].model_validate(
+                {"segments": [], "required_documents_check": None}
+            )
             return GatewayResult(
                 model_id=kwargs["model_id"],
                 parsed=parsed,
@@ -161,6 +163,44 @@ async def test_missing_gold_fails_cell_without_gateway_call(tmp_path, monkeypatc
         result = session.exec(select(RunResult)).one()
         assert cell.status == RunStatus.failed
         assert result.error["message"].startswith("missing_upstream:")
+        assert session.get(BenchmarkRun, run_id).status == RunStatus.failed
+
+
+@pytest.mark.asyncio
+async def test_deterministic_opd_merge_completes_without_gateway_call(tmp_path, monkeypatch) -> None:
+    db, run_id, document_ids = _setup(tmp_path)
+    monkeypatch.setattr(engine_module, "get_engine", lambda: db)
+    spec = RunSpec(
+        name="deterministic",
+        pack="OPD",
+        selected_tasks=["merge_bills"],
+        document_ids=[document_ids[0]],
+        model_ids=[_model()],
+        upstream_mode="gold",
+    )
+    gateway = FakeGateway()
+    with Session(db) as session:
+        session.add(
+            GroundTruth(
+                document_id=document_ids[0],
+                task="itemized_bills",
+                gold={"bills": []},
+            )
+        )
+        session.add(
+            GroundTruth(
+                document_id=document_ids[0],
+                task="consolidated_bills",
+                gold={"bills": []},
+            )
+        )
+        session.commit()
+
+    await execute_run(run_id, spec, gateway_factory=lambda: gateway)
+
+    assert gateway.models == []
+    with Session(db) as session:
+        assert session.exec(select(RunCell)).one().status == RunStatus.succeeded
 
 
 @pytest.mark.asyncio
@@ -189,3 +229,55 @@ async def test_cancel_marks_unfinished_cells_skipped(tmp_path, monkeypatch) -> N
         assert all(cell.status == RunStatus.skipped for cell in cells)
         assert all(cell.skip_reason == "cancelled" for cell in cells)
         assert session.get(BenchmarkRun, run_id).status == RunStatus.cancelled
+
+
+@pytest.mark.asyncio
+async def test_cheque_bank_succeeds_with_empty_when_no_matching_segment(tmp_path, monkeypatch) -> None:
+    db, run_id, document_ids = _setup(tmp_path, 1)
+    monkeypatch.setattr(engine_module, "get_engine", lambda: db)
+    model_id = _model()
+    spec = RunSpec(
+        name="no-cheque-pages",
+        pack="OPD",
+        selected_tasks=["cheque_bank"],
+        document_ids=[document_ids[0]],
+        model_ids=[model_id],
+        upstream_mode="gold",
+    )
+    with Session(db) as session:
+        session.add(
+            GroundTruth(
+                document_id=document_ids[0],
+                task="segregation",
+                gold={"segments": [{"document_type": "prescription", "pages": "1"}]},
+            )
+        )
+        session.commit()
+
+    gateway = FakeGateway()
+    await execute_run(run_id, spec, Events(), gateway_factory=lambda: gateway)
+
+    assert gateway.models == []  # No model call made on empty pages
+    with Session(db) as session:
+        cell = session.exec(select(RunCell)).one()
+        result = session.exec(select(RunResult)).one()
+        assert cell.status == RunStatus.succeeded
+        assert result.parsed_output == {"bank_details": None}
+
+
+def test_extract_icd_codes_opd_instruction_builds_context() -> None:
+    from app.tasks.opd import EXTRACT_ICD_CODES
+
+    class Resolver:
+        def get(self, name):
+            if name in {"merge_bills", "upstream_bills"}:
+                return {"bills": [{"bill": {"bill_id": "INV-1"}, "items": [{"item_name": "Paracetamol"}]}]}
+            if name == "prescription":
+                return {"claims_digitization_details": {"diagnosis": "Acute Bronchitis"}}
+            raise engine_module.MissingUpstreamData(name, DocumentSample(path="x", sha256="x"))
+
+    rendered = _opd_instruction(EXTRACT_ICD_CODES, Resolver())
+    assert "Acute Bronchitis" in rendered
+    assert "Paracetamol" in rendered
+    assert "INV-1" in rendered
+

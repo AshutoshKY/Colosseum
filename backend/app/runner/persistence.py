@@ -67,6 +67,7 @@ def persist_cell_result(
         cell_id=cell.id,
         prompt_system=result.prompt_system,
         prompt_instruction=result.prompt_instruction,
+        prompt_version=result.prompt_version,
         document_count=result.document_count,
         raw_response=result.raw_response,
         parsed_output=parsed_json,
