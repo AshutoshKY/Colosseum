@@ -99,7 +99,7 @@ export default function Prompts() {
             <ErrorBox error={actions.createPrompt.error} />
           </Card>
 
-          <Card>
+            <Card>
             <h2>Version history</h2>
             {versions.isLoading ? (
               <Spinner />
@@ -107,11 +107,44 @@ export default function Prompts() {
               <div className="timeline">
                 {versions.data.map((version, index) => (
                   <details key={version.version ?? index} open={index === 0}>
-                    <summary>
-                      <Badge tone={version.active ? 'good' : 'neutral'}>
-                        v{version.version ?? '—'}{version.active ? ' active' : ''}
-                      </Badge>{' '}
-                      {version.created_at ? new Date(version.created_at).toLocaleString() : ''}
+                    <summary style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', cursor: 'pointer' }}>
+                      <div className="row center gap-xs">
+                        <Badge tone={version.active ? 'good' : 'neutral'}>
+                          v{version.version ?? '—'}{version.active ? ' active' : ''}
+                        </Badge>{' '}
+                        <span style={{ fontSize: '0.85rem' }}>
+                          {version.created_at ? new Date(version.created_at).toLocaleString() : ''}
+                        </span>
+                      </div>
+                      <div className="row center gap-xs" style={{ marginLeft: 'auto', paddingRight: '0.5rem' }}>
+                        <button
+                          type="button"
+                          className="ghost sm"
+                          onClick={event => {
+                            event.preventDefault()
+                            event.stopPropagation()
+                            setSystem(version.system_prompt ?? '')
+                            setInstruction(version.instruction_template ?? '')
+                          }}
+                        >
+                          Load into editor
+                        </button>
+                        {!version.active && version.version != null && (
+                          <button
+                            type="button"
+                            className="secondary sm"
+                            disabled={actions.activatePrompt.isPending}
+                            onClick={event => {
+                              event.preventDefault()
+                              event.stopPropagation()
+                              if (!activeTask) return
+                              actions.activatePrompt.mutate({ pack, task: activeTask, version: version.version! })
+                            }}
+                          >
+                            Activate this version
+                          </button>
+                        )}
+                      </div>
                     </summary>
                     <p className="muted">{[version.source_repo, version.source_branch, version.source_path].filter(Boolean).join(' · ')}</p>
                     <h4>System</h4>
@@ -124,7 +157,7 @@ export default function Prompts() {
             ) : (
               <Empty>No versions.</Empty>
             )}
-            <ErrorBox error={versions.error} />
+            <ErrorBox error={actions.activatePrompt.error || versions.error} />
           </Card>
         </div>
       </div>

@@ -1,10 +1,38 @@
 import { useMemo, useState } from 'react'
 import type { DocumentItem } from '../types'
-import { Badge, Empty, Spinner } from './common'
+import { Badge, Empty, formatBriefDate, Spinner } from './common'
 
-type GoldFilter = 'all' | 'gold' | 'missing'
+type GoldFilter = 'all' | 'gold' | 'missing' | 'starred'
+type SortBy = 'date-desc' | 'date-asc' | 'name-asc' | 'pages-desc' | 'pages-asc' | 'id-desc'
 
 const hasGold = (doc: DocumentItem) => Boolean(doc.has_gold)
+
+function useStarredDocs() {
+  const [starred, setStarred] = useState<Set<number>>(() => {
+    try {
+      const stored = localStorage.getItem('colosseum_starred_docs')
+      return stored ? new Set(JSON.parse(stored)) : new Set()
+    } catch {
+      return new Set()
+    }
+  })
+
+  const toggleStar = (id: number, event?: React.MouseEvent) => {
+    event?.stopPropagation()
+    event?.preventDefault()
+    setStarred(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      try {
+        localStorage.setItem('colosseum_starred_docs', JSON.stringify([...next]))
+      } catch {}
+      return next
+    })
+  }
+
+  return { starred, toggleStar }
+}
 
 export function DocumentPicker({
   documents,
@@ -19,15 +47,44 @@ export function DocumentPicker({
 }) {
   const [search, setSearch] = useState('')
   const [goldFilter, setGoldFilter] = useState<GoldFilter>('all')
+  const [sortBy, setSortBy] = useState<SortBy>('date-desc')
+  const { starred, toggleStar } = useStarredDocs()
 
   const shown = useMemo(() => {
     const query = search.trim().toLowerCase()
-    return documents.filter(doc => {
+    const filtered = documents.filter(doc => {
       if (goldFilter === 'gold' && !hasGold(doc)) return false
       if (goldFilter === 'missing' && hasGold(doc)) return false
+      if (goldFilter === 'starred' && !starred.has(doc.id)) return false
       return (doc.filename ?? doc.name ?? '').toLowerCase().includes(query)
     })
-  }, [documents, search, goldFilter])
+
+    return filtered.sort((a, b) => {
+      if (sortBy === 'date-desc') {
+        const da = a.created_at ? new Date(a.created_at).getTime() : 0
+        const db = b.created_at ? new Date(b.created_at).getTime() : 0
+        return db - da || b.id - a.id
+      }
+      if (sortBy === 'date-asc') {
+        const da = a.created_at ? new Date(a.created_at).getTime() : 0
+        const db = b.created_at ? new Date(b.created_at).getTime() : 0
+        return da - db || a.id - b.id
+      }
+      if (sortBy === 'name-asc') {
+        return (a.filename ?? a.name ?? '').localeCompare(b.filename ?? b.name ?? '')
+      }
+      if (sortBy === 'pages-desc') {
+        return (b.page_count ?? 0) - (a.page_count ?? 0)
+      }
+      if (sortBy === 'pages-asc') {
+        return (a.page_count ?? 0) - (b.page_count ?? 0)
+      }
+      if (sortBy === 'id-desc') {
+        return b.id - a.id
+      }
+      return 0
+    })
+  }, [documents, search, goldFilter, sortBy, starred])
 
   const selectedSet = new Set(selected)
   const shownIds = shown.map(doc => doc.id)
@@ -35,6 +92,14 @@ export function DocumentPicker({
 
   const selectShown = () => onChange([...new Set([...selected, ...shownIds])])
   const deselectShown = () => onChange(selected.filter(id => !shownIds.includes(id)))
+  const selectGold = () => {
+    const goldIds = documents.filter(hasGold).map(doc => doc.id)
+    onChange([...new Set([...selected, ...goldIds])])
+  }
+  const selectStarred = () => {
+    const starredIds = documents.filter(doc => starred.has(doc.id)).map(doc => doc.id)
+    onChange([...new Set([...selected, ...starredIds])])
+  }
 
   const toggle = (id: number, checked: boolean) =>
     onChange(checked ? [...selected, id] : selected.filter(value => value !== id))
@@ -53,15 +118,35 @@ export function DocumentPicker({
           />
         </label>
         <div className="segmented">
-          <button className={goldFilter === 'all' ? 'active' : ''} onClick={() => setGoldFilter('all')}>All</button>
-          <button className={goldFilter === 'gold' ? 'active' : ''} onClick={() => setGoldFilter('gold')}>Gold</button>
-          <button className={goldFilter === 'missing' ? 'active' : ''} onClick={() => setGoldFilter('missing')}>No gold</button>
+          <button type="button" className={goldFilter === 'all' ? 'active' : ''} onClick={() => setGoldFilter('all')}>All</button>
+          <button type="button" className={goldFilter === 'gold' ? 'active' : ''} onClick={() => setGoldFilter('gold')}>Gold</button>
+          <button type="button" className={goldFilter === 'missing' ? 'active' : ''} onClick={() => setGoldFilter('missing')}>No gold</button>
+          <button type="button" className={goldFilter === 'starred' ? 'active' : ''} onClick={() => setGoldFilter('starred')}>
+            ⭐ Starred {starred.size > 0 ? `(${starred.size})` : ''}
+          </button>
         </div>
+        <select
+          value={sortBy}
+          onChange={event => setSortBy(event.target.value as SortBy)}
+          aria-label="Sort documents"
+          title="Sort documents by"
+        >
+          <option value="date-desc">🕒 Date (Newest)</option>
+          <option value="date-asc">🕒 Date (Oldest)</option>
+          <option value="name-asc">🔤 Name (A → Z)</option>
+          <option value="pages-desc">📄 Pages (High → Low)</option>
+          <option value="pages-asc">📄 Pages (Low → High)</option>
+          <option value="id-desc">🔢 ID (#)</option>
+        </select>
         <div className="picker-actions">
           {allShownSelected
             ? <button type="button" className="small" onClick={deselectShown}>Deselect all</button>
             : <button type="button" className="small" onClick={selectShown} disabled={!shown.length}>Select all{shown.length !== documents.length ? ` (${shown.length})` : ''}</button>}
-          {selected.length > 0 && <button type="button" className="small ghost" onClick={() => onChange([])}>Clear</button>}
+          <button type="button" className="small ghost" onClick={selectGold} title="Select all documents with ground truth">Select gold</button>
+          {starred.size > 0 && (
+            <button type="button" className="small ghost" onClick={selectStarred} title="Select all starred documents">Select starred</button>
+          )}
+          {selected.length > 0 && <button type="button" className="small ghost danger" onClick={() => onChange([])}>Clear</button>}
         </div>
         <span className="count-pill">{selected.length} / {documents.length} selected</span>
       </div>
@@ -70,14 +155,42 @@ export function DocumentPicker({
         <div className="document-list">
           {shown.map(doc => {
             const checked = selectedSet.has(doc.id)
+            const isStarred = starred.has(doc.id)
             return (
               <label key={doc.id} className={checked ? 'checked' : ''}>
                 <input type="checkbox" checked={checked} onChange={event => toggle(doc.id, event.target.checked)} />
+                <button
+                  type="button"
+                  className={`star-btn ${isStarred ? 'starred' : ''}`}
+                  onClick={event => toggleStar(doc.id, event)}
+                  title={isStarred ? 'Unstar document' : 'Star document'}
+                  aria-label={isStarred ? 'Unstar document' : 'Star document'}
+                >
+                  {isStarred ? '⭐' : '☆'}
+                </button>
                 <span className="grow">
                   <strong>{doc.filename ?? doc.name}</strong>
-                  <small>{doc.page_count ?? '—'} pages · {doc.origin ?? 'test-docs'}</small>
+                  <small>
+                    #{doc.id} · {doc.page_count ?? '—'} pages · {doc.origin ?? 'test-docs'}
+                    {doc.created_at && (
+                      <span title={`Uploaded: ${new Date(doc.created_at).toLocaleString()}`}>
+                        {' · 🕒 '}{formatBriefDate(doc.created_at)}
+                      </span>
+                    )}
+                  </small>
                 </span>
                 <Badge tone={hasGold(doc) ? 'good' : 'warn'}>{hasGold(doc) ? 'gold' : 'no gold'}</Badge>
+                <a
+                  className="button ghost sm"
+                  href={`/api/documents/${doc.id}/file`}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={event => event.stopPropagation()}
+                  title="Open PDF in new tab"
+                  style={{ marginLeft: '0.5rem', padding: '0.1rem 0.4rem', fontSize: '0.75rem' }}
+                >
+                  📄 View PDF
+                </a>
               </label>
             )
           })}
@@ -88,3 +201,4 @@ export function DocumentPicker({
     </>
   )
 }
+

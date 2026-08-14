@@ -72,7 +72,11 @@ export const percent = (value?: number | null) => `${((value ?? 0) <= 1 ? (value
 export const modelId = (model: { id?: string; model_id?: string }) => model.id ?? model.model_id ?? ''
 
 export const capabilityList = (caps?: string[] | Record<string, unknown>) =>
-  Array.isArray(caps) ? caps : Object.entries(caps ?? {}).filter(([, on]) => on === true).map(([name]) => name.replaceAll('_', ' '))
+  Array.isArray(caps)
+    ? caps
+    : Object.entries(caps ?? {})
+        .filter(([key, on]) => on === true && !['modalities', 'context_window'].includes(key))
+        .map(([name]) => name.replaceAll('_', ' '))
 
 export function supportsDocuments(model: { capabilities?: string[] | Record<string, unknown> }) {
   const caps = model.capabilities
@@ -82,12 +86,69 @@ export function supportsDocuments(model: { capabilities?: string[] | Record<stri
   return caps.pdf_native === true || caps.vision === true || modalities.includes('pdf') || modalities.includes('image')
 }
 
+export function getContextWindow(model: { context_window?: number | null; capabilities?: string[] | Record<string, unknown> }): number | null {
+  if (model.context_window) return model.context_window
+  if (model.capabilities && !Array.isArray(model.capabilities)) {
+    const ctx = model.capabilities.context_window
+    if (typeof ctx === 'number') return ctx
+  }
+  return null
+}
+
+export function formatContextWindow(tokens?: number | null): string | null {
+  if (!tokens || tokens <= 0) return null
+  if (tokens >= 1_000_000) {
+    const m = tokens / 1_000_000
+    return `${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M ctx`
+  }
+  if (tokens >= 1_000) {
+    return `${Math.round(tokens / 1_000)}k ctx`
+  }
+  return `${tokens} ctx`
+}
+
+export function formatReleaseDate(dateStr?: string | null): string | null {
+  if (!dateStr) return null
+  try {
+    const parts = dateStr.split('-')
+    if (parts.length === 3) {
+      const date = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+      }
+    }
+    return dateStr
+  } catch {
+    return dateStr
+  }
+}
+
+export function formatPriceSummary(pricing?: { input?: number | null; output?: number | null; input_per_million?: number | null; output_per_million?: number | null }): string {
+  if (!pricing) return '$0.00/M'
+  const inVal = Number(pricing.input_per_million ?? pricing.input ?? 0)
+  const outVal = Number(pricing.output_per_million ?? pricing.output ?? 0)
+  if (inVal === 0 && outVal === 0) return 'Free'
+  if (outVal > 0) {
+    return `$${inVal >= 1 ? inVal.toFixed(2) : inVal.toFixed(4)} in · $${outVal >= 1 ? outVal.toFixed(2) : outVal.toFixed(4)} out / 1M`
+  }
+  return `$${inVal >= 1 ? inVal.toFixed(2) : inVal.toFixed(4)}/M in`
+}
+
 /** Human-friendly date: "Today, 14:03" or "8 Jul, 09:41". */
 export function formatBriefDate(dateStr: string) {
   const date = new Date(dateStr)
   const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
   if (date.toDateString() === new Date().toDateString()) return `Today, ${timeStr}`
   return `${date.getDate()} ${date.toLocaleDateString([], { month: 'short' })}, ${timeStr}`
+}
+
+export function formatDuration(milliseconds?: number | null) {
+  if (milliseconds == null) return '—'
+  if (milliseconds < 1000) return `${milliseconds} ms`
+  const seconds = milliseconds / 1000
+  if (seconds < 60) return `${seconds.toFixed(seconds < 10 ? 1 : 0)} s`
+  const minutes = Math.floor(seconds / 60)
+  return `${minutes}m ${Math.round(seconds % 60)}s`
 }
 
 /** Stable hue class for model / agent / pack chips. */

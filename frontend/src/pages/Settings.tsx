@@ -1,7 +1,10 @@
 import { useRunBuilder } from '../context/RunBuilderContext'
+import { useCatalog } from '../api/hooks'
 import { useTheme, type ThemePreference } from '../theme'
 import type { JudgeMode } from '../types'
 import { Card } from '../components/common'
+import { JudgeModelPicker } from '../components/JudgeModelPicker'
+import { DEFAULT_PER_PROVIDER_CONCURRENCY } from '../builder'
 
 const JUDGE_MODES: JudgeMode[] = ['gold_grade', 'doc_grade', 'head_to_head']
 const THEMES: Array<{ value: ThemePreference; label: string }> = [
@@ -10,9 +13,19 @@ const THEMES: Array<{ value: ThemePreference; label: string }> = [
   { value: 'system', label: 'System' },
 ]
 
+const PROVIDER_LABELS: Record<string, string> = {
+  vertex_ai: 'Vertex AI (Gemini)',
+  vertex_partner: 'Vertex Partner (Claude, Llama, Qwen, etc.)',
+  openai_compatible: 'OpenAI Compatible / vLLM',
+  openrouter: 'OpenRouter (300+ models)',
+  bedrock: 'Amazon Bedrock',
+  xai: 'xAI (Grok)',
+}
+
 export default function Settings() {
   const { spec, setSpec } = useRunBuilder()
   const { preference, setPreference } = useTheme()
+  const catalog = useCatalog()
 
   const compression = spec.compression
   const concurrency = spec.concurrency
@@ -120,9 +133,9 @@ export default function Settings() {
                 onChange={event => update('concurrency', { ...concurrency, global: Number(event.target.value) })}
               />
             </label>
-            {Object.entries(concurrency.per_provider).map(([provider, value]) => (
+            {(Object.entries({ ...DEFAULT_PER_PROVIDER_CONCURRENCY, ...concurrency.per_provider }) as [string, number][]).map(([provider, value]) => (
               <label key={provider}>
-                {provider.replaceAll('_', ' ')}
+                {PROVIDER_LABELS[provider] ?? provider.replaceAll('_', ' ')}
                 <input
                   type="number"
                   min="1"
@@ -130,7 +143,11 @@ export default function Settings() {
                   onChange={event =>
                     update('concurrency', {
                       ...concurrency,
-                      per_provider: { ...concurrency.per_provider, [provider]: Number(event.target.value) },
+                      per_provider: {
+                        ...DEFAULT_PER_PROVIDER_CONCURRENCY,
+                        ...concurrency.per_provider,
+                        [provider]: Number(event.target.value),
+                      },
                     })
                   }
                 />
@@ -164,10 +181,7 @@ export default function Settings() {
               <p>gold grade scores against gold answers; doc grade against the document; head-to-head ranks models.</p>
             </div>
             <div>
-              <label>
-                Judge model
-                <input value={judge.model_id} onChange={event => update('judge', { ...judge, model_id: event.target.value })} />
-              </label>
+              <JudgeModelPicker models={catalog.data ?? []} value={judge.model_id} onChange={model_id => update('judge', { ...judge, model_id })} />
               {JUDGE_MODES.map(mode => (
                 <label key={mode}>
                   <input

@@ -1,9 +1,18 @@
 import type { PackMeta, RunSpec, TaskMeta } from './types'
 
+export const DEFAULT_PER_PROVIDER_CONCURRENCY: Record<string, number> = {
+  vertex_ai: 4,
+  vertex_partner: 4,
+  openai_compatible: 8,
+  openrouter: 8,
+  bedrock: 4,
+  xai: 2,
+}
+
 export const initialRunSpec = (): RunSpec => ({
   name: `benchmark-${new Date().toISOString().slice(0, 10)}`, pack: 'OPD', variant: null,
   selected_tasks: [], document_ids: [], model_ids: [], upstream_mode: 'gold', prompt_overrides: {}, runtime_overrides: {},
-  concurrency: {global: 16, per_provider: {vertex_ai: 4, openai_compatible: 8, bedrock: 4, xai: 2}},
+  concurrency: {global: 16, per_provider: { ...DEFAULT_PER_PROVIDER_CONCURRENCY }},
   judge: {enabled: true, model_id: 'gemini-3.1-pro', modes: ['gold_grade', 'head_to_head']},
   compression: {enabled: false, max_megapixels: 4, max_image_mb: null}, confirm_large: false,
 })

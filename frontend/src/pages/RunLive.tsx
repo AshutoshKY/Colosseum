@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { subscribeToRun } from '../api/sse'
 import { useActions, useResults, useRun } from '../api/hooks'
 import type { Cell, ProgressEvent, RunDetail } from '../types'
-import { Badge, badgeHue, Card, ErrorBox, Modal, money, Spinner } from '../components/common'
+import { Badge, badgeHue, Card, ErrorBox, formatDuration, Modal, money, Spinner } from '../components/common'
 import { RunGrid, cellKey } from '../components/RunGrid'
 import { JsonDiffTree } from '../components/JsonDiffTree'
 
@@ -71,6 +71,7 @@ export default function RunLive() {
               <span key={model} className={`badge ${badgeHue(model, 'model')}`}>{model.split('/').pop()}</span>
             ))}
             {run?.spec?.compression?.enabled && <Badge tone="warn">🗜 compressed · {run.spec.compression.max_megapixels} MP</Badge>}
+            {run?.spec?.prompt_overrides && Object.keys(run.spec.prompt_overrides).length > 0 && <Badge tone="warn">✏️ prompt override</Badge>}
           </div>
         </div>
         <div className="row">
@@ -84,8 +85,8 @@ export default function RunLive() {
       </header>
 
       {terminal && (
-        <div className="alert good">
-          Run is {run.status}. <Link to={`/runs/${id}/results`}>View results →</Link>
+        <div className={`alert ${run.status === 'failed' ? 'bad' : 'good'}`}>
+          Run is {run.status}.{run.failure_reason ? ` ${run.failure_reason}` : ''} <Link to={`/runs/${id}/results`}>View results →</Link>
         </div>
       )}
 
@@ -94,10 +95,12 @@ export default function RunLive() {
         <Card><span>Failed</span><strong>{run?.counts.failed ?? 0}</strong></Card>
         <Card><span>Running cost</span><strong>{money(cost)}</strong></Card>
         <Card><span>Started</span><strong>{run ? new Date(run.created_at).toLocaleTimeString() : '—'}</strong></Card>
+        <Card><span>Elapsed</span><strong>{formatDuration(run?.elapsed_ms)}</strong></Card>
       </div>
 
       <Card>
         <h2>Progress grid</h2>
+        <p className="muted grid-help">Use <strong>View result</strong> when a claim is complete, or when all processing for a document has finished. You do not need to wait for the whole run.</p>
         {detail.isLoading ? (
           <Spinner />
         ) : (
@@ -111,7 +114,10 @@ export default function RunLive() {
           <dl className="details">
             <dt>Status</dt><dd><Badge tone={statusTone(selectedDetail.status)}>{selectedDetail.status}</Badge></dd>
             <dt>Document</dt><dd>{selectedDetail.document_name ?? selectedDetail.document ?? selectedDetail.document_id ?? '—'}</dd>
-            <dt>Latency</dt><dd>{selectedDetail.latency_ms != null ? `${selectedDetail.latency_ms} ms` : '—'}</dd>
+            <dt>Prompt version</dt><dd><Badge tone={selectedDetail.prompt_version?.startsWith('db:') ? 'good' : selectedDetail.prompt_version === 'override' ? 'warn' : 'neutral'}>{selectedDetail.prompt_version ?? 'code baseline'}</Badge></dd>
+            <dt>Queued</dt><dd>{selectedDetail.created_at ? new Date(selectedDetail.created_at).toLocaleString() : '—'}</dd>
+            <dt>Completed</dt><dd>{selectedDetail.completed_at ? new Date(selectedDetail.completed_at).toLocaleString() : '—'}</dd>
+            <dt>Execution time</dt><dd>{formatDuration(selectedDetail.latency_ms)}</dd>
             <dt>Cost</dt><dd>{selectedDetail.cost_usd != null ? money(selectedDetail.cost_usd) : '—'}</dd>
             <dt>Retries</dt><dd>{selectedDetail.retries ?? '—'}</dd>
           </dl>
@@ -122,7 +128,7 @@ export default function RunLive() {
 
           {selectedDetail.prompt_system || selectedDetail.prompt_instruction ? (
             <details>
-              <summary>Prompt</summary>
+              <summary>Prompt {selectedDetail.prompt_version ? `(${selectedDetail.prompt_version})` : ''}</summary>
               <pre>{selectedDetail.prompt_system}{'\n\n'}{selectedDetail.prompt_instruction}</pre>
             </details>
           ) : (
@@ -131,7 +137,7 @@ export default function RunLive() {
 
           {selectedDetail.parsed_output != null && (
             <details open>
-              <summary>Parsed output</summary>
+              <summary>Result</summary>
               <JsonDiffTree value={selectedDetail.parsed_output} />
             </details>
           )}

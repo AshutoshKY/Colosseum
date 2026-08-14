@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useActions, useRuns } from '../api/hooks'
-import { Badge, badgeHue, Card, Empty, ErrorBox, formatBriefDate, Menu, Modal, money, Spinner } from '../components/common'
+import { Badge, badgeHue, Card, Empty, ErrorBox, formatBriefDate, formatDuration, Menu, Modal, money, Spinner } from '../components/common'
 import type { RunItem } from '../types'
 
 const statusTone = (status: string) =>
@@ -49,7 +49,7 @@ export default function Runs() {
             <table>
               <thead>
                 <tr>
-                  <th>Name</th><th>Pack</th><th>Models</th><th>Agents</th><th>Status</th><th>Created</th><th>Progress</th><th>Cost</th><th></th>
+                  <th>Name</th><th>Pack</th><th>Models</th><th>Agents</th><th>Status</th><th>Created</th><th>Duration</th><th>Progress</th><th>Cost</th><th></th>
                 </tr>
               </thead>
               <tbody>
@@ -124,13 +124,20 @@ function RunRow({
       </td>
       <td>
         <div className="badges compact">
-          {(run.spec?.selected_tasks ?? []).map(task => (
-            <span key={task} className={`badge ${badgeHue(task, 'agent')}`}>{task.replaceAll('_', ' ')}</span>
-          ))}
+          {(run.spec?.selected_tasks ?? []).map(task => {
+            const hasOverride = Boolean(run.spec?.prompt_overrides?.[task])
+            return (
+              <span key={task} className={`badge ${badgeHue(task, 'agent')}`} title={hasOverride ? `Prompt override active for ${task}` : `Default prompt for ${task}`}>
+                {task.replaceAll('_', ' ')}
+                {hasOverride && <small style={{ marginLeft: '0.2rem', opacity: 0.85 }}>✏️</small>}
+              </span>
+            )
+          })}
         </div>
       </td>
       <td><Badge tone={statusTone(run.status)}>{run.status}</Badge></td>
       <td title={new Date(run.created_at).toLocaleString()}>{formatBriefDate(run.created_at)}</td>
+      <td>{formatDuration(run.elapsed_ms)}</td>
       <td>
         <div className={`progress ${progressState}`} style={{ width: 60 }}>
           <span style={{ width: `${percentDone}%` }} />

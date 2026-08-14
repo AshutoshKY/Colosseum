@@ -5,7 +5,7 @@ import { ApiError } from '../api/client'
 import { useActions, useCatalog, useDocuments, usePacks, usePrompts } from '../api/hooks'
 import { useRunBuilder } from '../context/RunBuilderContext'
 import type { DryRun, PackMeta, PackName, Prompt, Runtime, RunSpec, TaskMeta } from '../types'
-import { Card, ErrorBox, Spinner } from '../components/common'
+import { Badge, Card, ErrorBox, Spinner } from '../components/common'
 import { UploadZone } from '../components/UploadZone'
 import { DocumentPicker } from '../components/DocumentPicker'
 import { DependencyGraph } from '../components/DependencyGraph'
@@ -178,6 +178,38 @@ export default function RunBuilder() {
             <div><Link to="/settings">Edit run settings →</Link></div>
           </div>
 
+          {spec.model_ids.length > 0 && (
+            <div className="summary-models-block">
+              <div className="row between" style={{ marginBottom: '0.35rem' }}>
+                <span className="eyebrow" style={{ margin: 0, fontSize: '0.7rem' }}>Models ({spec.model_ids.length})</span>
+                <button
+                  type="button"
+                  className="ghost small danger"
+                  style={{ padding: '0.1rem 0.3rem', fontSize: '0.7rem' }}
+                  onClick={() => update('model_ids', [])}
+                >
+                  Clear
+                </button>
+              </div>
+              <div className="badges compact summary-tags">
+                {spec.model_ids.map(id => (
+                  <span key={id} className="badge summary-model-pill" title={id}>
+                    {id.split('/').pop()}
+                    <button
+                      type="button"
+                      className="pill-remove-x"
+                      onClick={() => update('model_ids', spec.model_ids.filter(m => m !== id))}
+                      title={`Remove ${id}`}
+                      aria-label={`Remove ${id}`}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {missing && (
             <div className="alert bad">
               <strong>Missing gold</strong>
@@ -268,9 +300,17 @@ function PipelineStep({
       {tasks.filter(task => spec.selected_tasks.includes(task.name)).map(task => {
         const baseline = prompts?.find(prompt => (prompt.task ?? prompt.task_name) === task.name)
         const runtime = { ...task.reference_runtime, ...spec.runtime_overrides[task.name] }
+        const promptVersionLabel = spec.prompt_overrides[task.name] ? 'override' : baseline?.active_version ? `v${baseline.active_version}` : 'code baseline'
         return (
           <details className="task-config" key={task.name}>
-            <summary>{task.name.replaceAll('_', ' ')} settings <small>source defaults visible below</small></summary>
+            <summary>
+              <div className="row center gap-xs" style={{ display: 'inline-flex' }}>
+                <span>{task.name.replaceAll('_', ' ')} settings</span>
+                <Badge tone={spec.prompt_overrides[task.name] ? 'warn' : baseline?.active_version ? 'good' : 'neutral'}>
+                  {promptVersionLabel}
+                </Badge>
+              </div>
+            </summary>
             <PromptEditor
               baseline={baseline}
               value={spec.prompt_overrides[task.name]}
