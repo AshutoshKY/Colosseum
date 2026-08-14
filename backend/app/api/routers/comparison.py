@@ -172,6 +172,8 @@ def side_by_side(
         }
         item = {
             "model_id": cell.model_id,
+            "latency_ms": result.latency_ms,
+            "completed_at": result.created_at,
             "parsed_output": result.parsed_output,
             "valid": result.valid,
             "field_metrics": field_verdicts,
@@ -184,6 +186,7 @@ def side_by_side(
             "judge": score.judge_score if score else None,
             "prompt_system": result.prompt_system,
             "prompt_instruction": result.prompt_instruction,
+            "prompt_version": result.prompt_version,
             "raw_response": json.dumps(result.raw_response, indent=2, default=str)
             if result.raw_response is not None
             else None,

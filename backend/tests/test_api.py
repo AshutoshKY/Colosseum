@@ -62,9 +62,28 @@ async def test_health_openapi_catalog_and_packs(client):
     packs = (await client.get("/api/packs")).json()
     assert [pack["name"] for pack in packs] == ["OPD", "IPD"]
     audit = next(task for task in packs[0]["tasks"] if task["name"] == "audit")
-    assert "segregation" in audit["depends_on"]
-    assert "nme_analysis" in audit["gold_feed_keys"]
-    assert "patient_summary" in audit["gold_feed_keys"]
+    assert "merge_bills" in audit["depends_on"]
+    assert "merge_bills" in audit["gold_feed_keys"]
+
+
+async def test_catalog_verify_dynamic_openrouter_model(client, monkeypatch):
+    async def fake_verify(model_id: str, thinking_level: str | None = None) -> bool:
+        assert model_id == "openrouter/deepseek/deepseek-v4-flash-0731"
+        return True
+
+    import app.api.routers.catalog as catalog_module
+
+    monkeypatch.setattr(catalog_module, "_load_verify", lambda: fake_verify)
+
+    # Test encoded slashes URL (from frontend encodeURIComponent)
+    res1 = await client.post("/api/catalog/openrouter%2Fdeepseek%2Fdeepseek-v4-flash-0731/verify")
+    assert res1.status_code == 200
+    assert res1.json()["ok"] is True
+
+    # Test standard slashes URL
+    res2 = await client.post("/api/catalog/openrouter/deepseek/deepseek-v4-flash-0731/verify")
+    assert res2.status_code == 200
+    assert res2.json()["ok"] is True
 
 
 async def test_upload_dedupe_gold_and_prompt_versions(client, api_engine):
@@ -273,7 +292,10 @@ async def test_run_results_comparisons_judge_and_sse(client, api_engine, tmp_pat
     run_id, document_id = _seed_run(api_engine, tmp_path)
     detail = (await client.get(f"/api/runs/{run_id}")).json()
     assert detail["run"]["counts"]["succeeded"] == 1
+    assert detail["run"]["elapsed_ms"] >= 0
     assert detail["cells"][0]["document_name"] == "result.pdf"
+    assert detail["cells"][0]["created_at"]
+    assert detail["cells"][0]["completed_at"]
 
     hidden = (await client.get(f"/api/runs/{run_id}/results")).json()["results"][0]
     shown = (await client.get(f"/api/runs/{run_id}/results?include_raw=true")).json()["results"][0]
@@ -292,6 +314,7 @@ async def test_run_results_comparisons_judge_and_sse(client, api_engine, tmp_pat
     ).json()
     assert side["gold"] == {"segments": [{"document_type": "bill", "pages": "1"}]}
     assert side["outputs"][0]["prompt_system"] == "system"
+    assert side["outputs"][0]["completed_at"]
     assert side["outputs"][0]["field_metrics"] == {"segments": "match"}
 
     events = [
@@ -347,10 +370,162 @@ async def test_run_results_comparisons_judge_and_sse(client, api_engine, tmp_pat
     monkeypatch.setattr(judge_module, "judge_run", fake_judge)
     judged = await client.post(
         f"/api/runs/{run_id}/judge",
-        json={"model_id": "gemini-3.1-pro", "modes": ["gold_grade", "head_to_head"]},
+        json={"model_id": "vertex_ai/gemini-2.5-flash", "modes": ["gold_grade", "head_to_head"]},
     )
     assert judged.status_code == 202
     await asyncio.sleep(0)
     assert called[0][0] == run_id
     refreshed = (await client.get(f"/api/runs/{run_id}")).json()
     assert refreshed["run"]["judge_status"] == "completed"
+
+
+async def test_prompt_version_create_and_activate(client):
+    v1_resp = await client.post(
+        "/api/prompts/OPD/segregation/versions",
+        json={"system_prompt": "v1 sys", "instruction_template": "v1 inst", "activate": True},
+    )
+    assert v1_resp.status_code == 201
+    assert v1_resp.json()["version"] == 1
+    assert v1_resp.json()["active"] is True
+
+    v2_resp = await client.post(
+        "/api/prompts/OPD/segregation/versions",
+        json={"system_prompt": "v2 sys", "instruction_template": "v2 inst", "activate": True},
+    )
+    assert v2_resp.status_code == 201
+    assert v2_resp.json()["version"] == 2
+    assert v2_resp.json()["active"] is True
+
+    # Confirm v1 is no longer active
+    versions = (await client.get("/api/prompts/OPD/segregation/versions")).json()
+    v1_item = next(v for v in versions if v["version"] == 1)
+    assert v1_item["active"] is False
+
+    # Now activate v1
+    activate_resp = await client.post("/api/prompts/OPD/segregation/versions/1/activate")
+    assert activate_resp.status_code == 200
+    assert activate_resp.json()["version"] == 1
+    assert activate_resp.json()["active"] is True
+
+    # Confirm v1 is active and v2 is inactive
+    versions_after = (await client.get("/api/prompts/OPD/segregation/versions")).json()
+    v1_after = next(v for v in versions_after if v["version"] == 1)
+    v2_after = next(v for v in versions_after if v["version"] == 2)
+    assert v1_after["active"] is True
+    assert v2_after["active"] is False
+
+
+async def test_prompt_version_recorded_in_results(client, api_engine):
+    doc_res = await client.post(
+        "/api/documents", files=[("files", ("claim.pdf", _pdf(), "application/pdf"))]
+    )
+    doc_id = doc_res.json()[0]["id"]
+    run_spec = {
+        "name": "prompt-version-test-run",
+        "pack": "OPD",
+        "selected_tasks": ["segregation"],
+        "document_ids": [doc_id],
+        "model_ids": ["vertex_ai/gemini-2.5-flash"],
+        "upstream_mode": "gold",
+    }
+    create_res = await client.post("/api/runs", json=run_spec)
+    assert create_res.status_code == 202
+    run_id = create_res.json()["run_id"]
+    results_res = await client.get(f"/api/runs/{run_id}/results")
+    assert results_res.status_code == 200
+    results_data = results_res.json()["results"]
+    assert len(results_data) > 0
+    assert "prompt_version" in results_data[0]
+
+
+async def test_get_document_file(client):
+    doc_res = await client.post(
+        "/api/documents", files=[("files", ("claim_pdf_test.pdf", _pdf(), "application/pdf"))]
+    )
+    doc_id = doc_res.json()[0]["id"]
+    file_res = await client.get(f"/api/documents/{doc_id}/file")
+    assert file_res.status_code == 200
+    assert file_res.headers["content-type"] == "application/pdf"
+    assert file_res.content == _pdf()
+
+
+async def test_upload_gold_then_upload_pdf_binds_seamlessly(client):
+    # 1. Upload Gold JSON first (creates stub)
+    gold_res = await client.post(
+        "/api/gold/import",
+        files=[
+            (
+                "file",
+                (
+                    "gold.json",
+                    json.dumps({
+                        "document": "data/uploads/order_test_doc.pdf",
+                        "tasks": {"audit": {"status": "MATCH"}},
+                    }),
+                    "application/json",
+                ),
+            )
+        ],
+    )
+    assert gold_res.status_code == 200
+
+    docs = (await client.get("/api/documents")).json()
+    stub = next(d for d in docs if "order_test_doc" in d["filename"])
+    assert stub["has_gold"] is True
+
+    # 2. Upload the actual PDF file afterwards
+    pdf_res = await client.post(
+        "/api/documents",
+        files=[("files", ("order_test_doc.pdf", _pdf(), "application/pdf"))],
+    )
+    assert pdf_res.status_code == 201
+    updated_doc = pdf_res.json()[0]
+    assert updated_doc["id"] == stub["id"]  # Re-bound to same document
+    assert updated_doc["has_gold"] is True
+    assert updated_doc["page_count"] == 1
+
+    # 3. View PDF now succeeds
+    file_res = await client.get(f"/api/documents/{stub['id']}/file")
+    assert file_res.status_code == 200
+    assert file_res.headers["content-type"] == "application/pdf"
+
+
+async def test_upload_pdf_then_upload_gold_binds_seamlessly(client):
+    # 1. Upload PDF first
+    pdf_res = await client.post(
+        "/api/documents",
+        files=[("files", ("pdf_first_doc.pdf", _pdf(), "application/pdf"))],
+    )
+    assert pdf_res.status_code == 201
+    doc_id = pdf_res.json()[0]["id"]
+
+    # 2. Upload Gold afterwards
+    gold_res = await client.post(
+        "/api/gold/import",
+        files=[
+            (
+                "file",
+                (
+                    "gold.json",
+                    json.dumps({
+                        "document": "data/uploads/pdf_first_doc.pdf",
+                        "tasks": {"nme_analysis": {"nme_total": 0}},
+                    }),
+                    "application/json",
+                ),
+            )
+        ],
+    )
+    assert gold_res.status_code == 200
+
+    # 3. Verify gold attached and file accessible
+    docs = (await client.get("/api/documents")).json()
+    doc = next(d for d in docs if d["id"] == doc_id)
+    assert doc["has_gold"] is True
+
+    file_res = await client.get(f"/api/documents/{doc_id}/file")
+    assert file_res.status_code == 200
+
+
+
+

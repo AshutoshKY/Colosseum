@@ -21,6 +21,10 @@ from app.scoring.ground_truth_import import _resolve_document, _upsert
 router = APIRouter(prefix="/gold", tags=["gold"])
 REPO_ROOT = Path(__file__).resolve().parents[4]
 
+# Export CSVs pack an entire claim into one ``json_build_object`` cell, exceeding csv's
+# default 131072-byte per-field cap; lift it for the simple-CSV parse path too.
+csv.field_size_limit(256 * 1024 * 1024)
+
 
 def _tasks(session: Session, document_id: int) -> dict[str, Any]:
     rows = session.exec(select(GroundTruth).where(GroundTruth.document_id == document_id)).all()
@@ -138,10 +142,12 @@ async def import_gold(
                         )
                         inserted += int(is_new)
                         updated += int(not is_new)
-            except (ValueError, KeyError, json.JSONDecodeError, UnicodeDecodeError) as exc:
+            except HTTPException:
+                raise
+            except Exception as exc:  # noqa: BLE001 - surface any parse/convert failure as 422
                 raise HTTPException(
                     status_code=422,
-                    detail=f"{upload.filename}: {exc}",
+                    detail=f"{upload.filename}: {type(exc).__name__}: {exc}",
                 ) from exc
         session.commit()
         return {

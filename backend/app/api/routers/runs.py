@@ -8,6 +8,7 @@ import io
 import json
 from collections.abc import AsyncIterator
 from contextlib import suppress
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,7 @@ from sqlmodel import Session, select
 from app.api.deps import RunManagerDep, SessionDep
 from app.api.schemas import (
     CellOut,
+    CostBreakdownOut,
     CostEstimateOut,
     DryRunOut,
     JudgeJobOut,
@@ -70,6 +72,15 @@ def _run_cost(session: Session, run_id: int) -> float:
     return round(sum(float(row.total_cost_usd or 0) for row in rows), 8)
 
 
+def _elapsed_ms(started_at: Any, finished_at: Any | None = None) -> int | None:
+    if not started_at:
+        return None
+    start = started_at if getattr(started_at, "tzinfo", None) else started_at.replace(tzinfo=UTC)
+    end = finished_at or datetime.now(UTC)
+    end = end if getattr(end, "tzinfo", None) else end.replace(tzinfo=UTC)
+    return max(0, round((end - start).total_seconds() * 1000))
+
+
 def _run_out(session: Session, run: BenchmarkRun) -> RunOut:
     assert run.id is not None
     judge_status = _judge_states.get(run.id)
@@ -85,17 +96,42 @@ def _run_out(session: Session, run: BenchmarkRun) -> RunOut:
         ).all()
         if comparison_exists is not None or any(score.judge_score for score in graded):
             judge_status = "completed"
+    result_times = session.exec(
+        select(RunResult.created_at)
+        .join(RunCell, RunCell.id == RunResult.cell_id)  # type: ignore[arg-type]
+        .where(RunCell.run_id == run.id)
+    ).all()
+    finished_at = max(result_times) if result_times and _status(run.status) in _TERMINAL else None
     return RunOut(
         run_id=run.id,
         name=run.name,
         pack=run.pack,
         status=_status(run.status),
         created_at=run.created_at,
+        elapsed_ms=_elapsed_ms(run.created_at, finished_at),
         counts=_counts(session, run.id),
         spec=run.spec or {},
         cost_usd=_run_cost(session, run.id),
         judge_status=judge_status,
+        failure_reason=_run_failure_reason(session, run.id) if _status(run.status) == "failed" else None,
     )
+
+
+def _run_failure_reason(session: Session, run_id: int) -> str | None:
+    """Return the most useful persisted reason for a failed run."""
+    cells = session.exec(select(RunCell).where(RunCell.run_id == run_id)).all()
+    results = session.exec(
+        select(RunResult)
+        .join(RunCell, RunCell.id == RunResult.cell_id)  # type: ignore[arg-type]
+        .where(RunCell.run_id == run_id)
+    ).all()
+    errors = [_error_message(row.error) for row in results if _error_message(row.error)]
+    if errors:
+        return errors[0]
+    skipped = [cell.skip_reason for cell in cells if cell.skip_reason]
+    if skipped:
+        return f"No LLM call was made: {skipped[0]}"
+    return "The run failed before producing a result. Check backend logs for details."
 
 
 def _validate_spec(session: Session, spec: RunSpec) -> JSONResponse | None:
@@ -199,8 +235,28 @@ def _cell_rows(session: Session, run_id: int) -> list[CellOut]:
             model_id=cell.model_id,
             task=cell.task,
             status=_status(cell.status),
+            created_at=cell.created_at,
+            completed_at=by_cell[cell.id].created_at if cell.id in by_cell else None,
             latency_ms=by_cell[cell.id].latency_ms if cell.id in by_cell else None,
             cost_usd=float(by_cell[cell.id].total_cost_usd or 0) if cell.id in by_cell else None,
+            cost_breakdown=CostBreakdownOut(
+                input_usd=float(by_cell[cell.id].est_input_cost or 0),
+                output_usd=float(by_cell[cell.id].est_output_cost or 0),
+                cache_usd=float(by_cell[cell.id].est_cache_cost or 0),
+                thinking_usd=float(by_cell[cell.id].est_thinking_cost or 0),
+                total_usd=float(by_cell[cell.id].total_cost_usd or 0),
+            )
+            if cell.id in by_cell
+            else None,
+            usage={
+                "input_tokens": by_cell[cell.id].input_tokens,
+                "output_tokens": by_cell[cell.id].output_tokens,
+                "thinking_tokens": by_cell[cell.id].thinking_tokens,
+                "cached_tokens": by_cell[cell.id].cached_tokens,
+                "total_tokens": by_cell[cell.id].total_tokens,
+            }
+            if cell.id in by_cell
+            else {},
             error=_error_message(by_cell[cell.id].error) if cell.id in by_cell else None,
             skip_reason=cell.skip_reason,
         )
@@ -369,6 +425,15 @@ def export_run(
             "task",
             "status",
             "latency_ms",
+            "input_tokens",
+            "output_tokens",
+            "cached_tokens",
+            "thinking_tokens",
+            "total_tokens",
+            "input_cost_usd",
+            "output_cost_usd",
+            "cache_cost_usd",
+            "thinking_cost_usd",
             "cost_usd",
             "retries",
             "error",
@@ -377,6 +442,8 @@ def export_run(
         ]
     )
     for row in rows:
+        cb = row.cost_breakdown or CostBreakdownOut()
+        usage = row.usage or {}
         writer.writerow(
             [
                 row.document_id,
@@ -385,6 +452,15 @@ def export_run(
                 row.task,
                 row.status,
                 row.latency_ms,
+                usage.get("input_tokens", 0),
+                usage.get("output_tokens", 0),
+                usage.get("cached_tokens", 0),
+                usage.get("thinking_tokens", 0),
+                usage.get("total_tokens", 0),
+                cb.input_usd,
+                cb.output_usd,
+                cb.cache_usd,
+                cb.thinking_usd,
                 row.cost_usd,
                 row.retries,
                 row.error,
@@ -435,14 +511,26 @@ def results(
                 model_id=cell.model_id,
                 task=cell.task,
                 status=_status(cell.status),
+                created_at=cell.created_at,
+                completed_at=result.created_at if result else None,
                 latency_ms=result.latency_ms if result else None,
                 cost_usd=float(result.total_cost_usd or 0) if result else None,
+                cost_breakdown=CostBreakdownOut(
+                    input_usd=float(result.est_input_cost or 0),
+                    output_usd=float(result.est_output_cost or 0),
+                    cache_usd=float(result.est_cache_cost or 0),
+                    thinking_usd=float(result.est_thinking_cost or 0),
+                    total_usd=float(result.total_cost_usd or 0),
+                )
+                if result
+                else None,
                 error=_error_message(result.error) if result else None,
                 skip_reason=cell.skip_reason,
                 result_id=result.id if result else None,
                 parsed_output=result.parsed_output if result else None,
                 prompt_system=result.prompt_system if result else None,
                 prompt_instruction=result.prompt_instruction if result else None,
+                prompt_version=result.prompt_version if result else None,
                 raw_response=result.raw_response if result and include_raw else None,
                 valid=result.valid if result else None,
                 usage={
@@ -494,9 +582,27 @@ async def trigger_judge(
     existing = _judge_jobs.get(run_id)
     if existing and not existing.done():
         return JudgeJobOut(run_id=run_id, status="running")
+    model_id = body.model_id or get_settings().judge_default_model
+    try:
+        capability = get_capability(model_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=422, detail=f"Unknown judge model: {model_id}") from exc
+    if not capability.enabled or not capability.verified:
+        raise HTTPException(status_code=422, detail=f"Judge model must be enabled and verified: {model_id}")
+    selected_tasks = set(body.task_names or ())
+    selected_documents = set(body.document_ids or ())
+    cells = session.exec(select(RunCell.task, RunCell.document_id).where(RunCell.run_id == run_id)).all()
+    available_tasks = {task for task, _ in cells}
+    available_documents = {document_id for _, document_id in cells}
+    if unknown_tasks := selected_tasks - available_tasks:
+        raise HTTPException(status_code=422, detail=f"Unknown judge tasks: {', '.join(sorted(unknown_tasks))}")
+    if unknown_documents := selected_documents - available_documents:
+        raise HTTPException(status_code=422, detail=f"Unknown judge documents: {', '.join(map(str, sorted(unknown_documents)))}")
     payload = {
-        "model_id": body.model_id or get_settings().judge_default_model,
+        "model_id": model_id,
         "modes": body.modes,
+        "task_names": body.task_names,
+        "document_ids": body.document_ids,
     }
     job = asyncio.create_task(_run_judge(run_id, payload), name=f"judge-run-{run_id}")
     _judge_jobs[run_id] = job

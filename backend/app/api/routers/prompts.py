@@ -151,6 +151,44 @@ def create_prompt_version(
     return _version_out(row)
 
 
+@router.post("/{pack}/{task}/versions/{version}/activate", response_model=PromptVersionOut)
+def activate_prompt_version(
+    pack: str,
+    task: str,
+    version: int,
+    session: SessionDep,
+) -> PromptVersionOut:
+    task_pack = _pack(pack)
+    if task not in task_pack.tasks:
+        raise HTTPException(status_code=404, detail="Task not found in pack")
+    target = session.exec(
+        select(PromptVersion).where(
+            PromptVersion.pack == pack.upper(),
+            PromptVersion.task_name == task,
+            (PromptVersion.version == version) | (PromptVersion.id == version),
+        )
+    ).first()
+    if not target:
+        raise HTTPException(status_code=404, detail="Prompt version not found")
+
+    for row in session.exec(
+        select(PromptVersion).where(
+            PromptVersion.pack == pack.upper(),
+            PromptVersion.task_name == task,
+            PromptVersion.active.is_(True),  # type: ignore[union-attr]
+        )
+    ).all():
+        row.active = False
+        session.add(row)
+    session.flush()
+
+    target.active = True
+    session.add(target)
+    session.commit()
+    session.refresh(target)
+    return _version_out(target)
+
+
 def _preview_context(session: Session, document_id: int | None) -> dict[str, Any]:
     if document_id is None:
         return {}

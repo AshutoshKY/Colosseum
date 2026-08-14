@@ -31,10 +31,20 @@ class RunOut(BaseModel):
     pack: str
     status: str
     created_at: datetime
+    elapsed_ms: int | None = None
     counts: CountsOut
     spec: dict[str, Any]
     cost_usd: float = 0.0
     judge_status: str | None = None
+    failure_reason: str | None = None
+
+
+class CostBreakdownOut(BaseModel):
+    input_usd: float = 0.0
+    output_usd: float = 0.0
+    cache_usd: float = 0.0
+    thinking_usd: float = 0.0
+    total_usd: float = 0.0
 
 
 class CellOut(BaseModel):
@@ -43,8 +53,12 @@ class CellOut(BaseModel):
     model_id: str
     task: str
     status: str
+    created_at: datetime | None = None
+    completed_at: datetime | None = None
     latency_ms: int | None = None
     cost_usd: float | None = None
+    cost_breakdown: CostBreakdownOut | None = None
+    usage: dict[str, Any] = Field(default_factory=dict)
     error: str | None = None
     skip_reason: str | None = None
 
@@ -73,6 +87,7 @@ class ResultOut(CellOut):
     parsed_output: dict[str, Any] | None = None
     prompt_system: str | None = None
     prompt_instruction: str | None = None
+    prompt_version: str | None = None
     raw_response: Any | None = None
     valid: bool | None = None
     usage: dict[str, Any] = Field(default_factory=dict)
@@ -87,6 +102,8 @@ class ResultsOut(BaseModel):
 class JudgeRequest(BaseModel):
     model_id: str | None = None
     modes: list[Literal["gold_grade", "doc_grade", "head_to_head"]]
+    task_names: list[str] | None = None
+    document_ids: list[int] | None = None
 
 
 class JudgeJobOut(BaseModel):
@@ -100,9 +117,11 @@ class DocumentOut(BaseModel):
     sha256: str
     page_count: int | None = None
     origin: str
+    created_at: datetime | None = None
     has_gold: bool
     gold_keys: list[str] = Field(default_factory=list)
     gold_summary: dict[str, bool] = Field(default_factory=dict)
+
 
 
 class GoldBody(BaseModel):
@@ -193,6 +212,7 @@ class CatalogModelOut(BaseModel):
     enabled: bool
     verified: bool
     gate_reason: str | None = None
+    release_date: str | None = None
     capabilities: dict[str, Any]
     pricing: dict[str, float | None]
 
@@ -208,6 +228,50 @@ class VerifyOut(BaseModel):
     error: str | None = None
     latency_ms: int
     yaml_snippet: str | None = None
+
+
+class DiscoveredModelOut(BaseModel):
+    model_id: str
+    name: str
+    provider: str
+    family: str
+    publisher: str
+    description: str | None = None
+    is_registered: bool = False
+    is_callable: bool | None = None
+    capabilities: dict[str, Any] = Field(default_factory=dict)
+    pricing: dict[str, float | None] = Field(default_factory=dict)
+    release_date: str | None = None
+    status: str = "available"  # "registered", "available", "callable", "unverified"
+
+
+class DiscoverVertexOut(BaseModel):
+    total: int
+    has_credentials: bool
+    project: str | None = None
+    location: str
+    discovered: list[DiscoveredModelOut]
+
+
+class AddModelIn(BaseModel):
+    model_id: str = Field(description="Colosseum model id, e.g. vertex_ai/gemini-2.0-flash")
+    display_name: str
+    provider: str = "vertex_ai"
+    family: str | None = None
+    access: str = "maas"
+    modalities: list[str] = Field(default_factory=lambda: ["text"])
+    pdf_native: bool = False
+    vision: bool = False
+    context_window: int | None = None
+    structured_method: str = "json_schema"
+    thinking: bool = False
+    caching: bool = False
+    batch: bool = False
+    input_per_million: float = 0.0
+    output_per_million: float = 0.0
+    enabled: bool = True
+    verify_now: bool = False
+    notes: str | None = None
 
 
 class LeaderboardRow(BaseModel):

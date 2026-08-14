@@ -54,10 +54,12 @@ def _document_out(document: DocumentSample, gold_keys: list[str]) -> DocumentOut
         sha256=document.sha256,
         page_count=document.page_count,
         origin=document.origin,
+        created_at=document.created_at,
         has_gold=bool(gold_keys),
         gold_keys=gold_keys,
         gold_summary={key: True for key in gold_keys},
     )
+
 
 
 @router.post("", response_model=list[DocumentOut], status_code=201)
@@ -109,15 +111,44 @@ async def upload_documents(
                 temp.unlink(missing_ok=True)
                 output.append(_document_out(existing, gold.get(existing.id or -1, [])))
                 continue
+
             destination = _destination(filename)
             os.replace(temp, destination)
             created.append(destination)
-            document = register_document(session, str(destination), claim_type="OPD")
-            document.origin = "upload"
-            document.path = str(destination)
-            session.add(document)
-            session.flush()
-            output.append(_document_out(document, []))
+
+            # Check if there is an existing stub document with matching stem/filename from gold import
+            stem = Path(filename).stem
+            base_stem = stem.rsplit("_", 1)[0] if "_" in stem else stem
+            all_docs = session.exec(select(DocumentSample)).all()
+            matched_stub: DocumentSample | None = None
+            for d in all_docs:
+                d_stem = Path(d.path).stem
+                d_base = d_stem.rsplit("_", 1)[0] if "_" in d_stem else d_stem
+                if (d.sha256.startswith("stub-") or not Path(d.path).is_file()) and (
+                    d_stem in {stem, base_stem} or d_base in {stem, base_stem}
+                ):
+                    matched_stub = d
+                    break
+
+            if matched_stub is not None:
+                matched_stub.path = str(destination)
+                matched_stub.sha256 = digest
+                matched_stub.origin = "upload"
+                try:
+                    from app.utils.pdf import page_count
+                    matched_stub.page_count = page_count(str(destination))
+                except Exception:
+                    pass
+                session.add(matched_stub)
+                session.flush()
+                output.append(_document_out(matched_stub, gold.get(matched_stub.id or -1, [])))
+            else:
+                document = register_document(session, str(destination), claim_type="OPD")
+                document.origin = "upload"
+                document.path = str(destination)
+                session.add(document)
+                session.flush()
+                output.append(_document_out(document, []))
         session.commit()
         return output
     except Exception:
@@ -150,7 +181,7 @@ def delete_document(
     document = session.get(DocumentSample, document_id)
     if document is None:
         raise HTTPException(status_code=404, detail="Document not found")
-    if document.origin != "upload":
+    if document.origin != "upload" and not (document.sha256 and document.sha256.startswith("stub-")):
         raise HTTPException(status_code=403, detail="Bundled test documents cannot be deleted")
     in_use = session.exec(select(RunCell.id).where(RunCell.document_id == document_id)).first()
     if in_use is not None:
@@ -164,3 +195,45 @@ def delete_document(
     session.commit()
     path.unlink(missing_ok=True)
     return {"status": "deleted"}
+
+
+from fastapi.responses import FileResponse
+
+
+@router.get("/{document_id}/file")
+def get_document_file(document_id: int, session: SessionDep):
+    document = session.get(DocumentSample, document_id)
+    if document is None:
+        raise HTTPException(status_code=404, detail="Document not found")
+    path = Path(document.path)
+    if not path.is_file():
+        # Check fallback locations
+        stem = path.stem
+        base_stem = stem.rsplit("_", 1)[0] if "_" in stem else stem
+        candidates = [
+            REPO_ROOT / path,
+            UPLOAD_DIR / path.name,
+            REPO_ROOT / "test-docs" / path.name,
+            UPLOAD_DIR / f"{stem}.pdf",
+            REPO_ROOT / "test-docs" / f"{stem}.pdf",
+            UPLOAD_DIR / f"{base_stem}.pdf",
+            REPO_ROOT / "test-docs" / f"{base_stem}.pdf",
+            UPLOAD_DIR / f"{base_stem}_1.pdf",
+            REPO_ROOT / "test-docs" / f"{base_stem}_1.pdf",
+            UPLOAD_DIR / f"{base_stem}-1.pdf",
+            REPO_ROOT / "test-docs" / f"{base_stem}-1.pdf",
+        ]
+        found = next((p for p in candidates if p.is_file()), None)
+        if found:
+            path = found
+        else:
+            raise HTTPException(
+                status_code=404,
+                detail=f"File {path.name} not found on disk. Please upload the PDF file ({path.name}) using 'Drop PDFs here' above.",
+            )
+    return FileResponse(
+        path=path,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'inline; filename="{path.name}"'},
+    )
+

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -11,8 +12,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.responses import Response
 
 from app.api.routers import catalog, comparison, documents, gold, packs, prompts, runs
+from app.runner.run_manager import run_manager
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+logger = logging.getLogger(__name__)
 
 
 class SPAStaticFiles(StaticFiles):
@@ -58,6 +61,12 @@ def create_app() -> FastAPI:
         comparison.router,
     ):
         application.include_router(router, prefix="/api")
+
+    @application.on_event("startup")
+    async def resume_interrupted_runs() -> None:
+        resumed = run_manager.resume_incomplete_runs()
+        if resumed:
+            logger.info("resuming interrupted runs: %s", resumed)
 
     @application.get("/api/health", tags=["system"])
     def health() -> dict[str, str]:
