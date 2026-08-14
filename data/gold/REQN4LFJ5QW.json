@@ -290,6 +290,239 @@
       ],
       "extraction_ok": true
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "HDFC BANK",
+        "ifsc_code": "HDFC0000549",
+        "account_no": "05491610045131",
+        "bank_branch": "ELECTRONIC CITY",
+        "account_type": "Savings",
+        "account_holder_name": "NITHEN VARGHESE A C"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "fever",
+        "patient_age": 74,
+        "hospital_city": "Tirupur",
+        "hospital_name": "MAS Medical Center",
+        "temperature_f": "98.6",
+        "hospital_state": "Tamil Nadu",
+        "hospital_address": "# 5-9, Dharapuram Road, Old Govt. Hospital Compound (East), (Near Old Bus Stand), Tirupur - 641 604.",
+        "hospital_pincode": "641604",
+        "prescribed_items": [
+          {
+            "route": "Oral",
+            "dosage": "10/75/75",
+            "duration": "30 days",
+            "quantity": 30,
+            "frequency": "Night",
+            "instructions": "AF",
+            "medicine_name": "T ATORNIZE GOLD 10/75/75"
+          },
+          {
+            "route": "Oral",
+            "dosage": "12.5/25",
+            "duration": "30 days",
+            "quantity": 30,
+            "frequency": "Morning",
+            "instructions": "AF",
+            "medicine_name": "T CTD-M 12.5/25"
+          },
+          {
+            "route": "Oral",
+            "dosage": "10mg",
+            "duration": "30 days",
+            "quantity": 30,
+            "frequency": "Night",
+            "instructions": "AF",
+            "medicine_name": "T CILNIGREAT 10mg"
+          },
+          {
+            "route": "Oral",
+            "dosage": "5mg",
+            "duration": "30 days",
+            "quantity": 30,
+            "frequency": "Morning",
+            "instructions": "AF",
+            "medicine_name": "T GLICINA 5mg"
+          },
+          {
+            "route": "Oral",
+            "dosage": "500mg",
+            "duration": "30 days",
+            "quantity": 30,
+            "frequency": "Night",
+            "instructions": "BF",
+            "medicine_name": "T LINEGLYN 500mg"
+          },
+          {
+            "route": "Oral",
+            "dosage": "50 mcg",
+            "frequency": "Morning",
+            "instructions": "early morning",
+            "medicine_name": "T THYROX 50 mcg"
+          },
+          {
+            "route": "Oral",
+            "duration": "30 days",
+            "quantity": 30,
+            "frequency": "Night",
+            "instructions": "AF",
+            "medicine_name": "T REMIGARD"
+          },
+          {
+            "route": "Oral",
+            "duration": "30 days",
+            "quantity": 30,
+            "frequency": "Morning",
+            "instructions": "AF",
+            "medicine_name": "T BIDUM"
+          },
+          {
+            "route": "Oral",
+            "dosage": "20mg",
+            "duration": "30 days",
+            "quantity": 30,
+            "frequency": "Night",
+            "instructions": "BF",
+            "medicine_name": "T RABESEL 20mg"
+          },
+          {
+            "route": "Oral",
+            "dosage": "10ml",
+            "duration": "2 days",
+            "frequency": "Morning and Night",
+            "instructions": "AF",
+            "medicine_name": "Syp SUCRAL-O"
+          }
+        ],
+        "prescription_date": "2023/10/16",
+        "hospital_phone_number": "0421-4053875",
+        "treating_doctor_mobile": "7418533875",
+        "name_of_treating_doctor": "Dr. Nazirdeen",
+        "treating_doctor_registration": "35159",
+        "treating_doctor_qualification": "MD (Gen. Medicine)"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "R50.9",
+          "name": "Fever, unspecified",
+          "type": "primary",
+          "block": "General symptoms and signs",
+          "source": "diagnostics",
+          "chapter": "Chapter 18 – Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified (R00-R99)",
+          "diagnosis": "Fever, unspecified",
+          "related_bill_ids": []
+        },
+        {
+          "code": "I10",
+          "name": "Essential (primary) hypertension",
+          "type": "secondary",
+          "block": "Hypertensive diseases",
+          "source": "diagnostics",
+          "chapter": "Chapter 9 – Diseases of the circulatory system (I00-I99)",
+          "diagnosis": "Essential (primary) hypertension",
+          "related_bill_ids": []
+        },
+        {
+          "code": "E11.9",
+          "name": "Type 2 diabetes mellitus without complications",
+          "type": "secondary",
+          "block": "Diabetes mellitus",
+          "source": "diagnostics",
+          "chapter": "Chapter 4 – Endocrine, nutritional and metabolic diseases (E00-E89)",
+          "diagnosis": "Type 2 diabetes mellitus without complications",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_bank_name": "HDFC BANK",
+          "patient_bank_ifsc_code": "HDFC0000549",
+          "patient_bank_account_no": "05491610045131",
+          "patient_bank_branch_name": "ELECTRONIC CITY",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "NITHEN VARGHESE A C"
+        },
+        "clinical_details": {
+          "temp": "98.6",
+          "physician_name": "Dr. Nazirdeen"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Dr. Nazirdeen",
+          "provisional_final_diagnosis": "fever",
+          "treating_doctor_registration_number": "35159"
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1352921,
+          "benefit_name": "Dental Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No dental-related SOC categories found"
+        },
+        {
+          "benefit_id": 1352922,
+          "benefit_name": "Eye Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vision-related SOC categories found"
+        },
+        {
+          "benefit_id": 1352923,
+          "benefit_name": "Order Pharmacy",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Quantity mismatch: Billed 2, Prescribed 1"
+        },
+        {
+          "benefit_id": 1352924,
+          "benefit_name": "Book Vaccinations",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vaccination-related SOC categories found"
+        },
+        {
+          "benefit_id": 1352926,
+          "benefit_name": "In-Clinic Consults",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No consultation-related SOC categories found"
+        },
+        {
+          "benefit_id": 1352948,
+          "benefit_name": "Ayurveda",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No Ayurveda-related SOC categories found"
+        },
+        {
+          "benefit_id": 1352955,
+          "benefit_name": "Menopausal",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No menopausal-related SOC categories found"
+        },
+        {
+          "benefit_id": 1353205,
+          "benefit_name": "Prescribed Diagnostics",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No diagnostic-related SOC categories found"
+        }
+      ],
+      "item_assignments": []
+    },
     "upstream_bills": {
       "bills": [
         {

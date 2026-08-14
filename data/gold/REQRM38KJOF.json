@@ -169,6 +169,116 @@
       ],
       "extraction_ok": true
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "Bank of Baroda",
+        "ifsc_code": "BARB0SHANGR",
+        "account_no": "34920100009905",
+        "bank_branch": "SHASTRI NAGAR BRANCH, DELHI",
+        "account_type": "Savings",
+        "account_holder_name": "PRANSH KAUSHIK"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "Presbyopia",
+        "patient_age": 48,
+        "hospital_name": "Lenskart",
+        "prescribed_items": [],
+        "prescription_date": "2024/06/08",
+        "name_of_treating_doctor": "Sandeep",
+        "treating_doctor_qualification": "Optometrist"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "H52.4",
+          "name": "Presbyopia",
+          "type": "primary",
+          "block": "H52 Disorders of refraction and accommodation",
+          "source": "Product Recommendation Summary - Power details (+1.50 Add)",
+          "chapter": "Chapter VII - Diseases of the eye and adnexa",
+          "diagnosis": "Presbyopia",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_bank_name": "Bank of Baroda",
+          "patient_bank_ifsc_code": "BARB0SHANGR",
+          "patient_bank_account_no": "34920100009905",
+          "patient_bank_branch_name": "SHASTRI NAGAR BRANCH, DELHI",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "PRANSH KAUSHIK"
+        },
+        "clinical_details": {
+          "physician_name": "Sandeep"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Sandeep",
+          "provisional_final_diagnosis": "Presbyopia"
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1366527,
+          "benefit_name": "Dermatology Consultations & Treatment",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No consultation-related SOC categories found for Dermatology"
+        },
+        {
+          "benefit_id": 1366528,
+          "benefit_name": "WHO Approved Vaccinations",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vaccination-related SOC categories found"
+        },
+        {
+          "benefit_id": 1366531,
+          "benefit_name": "Dental",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No dental SOC categories found"
+        },
+        {
+          "benefit_id": 1366534,
+          "benefit_name": "Prescribed Pharmacy",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No pharmacy-related SOC categories found"
+        },
+        {
+          "benefit_id": 1366543,
+          "benefit_name": "Inclinic consultations",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No consultation-related SOC categories found"
+        },
+        {
+          "benefit_id": 1366553,
+          "benefit_name": "Vision",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Convenience/Administrative fees are generally excluded from medical coverage. Reject this item"
+        },
+        {
+          "benefit_id": 1366556,
+          "benefit_name": "Prescribed Lab Tests",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No lab-related SOC categories found"
+        }
+      ],
+      "item_assignments": []
+    },
     "upstream_bills": {
       "bills": [
         {

@@ -203,6 +203,128 @@
       ],
       "extraction_ok": true
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "IndusInd Bank",
+        "ifsc_code": "INDB0000039",
+        "account_no": "159538788475",
+        "bank_branch": null,
+        "account_type": "Savings",
+        "account_holder_name": "RAJANI P"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "Vaccination",
+        "prescribed_items": [
+          {
+            "dosage": "1 dose",
+            "quantity": 1,
+            "instructions": "IInd dose given on 30/5/2024",
+            "medicine_name": "Gardasil-4 Vaccination"
+          }
+        ],
+        "prescription_date": "2024/05/30",
+        "name_of_treating_doctor": "Dr. Ananya. R",
+        "treating_doctor_registration": "82026"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "Z25.8",
+          "name": "Need for immunization against other specified single viral diseases",
+          "type": "primary",
+          "block": "Z20-Z29 Persons with potential health hazards related to communicable diseases",
+          "source": "Prescription - Gardasil-9 Vaccination schedule",
+          "chapter": "Factors influencing health status and contact with health services",
+          "diagnosis": "Vaccination (Gardasil)",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_bank_name": "IndusInd Bank",
+          "patient_bank_ifsc_code": "INDB0000039",
+          "patient_bank_account_no": "159538788475",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "RAJANI P"
+        },
+        "clinical_details": {
+          "physician_name": "Dr. Ananya. R"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Dr. Ananya. R",
+          "provisional_final_diagnosis": "Vaccination",
+          "treating_doctor_registration_number": "82026"
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1352921,
+          "benefit_name": "Dental Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No dental-related SOC categories found"
+        },
+        {
+          "benefit_id": 1352922,
+          "benefit_name": "Eye Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vision-related SOC categories found"
+        },
+        {
+          "benefit_id": 1352923,
+          "benefit_name": "Order Pharmacy",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Consumable item used for injection prep; often excluded in OPD"
+        },
+        {
+          "benefit_id": 1352924,
+          "benefit_name": "Book Vaccinations",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vaccination-related SOC categories found"
+        },
+        {
+          "benefit_id": 1352926,
+          "benefit_name": "In-Clinic Consults",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No consultation-related SOC categories found"
+        },
+        {
+          "benefit_id": 1352948,
+          "benefit_name": "Ayurveda",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No Ayurveda-related SOC categories found"
+        },
+        {
+          "benefit_id": 1352955,
+          "benefit_name": "Menopausal",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No menopausal-related SOC categories found"
+        },
+        {
+          "benefit_id": 1353205,
+          "benefit_name": "Prescribed Diagnostics",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No lab/diagnostic/imaging-related SOC categories found"
+        }
+      ],
+      "item_assignments": []
+    },
     "upstream_bills": {
       "bills": [
         {

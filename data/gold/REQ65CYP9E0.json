@@ -161,6 +161,143 @@
       ],
       "extraction_ok": true
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "HDFC BANK",
+        "ifsc_code": "HDFC0000080",
+        "account_no": "00801270000140",
+        "bank_branch": "WORLI, MUMBAI",
+        "account_type": "Savings",
+        "account_holder_name": "Cancelled"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "Keratoconus suspect in Left Eye",
+        "patient_age": 33,
+        "hospital_gst": "27AAJCM8068Q1ZG",
+        "hospital_city": "Vashi",
+        "hospital_name": "asg eye hospital",
+        "hospital_state": "Maharashtra",
+        "hospital_address": "Vashi - Mumbai Goodwill Excellency, 6th Floor, Plot No.2, Sector 17, Vashi",
+        "prescribed_items": [],
+        "prescription_date": "2026/05/31",
+        "presenting_complaint": "ROUTINE CHECKUP. PGP MADE -1 YR AGO.",
+        "hospital_phone_number": "1800 1200 111",
+        "treating_doctor_mobile": "9987971240",
+        "name_of_treating_doctor": "Dr Nitin Saini",
+        "treating_doctor_registration": "2022/09/8230",
+        "treating_doctor_qualification": "MBBS, DNB, FVRS (UVEA AND VITRORETINA SPECIALIST)"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "H18.602",
+          "name": "Keratoconus, unspecified, left eye",
+          "type": "primary",
+          "block": "H15-H22 Disorders of sclera, cornea, iris and ciliary body",
+          "source": "Prescription - Diagnosis documented by Dr. Nitin Saini",
+          "chapter": "Chapter VII - Diseases of the eye and adnexa",
+          "diagnosis": "Keratoconus suspect in Left Eye",
+          "related_bill_ids": []
+        },
+        {
+          "code": "H52.20",
+          "name": "Unspecified astigmatism",
+          "type": "secondary",
+          "block": "H52 Disorders of refraction and accommodation",
+          "source": "Glass Prescription - Corrective lenses prescribed for astigmatism",
+          "chapter": "Chapter VII - Diseases of the eye and adnexa",
+          "diagnosis": "Refractive error requiring corrective lenses",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_bank_name": "HDFC BANK",
+          "patient_bank_ifsc_code": "HDFC0000080",
+          "patient_bank_account_no": "00801270000140",
+          "patient_bank_branch_name": "WORLI, MUMBAI",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "Cancelled"
+        },
+        "clinical_details": {
+          "physician_name": "Dr Nitin Saini",
+          "presenting_complaint": "ROUTINE CHECKUP. PGP MADE -1 YR AGO."
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Dr Nitin Saini",
+          "provisional_final_diagnosis": "Keratoconus suspect in Left Eye",
+          "treating_doctor_registration_number": "2022/09/8230"
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1354134,
+          "benefit_name": "Annual Health Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No SOC categories related to general health checkups found"
+        },
+        {
+          "benefit_id": 1354135,
+          "benefit_name": "Dental Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No dental-related SOC categories found"
+        },
+        {
+          "benefit_id": 1354136,
+          "benefit_name": "Eye Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Bank details mismatch in: account holder name. The details in your request do not match the documents submitted. Please verify and resubmit."
+        },
+        {
+          "benefit_id": 1354137,
+          "benefit_name": "Order Pharmacy",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No pharmacy-related SOC categories found"
+        },
+        {
+          "benefit_id": 1354138,
+          "benefit_name": "Book Vaccinations",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vaccination-related SOC categories found"
+        },
+        {
+          "benefit_id": 1354140,
+          "benefit_name": "In-Clinic Consults",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No consultation-related SOC categories found"
+        },
+        {
+          "benefit_id": 1354142,
+          "benefit_name": "Prescribed Diagnostic",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No lab/diagnostic/imaging-related SOC categories found"
+        },
+        {
+          "benefit_id": 1354185,
+          "benefit_name": "Prescribed Diagnostics",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No lab/diagnostic/imaging-related SOC categories found"
+        }
+      ],
+      "item_assignments": []
+    },
     "upstream_bills": {
       "bills": [
         {

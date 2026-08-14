@@ -345,6 +345,119 @@
       "policy_violations_count": 0,
       "medical_legibility_issues": 0
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "Indian Bank",
+        "ifsc_code": "IDIB000H007",
+        "account_no": "450139450",
+        "bank_branch": "HIDE ROAD",
+        "account_type": "Savings",
+        "account_holder_name": "SUBIR KUMAR GUPTA / SHUKLA GUPTA"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "T2DM-4yrs, Primary Hypothyroid, HTN, DYSLIPIDEMIA, BREAST CA, URINARY FREQUENCY, FIBROSCAN-LSM-6.8 KPA-F0, CAP 297 GRADE-2, NAFLD, FL-GR 2, NO DR, DPN CTS RT",
+        "hospital_gst": "19AAACE5752C1ZU",
+        "hospital_city": "Kolkata",
+        "hospital_name": "Sri Aurobindo Seva Kendra (EEDF Medicare Centre)",
+        "hospital_state": "West Bengal",
+        "hospital_address": "1H, Gariahat Road (S), Jodhpur Park",
+        "hospital_pincode": "700068",
+        "presenting_complaint": "Routine checkup",
+        "hospital_phone_number": "03340171520",
+        "treating_doctor_mobile": "9830118388",
+        "name_of_treating_doctor": "Dr. Prof. Debmalya Sanyal",
+        "treating_doctor_registration": "54796 of WBMC"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "E11.9",
+          "type": "primary",
+          "source": "Diagnosis - T2DM-4yrs documented in Dr. Sanyal's prescription",
+          "description": "Type 2 diabetes mellitus without complications"
+        },
+        {
+          "code": "E03.9",
+          "type": "secondary",
+          "source": "Diagnosis - Primary Hypothyroid documented; Thyroxine prescribed",
+          "description": "Hypothyroidism, unspecified"
+        },
+        {
+          "code": "I10",
+          "type": "secondary",
+          "source": "Diagnosis - HTN documented; Telmisartan prescribed",
+          "description": "Essential (primary) hypertension"
+        },
+        {
+          "code": "E78.5",
+          "type": "secondary",
+          "source": "Diagnosis - Dyslipidemia documented; Lipaglyn prescribed",
+          "description": "Hyperlipidemia, unspecified"
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_city": "Kolkata",
+          "patient_name": "S. Gupta",
+          "patient_email": "sgupta@gmail.com",
+          "patient_gender": "female",
+          "patient_mobile": "9836309993",
+          "patient_pan_no": "AMIPG3722F",
+          "patient_pincode": "700037",
+          "patient_district": "Kolkata",
+          "patient_aadhar_no": "2621",
+          "patient_address_1": "104 GARDE",
+          "patient_bank_name": "Indian Bank",
+          "patient_policy_no": "1535005025100094891",
+          "patient_bank_ifsc_code": "IDIB000H007",
+          "patient_bank_account_no": "450139450",
+          "patient_bank_branch_name": "HIDE ROAD",
+          "patient_bank_account_type": "Savings"
+        },
+        "clinical_details": {
+          "physician_name": "Dr. Prof. Debmalya Sanyal",
+          "presenting_complaint": "Routine checkup"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "claimed_amount": 4360,
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Dr. Prof. Debmalya Sanyal",
+          "claim_registered_email_id": "sgupta@gmail.com",
+          "claim_registered_mobile_no": "9836309993",
+          "provisional_final_diagnosis": "T2DM-4yrs, Primary Hypothyroid, HTN, DYSLIPIDEMIA, BREAST CA, URINARY FREQUENCY, FIBROSCAN-LSM-6.8 KPA-F0, CAP 297 GRADE-2, NAFLD, FL-GR 2, NO DR, DPN CTS RT",
+          "treating_doctor_registration_number": "54796 of WBMC"
+        }
+      }
+    },
+    "claim_form": {
+      "claim_form": {
+        "part_a": {
+          "city": "Kolkata",
+          "total": 4360,
+          "gender": "female",
+          "address": "104 GARDE",
+          "email_id": "sgupta@gmail.com",
+          "phone_no": "9836309993",
+          "pin_code": "700037",
+          "full_name": "S. Gupta",
+          "policy_no": "1535005025100094891"
+        },
+        "part_b": {
+          "name_of_the_patient": "S. Gupta",
+          "name_of_treating_doctor": "Dr. D. Samyd"
+        }
+      }
+    },
+    "identity_document": {
+      "pan_card_number": "AMIPG3722F",
+      "aadhar_card_number": "2621"
+    },
     "upstream_bills": {
       "bills": [
         {

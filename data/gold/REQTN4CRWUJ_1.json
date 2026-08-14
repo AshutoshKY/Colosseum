@@ -1,0 +1,213 @@
+{
+  "document": "data/uploads/REQTN4CRWUJ_1.pdf",
+  "tasks": {
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "invoice_number": "IIC141426A004213",
+            "bill_date": "2026-08-08",
+            "net_amount": 2799.0,
+            "page_number": 2,
+            "facility_details": {
+              "name": "lenskart",
+              "registration_number": "L33100DL2008PLC178355"
+            }
+          },
+          "items": [
+            {
+              "item_name": "Matt Dark Blue Full Rim Square Lenskart Air Comfort LA E15844 Eyeglasses -Product id: 243163 , Inclusive of Lens Package: Owndays Japan BLU+",
+              "unit_price": 3428.57,
+              "quantity": 1.0,
+              "discount": 952.38,
+              "final_amount": 3428.57,
+              "net_amount": 2600.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "Fitting Fee",
+              "unit_price": 168.64,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 168.64,
+              "net_amount": 168.64,
+              "is_returned": false
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "9a703d4e655d",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Vision/Optical"
+            },
+            {
+              "s.no.": 2,
+              "category": "Others"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "patches": [
+        {
+          "type": "EDIT_BILL_DETAILS",
+          "bill_id": "9a703d4e655d",
+          "reason": "Patient name 'Asha thuniya' is clearly specified under Bill To Address on invoice page 2.",
+          "page_reference": "2",
+          "impact": "0.00",
+          "bill_invoice_number": "IIC141426A004213",
+          "bill_net_amount": 2799.0,
+          "key": "patient_name",
+          "new_value": "Asha thuniya"
+        },
+        {
+          "type": "EDIT_ITEM",
+          "bill_id": "9a703d4e655d",
+          "item_s_no": 2,
+          "reason": "Fitting Fee total invoice value inclusive of tax is INR 199.00, not 168.64.",
+          "page_reference": "2",
+          "impact": "30.36",
+          "bill_invoice_number": "IIC141426A004213",
+          "bill_net_amount": 2799.0,
+          "key": "net_amount",
+          "old_value": 168.64,
+          "new_value": 199.0,
+          "calculation": "168.64 + 15.18 (SGST) + 15.18 (CGST) = 199.00"
+        }
+      ],
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "ifsc_code": "AUBL0002667",
+        "bank_name": "AU Small Finance Bank",
+        "bank_branch": "Madhapur Hyderabad",
+        "account_no": "2501266784831243",
+        "account_holder_name": "ASHA THUNIYA",
+        "account_type": "Savings"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_name": "Asha thuniya",
+        "prescription_date": "2025/11/13",
+        "prescribed_items": []
+      }
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "Asha thuniya",
+          "patient_bank_account_holder_name": "ASHA THUNIYA",
+          "patient_bank_account_no": "2501266784831243",
+          "patient_bank_name": "AU Small Finance Bank",
+          "patient_bank_branch_name": "Madhapur Hyderabad",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_ifsc_code": "AUBL0002667"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        },
+        "clinical_details": {},
+        "past_history_details": {}
+      }
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "patient_name": null,
+            "invoice_number": "IIC141426A004213",
+            "ip_number": null,
+            "bill_date": "2026-08-08",
+            "total_discount": null,
+            "net_amount": 2799.0,
+            "page_number": 2,
+            "facility_details": {
+              "name": "lenskart",
+              "registration_number": "L33100DL2008PLC178355",
+              "gst_number": "36AACCV7324B1ZL",
+              "address_line": "Ground Floor, House No.7-17/6, Suncity Main road, beside Suncity, Nursing Home",
+              "city": "Hyderabad",
+              "state": "Telangana",
+              "pincode": "500091"
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "9a703d4e655d",
+            "discount_allocated": true,
+            "applied_total_discount": 828.57
+          },
+          "items": [
+            {
+              "item_name": "Matt Dark Blue Full Rim Square Lenskart Air Comfort LA E15844 Eyeglasses -Product id: 243163 , Inclusive of Lens Package: Owndays Japan BLU+",
+              "unit_price": 3428.57,
+              "quantity": 1.0,
+              "discount": 952.38,
+              "final_amount": 3428.57,
+              "net_amount": 2600.0,
+              "is_returned": false,
+              "s.no.": 1,
+              "gross_before_discount": 3428.57,
+              "allocated_discount": 828.57,
+              "category": "Vision/Optical",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "Fitting Fee",
+              "unit_price": 168.64,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 168.64,
+              "net_amount": 168.64,
+              "is_returned": false,
+              "s.no.": 2,
+              "gross_before_discount": 168.64,
+              "allocated_discount": 0.0,
+              "category": "Others",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        }
+      ],
+      "policy_violations": [
+        {
+          "rule_name": "Vision claims require Invoice + prescription.",
+          "item_name": "Matt Dark Blue Full Rim Square Lenskart Air Comfort LA E15844 Eyeglasses -Product id: 243163 , Inclusive of Lens Package: Owndays Japan BLU+",
+          "bill_id": "9a703d4e655d",
+          "item_s_no": 1,
+          "violation_details": "Prescription missing for vision/optical claim",
+          "amount_impacted": 3428.57,
+          "recommendation": "verify"
+        },
+        {
+          "rule_name": "Vision claims require Invoice + prescription.",
+          "item_name": "Fitting Fee",
+          "bill_id": "9a703d4e655d",
+          "item_s_no": 2,
+          "violation_details": "Prescription missing for vision/optical claim",
+          "amount_impacted": 168.64,
+          "recommendation": "verify"
+        }
+      ]
+    }
+  }
+}

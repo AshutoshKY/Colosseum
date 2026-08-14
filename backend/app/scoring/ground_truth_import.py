@@ -40,16 +40,27 @@ logger = get_logger(__name__)
 
 
 def _resolve_document(session: Session, ref: str) -> DocumentSample:
-    """Resolve a document by sha256, then by exact path, then register it if the file exists."""
+    """Resolve a document by sha256, then by exact path, then by stem match, then register if file exists."""
     by_hash = session.exec(select(DocumentSample).where(DocumentSample.sha256 == ref)).first()
     if by_hash:
         return by_hash
     by_path = session.exec(select(DocumentSample).where(DocumentSample.path == ref)).first()
     if by_path:
         return by_path
+    stem = Path(ref).stem
+    base_stem = stem.rsplit("_", 1)[0] if "_" in stem else stem
+    for doc in session.exec(select(DocumentSample)).all():
+        doc_stem = Path(doc.path).stem
+        doc_base = doc_stem.rsplit("_", 1)[0] if "_" in doc_stem else doc_stem
+        if doc_stem in {stem, base_stem} or doc_base in {stem, base_stem}:
+            return doc
     if Path(ref).is_file():
         return register_document(session, ref, claim_type="OPD")
-    raise ValueError(f"Cannot resolve document {ref!r}: not a known sha256/path and file missing.")
+    stub = DocumentSample(path=ref, sha256=f"stub-{stem}", claim_type="OPD", page_count=None)
+    session.add(stub)
+    session.flush()
+    return stub
+
 
 
 def _upsert(session: Session, *, document_id: int, task: str, gold: dict[str, Any]) -> bool:

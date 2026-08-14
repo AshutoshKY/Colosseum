@@ -150,6 +150,154 @@
       ],
       "extraction_ok": true
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "ICICI Bank",
+        "ifsc_code": "ICIC0000212",
+        "account_no": "021201580007",
+        "bank_branch": "R A Puram Branch",
+        "account_type": "Savings",
+        "account_holder_name": "VISHAL VEDULA"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "Acute posterior fissure in ano, mild spasm",
+        "patient_age": 40,
+        "hospital_city": "Bengaluru",
+        "hospital_name": "Manipal Hospital Sarjapur",
+        "hospital_state": "Karnataka",
+        "hospital_address": "Survey no 45/2, ward 150, Marathahalli - Sarjapur Rd, opposite Iblur, Ambalipura, Bellandur",
+        "hospital_pincode": "560102",
+        "prescribed_items": [
+          {
+            "route": "L/A (Local Application)",
+            "instructions": "5mins before motions and after sitz bath",
+            "medicine_name": "Cremagel L"
+          }
+        ],
+        "prescription_date": "2026/06/03",
+        "presenting_complaint": "c/o painful defecation with burning sensation after stools for 3 days, h/o acute constipation ++ 3 days back, K/C/O Hypothyroidism++",
+        "hospital_phone_number": "+91 80 5555 5555",
+        "treating_doctor_mobile": "+91 80 5555 5555",
+        "name_of_treating_doctor": "Dr. Manas Ranjan Tripathy",
+        "treating_doctor_registration": "104549",
+        "treating_doctor_qualification": "MBBS, MS(SURGERY) FIAGES (ADVANCED LAPAROSCOPY) FELLOWSHIP IN LASER PROCTOLOGY"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "K60.0",
+          "name": "Acute anal fissure",
+          "type": "primary",
+          "block": "K60-K64 Diseases of anus and rectum",
+          "source": "Diagnosis - Outpatient Record Page 2",
+          "chapter": "Chapter XI: Diseases of the digestive system",
+          "diagnosis": "Acute posterior fissure in ano",
+          "related_bill_ids": []
+        },
+        {
+          "code": "E03.9",
+          "name": "Hypothyroidism, unspecified",
+          "type": "secondary",
+          "block": "E00-E07 Disorders of thyroid gland",
+          "source": "Past History - Outpatient Record Page 2",
+          "chapter": "Chapter IV: Endocrine, nutritional and metabolic diseases",
+          "diagnosis": "Hypothyroidism",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_bank_name": "ICICI Bank",
+          "patient_bank_ifsc_code": "ICIC0000212",
+          "patient_bank_account_no": "021201580007",
+          "patient_bank_branch_name": "R A Puram Branch",
+          "patient_bank_account_type": "Savings"
+        },
+        "clinical_details": {
+          "physician_name": "Dr. Manas Ranjan Tripathy",
+          "presenting_complaint": "c/o painful defecation with burning sensation after stools for 3 days, h/o acute constipation ++ 3 days back, K/C/O Hypothyroidism++"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Dr. Manas Ranjan Tripathy",
+          "provisional_final_diagnosis": "Acute posterior fissure in ano, mild spasm",
+          "treating_doctor_registration_number": "104549"
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1351910,
+          "benefit_name": "Dental Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No dental-related SOC categories found"
+        },
+        {
+          "benefit_id": 1351913,
+          "benefit_name": "Eye Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vision-related SOC categories found"
+        },
+        {
+          "benefit_id": 1351915,
+          "benefit_name": "Order Pharmacy",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No pharmacy-related SOC categories found"
+        },
+        {
+          "benefit_id": 1351916,
+          "benefit_name": "Book Vaccinations",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vaccination-related SOC categories found"
+        },
+        {
+          "benefit_id": 1351925,
+          "benefit_name": "Prenatal Services",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No prenatal-related SOC categories found"
+        },
+        {
+          "benefit_id": 1351927,
+          "benefit_name": "Tobacco Cessation Program",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No tobacco cessation-related SOC categories found"
+        },
+        {
+          "benefit_id": 1351931,
+          "benefit_name": "In-Clinic Consults",
+          "applicable": true,
+          "confidence": 1.0
+        },
+        {
+          "benefit_id": 1351937,
+          "benefit_name": "Cancer Screening",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No cancer screening-related SOC categories found"
+        },
+        {
+          "benefit_id": 1366494,
+          "benefit_name": "Diagnostics",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No lab/diagnostic/imaging-related SOC categories found"
+        }
+      ],
+      "item_assignments": []
+    },
     "upstream_bills": {
       "bills": [
         {

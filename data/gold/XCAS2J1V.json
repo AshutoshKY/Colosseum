@@ -206,6 +206,76 @@
       ],
       "extraction_ok": true
     },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "USG Abdomen Pelvis, CBC, S. Creat, Urine",
+        "hospital_city": "Ahmedabad",
+        "hospital_name": "CONCEPT DIAGNOSTICS",
+        "hospital_state": "Gujarat",
+        "hospital_address": "1st Floor, Sahajand Palace, Near Gopi Restaurant, Anandnagar Cross Road, Prahladnagar",
+        "hospital_pincode": "380015",
+        "prescribed_items": [],
+        "prescription_date": "2020/05/26",
+        "hospital_phone_number": "7567000750",
+        "treating_doctor_mobile": "9824341541",
+        "name_of_treating_doctor": "Dr. M. D. Trivedi",
+        "treating_doctor_registration": "GBI-12448",
+        "treating_doctor_qualification": "B.A.M.S."
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "R10.9",
+          "name": "Unspecified abdominal pain",
+          "type": "primary",
+          "block": "R10-R19 Symptoms and signs involving the digestive system and abdomen",
+          "source": "Referral slip - USG Abdomen Pelvis advised",
+          "chapter": "Chapter XVIII",
+          "diagnosis": "Suspected abdominal/pelvic condition requiring USG",
+          "related_bill_ids": []
+        },
+        {
+          "code": "R39.9",
+          "name": "Unspecified symptoms and signs involving the genitourinary system",
+          "type": "secondary",
+          "block": "R30-R39 Symptoms and signs involving the genitourinary system",
+          "source": "Referral slip - Urine and S. Creatinine advised",
+          "chapter": "Chapter XVIII",
+          "diagnosis": "Suspected urinary/renal condition requiring Urine and Creatinine tests",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {},
+        "clinical_details": {
+          "physician_name": "Dr. M. D. Trivedi"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "claimed_amount": 2650.0,
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Dr. M. D. Trivedi",
+          "provisional_final_diagnosis": "USG Abdomen Pelvis, CBC, S. Creat, Urine",
+          "treating_doctor_registration_number": "GBI-12448"
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1361102,
+          "benefit_name": "Prescribed Diagnostics",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Allopathic test prescribed by B.A.M.S. doctor Reject"
+        }
+      ],
+      "item_assignments": []
+    },
+    "identity_document": {},
     "upstream_bills": {
       "bills": [
         {

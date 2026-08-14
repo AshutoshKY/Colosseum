@@ -162,6 +162,70 @@
       "policy_violations_count": 1,
       "medical_legibility_issues": 0
     },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "Diabetes Type: Type 2 Diabetes Mellitus 10 years",
+        "hospital_city": "Pune",
+        "hospital_name": "Yashica Care",
+        "hospital_state": "Maharashtra",
+        "hospital_address": "109, 1st Floor, Town Square Building, Above Dorabjee Mall, Viman Nagar",
+        "hospital_pincode": "411014",
+        "hospital_phone_number": "8761959595",
+        "treating_doctor_mobile": "8761959595",
+        "name_of_treating_doctor": "Dr. Ajit More",
+        "treating_doctor_registration": "2016020210"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "E11.9",
+          "type": "primary",
+          "source": "Diagnosis - Type 2 Diabetes Mellitus 10 years; Prescription - Stalix DM, Diamicron XR Mex",
+          "description": "Type 2 diabetes mellitus without complications"
+        },
+        {
+          "code": "E78.5",
+          "type": "secondary",
+          "source": "Prescription - Novastat 10mg (Rosuvastatin) for cholesterol management",
+          "description": "Hyperlipidemia, unspecified"
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_age": 49,
+          "patient_city": "Mumbai",
+          "patient_name": "Fenil Shivarajan",
+          "patient_district": "Mumbai",
+          "patient_policy_no": "89000063250400000235"
+        },
+        "clinical_details": {
+          "physician_name": "Dr. Ajit More"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Dr. Ajit More",
+          "provisional_final_diagnosis": "Diabetes Type: Type 2 Diabetes Mellitus 10 years",
+          "treating_doctor_registration_number": "2016020210"
+        }
+      }
+    },
+    "claim_form": {
+      "claim_form": {
+        "part_a": {
+          "city": "Mumbai",
+          "age_years": 49,
+          "full_name": "Fenil Shivarajan",
+          "policy_no": "89000063250400000235"
+        },
+        "part_b": {
+          "name_of_the_patient": "Fenil Shivarajan"
+        }
+      }
+    },
     "upstream_bills": {
       "bills": [
         {

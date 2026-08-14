@@ -1,0 +1,405 @@
+{
+  "document": "data/uploads/SH4ZKYPI_1.pdf",
+  "tasks": {
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "invoice_number": "OP26-27/096909",
+            "bill_date": "2026-08-10",
+            "net_amount": 500.0,
+            "page_number": 5,
+            "facility_details": {
+              "name": "Lakeshore Hospital & Research Centre Ltd",
+              "registration_number": "U85110KL1996PLC010260"
+            }
+          },
+          "items": [
+            {
+              "item_name": "Consultation Fees",
+              "unit_price": 500.0,
+              "quantity": 1.0,
+              "final_amount": 500.0,
+              "net_amount": 500.0,
+              "is_returned": false
+            }
+          ]
+        },
+        {
+          "bill": {
+            "invoice_number": "LB 26-27/202818",
+            "bill_date": "2026-08-10",
+            "net_amount": 2560.0,
+            "page_number": 6,
+            "facility_details": {
+              "name": "Lakeshore Hospital & Research Centre Ltd",
+              "registration_number": "U85110KL1996PLC010260"
+            }
+          },
+          "items": [
+            {
+              "item_name": "CHEST PA",
+              "unit_price": 340.0,
+              "quantity": 1.0,
+              "final_amount": 340.0,
+              "net_amount": 340.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "HEMOGRAM",
+              "unit_price": 240.0,
+              "quantity": 1.0,
+              "final_amount": 240.0,
+              "net_amount": 240.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "PULMONARY FUNCTION TEST (PUL-01)",
+              "unit_price": 1210.0,
+              "quantity": 1.0,
+              "final_amount": 1210.0,
+              "net_amount": 1210.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "SERUM IGE",
+              "unit_price": 730.0,
+              "quantity": 1.0,
+              "final_amount": 730.0,
+              "net_amount": 730.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "VACCUTTE",
+              "unit_price": 30.0,
+              "quantity": 1.0,
+              "final_amount": 30.0,
+              "net_amount": 30.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "SYRINGE",
+              "unit_price": 10.0,
+              "quantity": 1.0,
+              "final_amount": 10.0,
+              "net_amount": 10.0,
+              "is_returned": false
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "8228071d4827",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Consultation"
+            }
+          ]
+        },
+        {
+          "bill_id": "ec835f641527",
+          "categorized_items": [
+            {
+              "s.no.": 2,
+              "category": "Imageology"
+            },
+            {
+              "s.no.": 3,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 4,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 5,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 6,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 7,
+              "category": "Medicines Supplied By Hospital"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": [
+        {
+          "nme_item": {
+            "sr.no": 7,
+            "item_name": "SYRINGE",
+            "bill_amount": 10.0,
+            "deduction_reason": "Needles, Syringes: Not Payable - Part of Dressing charges / Routine Consumables"
+          }
+        }
+      ]
+    },
+    "audit": {
+      "patches": [],
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "ifsc_code": "ICIC0000558",
+        "bank_name": "ICICI Bank",
+        "bank_branch": "MYSORE INFOSYS Branch",
+        "account_no": "055801520552",
+        "account_holder_name": "RICHIN DANIEL",
+        "account_type": "Savings"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_name": "Mrs. Valsa K David",
+        "name_of_treating_doctor": "DR.MUJEEB RAHMAN K.K",
+        "treating_doctor_qualification": "M.B.B.S, MD, DM - PULMONARY CRITICAL CARE & SLEEP MEDICINE(AIIMS) Department of Pulmonary Critical Care And Sleep Medicine",
+        "treating_doctor_registration": "47616",
+        "hospital_name": "VPS Lakeshore Hospital & Research Centre Ltd",
+        "hospital_address": "Nettur P.O Kochi",
+        "hospital_city": "Ernakulam",
+        "hospital_phone_number": "0484-2701032",
+        "hospital_gst": "32AAACL1925A1ZE",
+        "patient_age": 68,
+        "prescription_date": "2026/08/10",
+        "prescribed_items": [
+          {
+            "medicine_name": "BUDESONIDE 200MCG +FORMOTEROL 6MCG (BUDAMATE 200 TRANSHALER (120 DOSE))",
+            "frequency": "2-0-2",
+            "duration": "30 Days",
+            "quantity": 120,
+            "route": "Inhalation",
+            "instructions": "2 Puff 2 Times"
+          },
+          {
+            "medicine_name": "DEVICE (TRANSPACER V)",
+            "frequency": "0 1 0",
+            "duration": "1 Days",
+            "quantity": 1,
+            "route": "Inhalation"
+          },
+          {
+            "medicine_name": "ACEBROPHYLLINE (AB PHYLLINE SR 200 TABLET)",
+            "frequency": "0-1-0",
+            "duration": "30 Days",
+            "quantity": 30,
+            "route": "Oral"
+          },
+          {
+            "medicine_name": "BILASTINE 20MG + MONTELUKAST 10MG (MONTEK BLODT TAB)",
+            "frequency": "0-0-1",
+            "duration": "30 Days",
+            "quantity": 30,
+            "route": "Oral"
+          }
+        ]
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": []
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "Mrs. Valsa K David",
+          "patient_bank_account_holder_name": "RICHIN DANIEL",
+          "patient_bank_account_no": "055801520552",
+          "patient_bank_name": "ICICI Bank",
+          "patient_bank_branch_name": "MYSORE INFOSYS Branch",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_ifsc_code": "ICIC0000558"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        },
+        "clinical_details": {
+          "hospital_gst": "32AAACL1925A1ZE",
+          "hospital_name": "VPS Lakeshore Hospital & Research Centre Ltd"
+        },
+        "past_history_details": {
+          "physician_reg_no": "47616"
+        }
+      }
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "patient_name": "Mrs Valsa K David",
+            "invoice_number": "OP26-27/096909",
+            "ip_number": null,
+            "bill_date": "2026-08-10",
+            "total_discount": null,
+            "net_amount": 500.0,
+            "page_number": 5,
+            "facility_details": {
+              "name": "Lakeshore Hospital & Research Centre Ltd",
+              "registration_number": "U85110KL1996PLC010260",
+              "gst_number": "32AAACL4923A1ZB",
+              "address_line": "Nettoor P.O",
+              "city": "Kochi",
+              "state": null,
+              "pincode": null
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "8228071d4827",
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "item_name": "Consultation Fees",
+              "unit_price": 500.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 500.0,
+              "net_amount": 500.0,
+              "is_returned": false,
+              "s.no.": 1,
+              "gross_before_discount": 500.0,
+              "allocated_discount": 0.0,
+              "category": "Consultation",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        },
+        {
+          "bill": {
+            "patient_name": "Mrs. Valsa K David",
+            "invoice_number": "LB 26-27/202818",
+            "ip_number": null,
+            "bill_date": "2026-08-10",
+            "total_discount": null,
+            "net_amount": 2560.0,
+            "page_number": 6,
+            "facility_details": {
+              "name": "Lakeshore Hospital & Research Centre Ltd",
+              "registration_number": "U85110KL1996PLC010260",
+              "gst_number": "32AAACL4923A1ZB",
+              "address_line": "Nettoor P.O",
+              "city": "Kochi",
+              "state": null,
+              "pincode": null
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "ec835f641527",
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "item_name": "CHEST PA",
+              "unit_price": 340.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 340.0,
+              "net_amount": 340.0,
+              "is_returned": false,
+              "s.no.": 2,
+              "gross_before_discount": 340.0,
+              "allocated_discount": 0.0,
+              "category": "Imageology",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "HEMOGRAM",
+              "unit_price": 240.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 240.0,
+              "net_amount": 240.0,
+              "is_returned": false,
+              "s.no.": 3,
+              "gross_before_discount": 240.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "PULMONARY FUNCTION TEST (PUL-01)",
+              "unit_price": 1210.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 1210.0,
+              "net_amount": 1210.0,
+              "is_returned": false,
+              "s.no.": 4,
+              "gross_before_discount": 1210.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "SERUM IGE",
+              "unit_price": 730.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 730.0,
+              "net_amount": 730.0,
+              "is_returned": false,
+              "s.no.": 5,
+              "gross_before_discount": 730.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "VACCUTTE",
+              "unit_price": 30.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 30.0,
+              "net_amount": 30.0,
+              "is_returned": false,
+              "s.no.": 6,
+              "gross_before_discount": 30.0,
+              "allocated_discount": 0.0,
+              "category": "Medicines Supplied By Hospital",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "SYRINGE",
+              "unit_price": 10.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 10.0,
+              "net_amount": 10.0,
+              "is_returned": false,
+              "s.no.": 7,
+              "gross_before_discount": 10.0,
+              "allocated_discount": 0.0,
+              "category": "Medicines Supplied By Hospital",
+              "categorization_source": "llm",
+              "is_nme": true,
+              "deduction_reason": "Needles, Syringes: Not Payable - Part of Dressing charges / Routine Consumables",
+              "nme_item_name": "SYRINGE",
+              "nme_bill_amount": 10.0
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    }
+  }
+}

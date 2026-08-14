@@ -4,12 +4,8 @@ from app.tasks.claim_types import get_task_pack
 def test_opd_parity_tasks_and_reference_runtime() -> None:
     pack = get_task_pack("OPD")
     expected = {
-        "claim_form",
         "prescription",
-        "identity_document",
-        "cheque_bank",
         "extract_icd_codes",
-        "patient_summary",
         "merge_bills",
     }
     assert expected <= pack.tasks.keys()
@@ -19,11 +15,6 @@ def test_opd_parity_tasks_and_reference_runtime() -> None:
 
 
 def test_opd_seg_audit_gold_requirements_exclude_selected_segmentation() -> None:
-    plan = get_task_pack("OPD").resolve_subset(["segregation", "audit"], "gold")
-    assert plan.layers == [["segregation"], ["audit"]]
-    assert plan.gold_requirements["audit"] == (
-        "nme_analysis",
-        "patient_summary",
-        "benefit_plan",
-        "extract_icd_codes",
-    )
+    plan = get_task_pack("OPD").resolve_subset(["audit"], "gold")
+    assert plan.layers == [["audit"]]
+    assert plan.gold_requirements["audit"] == ("merge_bills",)

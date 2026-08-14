@@ -31,8 +31,15 @@ import sys
 from pathlib import Path
 from typing import Any
 
+# Export rows carry a single multi-KB ``json_build_object`` cell that blows past csv's
+# default 131072-byte per-field cap; lift it well above any realistic claim payload.
+csv.field_size_limit(256 * 1024 * 1024)
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TEST_DOCS = REPO_ROOT / "test-docs"
+# Directories searched for a stem's PDF, in priority order. Uploaded claims land in
+# ``data/uploads``; the committed fixtures live in ``test-docs``.
+DOC_DIRS = (TEST_DOCS, REPO_ROOT / "data" / "uploads")
 
 # Schema field allowlists (keep gold comparable to what models emit).
 BILL_HEADER_FIELDS = {
@@ -87,25 +94,42 @@ def _item_sno(item: dict[str, Any]) -> int | None:
         return None
 
 
-def _find_pdf(stem: str) -> str | None:
-    for candidate in (f"{stem}_1.pdf", f"{stem}-1.pdf"):
-        if (TEST_DOCS / candidate).is_file():
-            return f"test-docs/{candidate}"
-    hits = sorted(TEST_DOCS.glob(f"{stem}*.pdf"))
-    return f"test-docs/{hits[0].name}" if hits else None
+def _find_pdf(stem: str) -> str:
+    base_stem = stem.rsplit("_", 1)[0] if "_" in stem else stem
+    for base in DOC_DIRS:
+        for candidate in (
+            f"{stem}.pdf",
+            f"{stem}_1.pdf",
+            f"{stem}-1.pdf",
+            f"{base_stem}.pdf",
+            f"{base_stem}_1.pdf",
+            f"{base_stem}-1.pdf",
+        ):
+            if (base / candidate).is_file():
+                return (base / candidate).relative_to(REPO_ROOT).as_posix()
+    for base in DOC_DIRS:
+        hits = sorted(base.glob(f"{base_stem}*.pdf"))
+        if hits:
+            return hits[0].relative_to(REPO_ROOT).as_posix()
+    return f"data/uploads/{stem}.pdf"
 
 
 def _gold_segregation(row: dict[str, Any]) -> dict[str, Any] | None:
     segs = row.get("segments") or []
+    if not segs and isinstance(row.get("extracted"), dict):
+        segs = row.get("extracted", {}).get("segregation", {}).get("segments", [])
     if not segs:
         return None
-    return {
-        "segments": [
-            {"document_type": s.get("segment_type"), "pages": s.get("page_range")}
-            for s in segs
-            if s.get("segment_type") and s.get("page_range")
-        ]
-    }
+    out_segs = []
+    for s in segs:
+        if not isinstance(s, dict):
+            continue
+        dtype = s.get("document_type") or s.get("segment_type")
+        prange = s.get("pages") or s.get("page_range")
+        if dtype and prange:
+            out_segs.append({"document_type": dtype, "pages": str(prange)})
+    return {"segments": out_segs} if out_segs else None
+
 
 
 def _gold_itemized_bills(pharmacy: dict[str, Any] | None) -> dict[str, Any] | None:
@@ -238,6 +262,137 @@ def _gold_benefits(edited: dict[str, Any]) -> dict[str, Any] | None:
     return {"benefits": benefits} if benefits else None
 
 
+def _gold_cheque_bank(
+    extracted_map: dict[str, Any], edited: dict[str, Any], doc_details: dict[str, Any]
+) -> dict[str, Any] | None:
+    raw = (
+        extracted_map.get("cheque_or_bank_details")
+        or extracted_map.get("cheque_bank")
+        or edited.get("bank_details")
+        or doc_details.get("bank_details")
+    )
+    if not raw:
+        return None
+    if isinstance(raw, dict) and "bank_details" in raw:
+        details = raw.get("bank_details")
+    elif isinstance(raw, dict):
+        details = raw
+    else:
+        return None
+    if not details or not isinstance(details, dict):
+        return {"bank_details": None}
+    bank_fields = {"ifsc_code", "bank_name", "bank_branch", "account_no", "account_holder_name", "account_type"}
+    pruned = _prune(details, bank_fields)
+    return {"bank_details": pruned if any(v is not None for v in pruned.values()) else None}
+
+
+def _gold_prescription(
+    extracted_map: dict[str, Any], edited: dict[str, Any]
+) -> dict[str, Any] | None:
+    raw = extracted_map.get("prescription") or edited.get("prescription")
+    if not raw or not isinstance(raw, dict):
+        return None
+    if "claims_digitization_details" in raw:
+        return _drop_nulls(raw)
+    return _drop_nulls({"claims_digitization_details": raw})
+
+
+def _gold_icd_codes(
+    extracted_map: dict[str, Any], edited: dict[str, Any]
+) -> dict[str, Any] | None:
+    raw = (
+        extracted_map.get("icd_codes")
+        or extracted_map.get("extract_icd_codes")
+        or edited.get("icd_codes")
+        or (edited.get("audit_analysis") or {}).get("icd_codes")
+    )
+    if raw is None:
+        return None
+    codes = raw.get("icd_codes", raw) if isinstance(raw, dict) else raw
+    if not isinstance(codes, list):
+        return None
+    return _drop_nulls({"icd_codes": [_prune(c, ICD_FIELDS | {"related_bill_ids"}) for c in codes if isinstance(c, dict)]})
+
+
+def _gold_patient_summary(
+    extracted_map: dict[str, Any], edited: dict[str, Any]
+) -> dict[str, Any] | None:
+    raw = extracted_map.get("patient_summary") or edited.get("patient_summary")
+    if not raw or not isinstance(raw, dict):
+        return None
+    if "patient_summary" in raw:
+        return _drop_nulls(raw)
+    return _drop_nulls({"patient_summary": raw})
+
+
+def _gold_benefit_plan(
+    extracted_map: dict[str, Any], edited: dict[str, Any]
+) -> dict[str, Any] | None:
+    raw = (
+        extracted_map.get("benefit_plan")
+        or extracted_map.get("benefit_plan_selection")
+        or edited.get("benefit_plan_selection")
+    )
+    if isinstance(raw, dict) and "plan_applicability" in raw:
+        return _drop_nulls(raw)
+    # If we have edited benefit_plan_breakdown, map it to BenefitPlanSelectionOutput shape
+    breakdown = edited.get("benefit_plan_breakdown")
+    if isinstance(breakdown, list) and breakdown:
+        plans = []
+        items = []
+        for b in breakdown:
+            if not isinstance(b, dict):
+                continue
+            plans.append(
+                {
+                    "benefit_id": b.get("benefit_id"),
+                    "benefit_name": b.get("benefit_name") or "",
+                    "applicable": bool(b.get("applicable", True)),
+                    "confidence": 1.0,
+                    "reason": b.get("reason"),
+                }
+            )
+            for it in b.get("items") or b.get("assigned_items") or []:
+                if isinstance(it, dict):
+                    items.append(
+                        {
+                            "bill_id": it.get("bill_id"),
+                            "item_s_no": it.get("item_s_no") or it.get("s_no") or it.get("s.no."),
+                            "benefit_id": b.get("benefit_id"),
+                            "benefit_name": b.get("benefit_name"),
+                        }
+                    )
+        if plans:
+            return _drop_nulls({"plan_applicability": plans, "item_assignments": items})
+    return None
+
+
+def _gold_claim_form(extracted_map: dict[str, Any], edited: dict[str, Any]) -> dict[str, Any] | None:
+    raw = extracted_map.get("claim_forms") or extracted_map.get("claim_form") or edited.get("claim_forms")
+    if isinstance(raw, dict) and raw:
+        return _drop_nulls(raw)
+    return None
+
+
+def _gold_identity_document(extracted_map: dict[str, Any], edited: dict[str, Any]) -> dict[str, Any] | None:
+    raw = extracted_map.get("identity_documents") or extracted_map.get("identity_document") or edited.get("identity_documents")
+    if isinstance(raw, dict) and raw:
+        return _drop_nulls(raw)
+    return None
+
+
+def _extracted_by_type(row: dict[str, Any]) -> dict[str, Any]:
+    """Support both Healthpay's history array and Superclaims' keyed JSON object."""
+    raw = row.get("extracted") or []
+    if isinstance(raw, dict):
+        return raw
+    out: dict[str, Any] = {}
+    for entry in raw:
+        if isinstance(entry, dict) and entry.get("document_type"):
+            out.setdefault(entry["document_type"], entry.get("json_data"))
+    return out
+
+
 def convert_row(row: dict[str, Any]) -> dict[str, Any] | None:
     stem = row["stem"]
     document = _find_pdf(stem)
@@ -245,9 +400,10 @@ def convert_row(row: dict[str, Any]) -> dict[str, Any] | None:
         print(f"  ! no test-docs PDF for stem {stem}; skipping", file=sys.stderr)
         return None
 
-    extracted_map: dict[str, Any] = {}
-    for entry in row.get("extracted") or []:
-        extracted_map.setdefault(entry["document_type"], entry.get("json_data"))
+    extracted_map = _extracted_by_type(row)
+    doc_details = row.get("doc_details") or {}
+    if not isinstance(doc_details, dict):
+        doc_details = {}
 
     reviews = row.get("review") or []
     latest = reviews[0] if reviews else {}
@@ -256,9 +412,9 @@ def convert_row(row: dict[str, Any]) -> dict[str, Any] | None:
     tasks: dict[str, Any] = {}
     if (gold := _gold_segregation(row)) is not None:
         tasks["segregation"] = gold
-    if (gold := _gold_itemized_bills(extracted_map.get("pharmacy_bills"))) is not None:
+    if (gold := _gold_itemized_bills(extracted_map.get("pharmacy_bills") or edited.get("bill_data"))) is not None:
         tasks["itemized_bills"] = gold
-    if (gold := _gold_items_categorisation(extracted_map.get("nme_analysis"))) is not None:
+    if (gold := _gold_items_categorisation(extracted_map.get("nme_analysis") or edited.get("nme_analysis"))) is not None:
         tasks["items_categorisation"] = gold
     if (gold := _gold_nme(edited.get("nme_analysis"), extracted_map.get("nme_analysis"))) is not None:
         tasks["nme_analysis"] = gold
@@ -266,17 +422,36 @@ def convert_row(row: dict[str, Any]) -> dict[str, Any] | None:
         tasks["audit"] = gold
     if (gold := _gold_policy(row)) is not None:
         tasks["policy_extraction"] = gold
+    if (gold := _gold_cheque_bank(extracted_map, edited, doc_details)) is not None:
+        tasks["cheque_bank"] = gold
+    if (gold := _gold_prescription(extracted_map, edited)) is not None:
+        tasks["prescription"] = gold
+    if (gold := _gold_icd_codes(extracted_map, edited)) is not None:
+        tasks["extract_icd_codes"] = gold
+    if (gold := _gold_patient_summary(extracted_map, edited)) is not None:
+        tasks["patient_summary"] = gold
+    if (gold := _gold_benefit_plan(extracted_map, edited)) is not None:
+        tasks["benefit_plan"] = gold
+    if (gold := _gold_claim_form(extracted_map, edited)) is not None:
+        tasks["claim_form"] = gold
+    if (gold := _gold_identity_document(extracted_map, edited)) is not None:
+        tasks["identity_document"] = gold
+    if (payload := extracted_map.get("discharge_summary")):
+        tasks["discharge_summary"] = _drop_nulls(payload)
+    if (payload := extracted_map.get("validation")):
+        tasks["validation"] = _drop_nulls(payload)
 
     # Context (not scored): merged categorised bills + benefit catalog for feeding dependent tasks.
-    upstream = extracted_map.get("nme_analysis")
+    upstream = extracted_map.get("nme_analysis") or edited.get("nme_analysis")
     if upstream and upstream.get("bills"):
         tasks["upstream_bills"] = upstream
-    if (benefits := _gold_benefits(edited)) is not None:
+    if (benefits := _gold_benefits(edited) or _gold_benefits(doc_details)) is not None:
         tasks["upstream_benefits"] = benefits
 
     if not tasks:
         return None
     return {"document": document, "tasks": tasks}
+
 
 
 def load_rows(csv_paths: list[Path]) -> dict[str, dict[str, Any]]:

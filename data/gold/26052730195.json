@@ -197,6 +197,48 @@
       "policy_violations_count": 3,
       "medical_legibility_issues": 2
     },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "Z12.4",
+          "type": "primary",
+          "source": "Investigations - Pap Smear and HPV PCR are primary screening tools for cervical cancer",
+          "description": "Encounter for screening for malignant neoplasm of cervix"
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_age": 71,
+          "patient_city": "Mumbai",
+          "patient_name": "Asha Lamba",
+          "patient_gender": "female",
+          "patient_district": "Mumbai",
+          "patient_policy_no": "89000063250400000235"
+        },
+        "clinical_details": {},
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        }
+      }
+    },
+    "claim_form": {
+      "claim_form": {
+        "part_a": {
+          "city": "Mumbai",
+          "gender": "female",
+          "age_years": 71,
+          "full_name": "Asha Lamba",
+          "policy_no": "89000063250400000235",
+          "hospitalization_expenses": 3800
+        },
+        "part_b": {
+          "name_of_the_patient": "Asha Lamba"
+        }
+      }
+    },
     "upstream_bills": {
       "bills": [
         {

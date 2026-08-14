@@ -138,6 +138,56 @@
       "policy_violations_count": 0,
       "medical_legibility_issues": 0
     },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "N83.20",
+          "type": "primary",
+          "source": "Diagnosis - Ovarian cyst documented in claim form",
+          "description": "Unspecified ovarian cyst"
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_age": 30,
+          "patient_city": "Bangalore",
+          "patient_name": "Belf",
+          "patient_state": "KARNATAKA",
+          "patient_district": "Bangalore",
+          "patient_address_1": "M-042 Dif woodland heights Jigami Bangalore",
+          "patient_policy_no": "433900/48/2026/761"
+        },
+        "clinical_details": {},
+        "past_history_details": {},
+        "hospitalization_details": {
+          "claimed_amount": 1350,
+          "patient_paid_amount": 0,
+          "provisional_final_diagnosis": "Ovarian cyst"
+        }
+      }
+    },
+    "claim_form": {
+      "claim_form": {
+        "part_a": {
+          "city": "Bangalore",
+          "state": "KARNATAKA",
+          "total": 1350,
+          "address": "M-042 Dif woodland heights Jigami Bangalore",
+          "age_years": 30,
+          "diagnosis": "Ovarian cyst",
+          "full_name": "Belf",
+          "policy_no": "433900/48/2026/761",
+          "date_of_admission": "2026-05-22",
+          "date_of_discharge": "2026-05-22",
+          "hospitalization_expenses": 1350
+        },
+        "part_b": {
+          "name_of_the_patient": "Belf"
+        }
+      }
+    },
     "upstream_bills": {
       "bills": [
         {

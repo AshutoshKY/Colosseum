@@ -101,6 +101,83 @@
       "policy_violations_count": 0,
       "medical_legibility_issues": 0
     },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "Root canal (tr) with crown",
+        "hospital_city": "Pune",
+        "hospital_name": "Saanvi Dental Care Cosmetic & Implant Center",
+        "hospital_state": "Maharashtra",
+        "hospital_address": "Survey No.38/1, Shankar Nagar, Keshav Nagar-Manjari Road, Shinde Vasti, Opp. HDFC ATM, Mundhawa-36",
+        "hospital_pincode": "411036",
+        "presenting_complaint": "pain in 17",
+        "hospital_phone_number": "9833976726",
+        "treating_doctor_mobile": "9833976726, 9764667695",
+        "name_of_treating_doctor": "Dr. Swapna Dashrathe (Pawal)",
+        "treating_doctor_registration": "A-15195"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "K04.01",
+          "type": "primary",
+          "source": "Prescription - Pain in 17; Advice for Root Canal Treatment",
+          "description": "Reversible pulpitis"
+        },
+        {
+          "code": "K04.1",
+          "type": "secondary",
+          "source": "Prescription - Advice for Root Canal Treatment",
+          "description": "Necrosis of pulp"
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_city": "Pune",
+          "patient_name": "Yogita Prashant Musande",
+          "patient_email": "prashantmusande@gmail.com",
+          "patient_gender": "female",
+          "patient_mobile": "9049649497",
+          "patient_pincode": "411028",
+          "patient_district": "Pune",
+          "patient_address_1": "MUSANDE PRASHANT DINKAR, Sector-R19, Advend tower, Amanora P92K town Hadapsa2,"
+        },
+        "clinical_details": {
+          "physician_name": "Dr. Swapna Dashrathe (Pawal)",
+          "presenting_complaint": "pain in 17"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "claimed_amount": 5000,
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Dr. Swapna Dashrathe (Pawal)",
+          "claim_registered_email_id": "prashantmusande@gmail.com",
+          "claim_registered_mobile_no": "9049649497",
+          "provisional_final_diagnosis": "Root canal (tr) with crown",
+          "treating_doctor_registration_number": "A-15195"
+        }
+      }
+    },
+    "claim_form": {
+      "claim_form": {
+        "part_a": {
+          "city": "Pune",
+          "total": 5000,
+          "gender": "female",
+          "address": "MUSANDE PRASHANT DINKAR, Sector-R19, Advend tower, Amanora P92K town Hadapsa2,",
+          "email_id": "prashantmusande@gmail.com",
+          "phone_no": "9049649497",
+          "pin_code": "411028",
+          "diagnosis": "Saanvi Dental care",
+          "full_name": "Yogita Prashant Musande"
+        },
+        "part_b": {
+          "name_of_the_patient": "Yogita Prashant Musande"
+        }
+      }
+    },
     "upstream_bills": {
       "bills": [
         {

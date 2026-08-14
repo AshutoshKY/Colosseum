@@ -1,0 +1,220 @@
+{
+  "document": "data/uploads/8AUFI2PS_1.pdf",
+  "tasks": {
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "invoice_number": "1220",
+            "bill_date": "2026-07-22",
+            "net_amount": 1500.0,
+            "page_number": 2,
+            "facility_details": {
+              "name": "Dr. Motiwala E.N.T. Care",
+              "registration_number": "M.P. -11504"
+            }
+          },
+          "items": [
+            {
+              "item_name": "Consultation fee / Endoscopic Inspection / Others",
+              "unit_price": 1500.0,
+              "quantity": 1.0,
+              "final_amount": 1500.0,
+              "net_amount": 1500.0,
+              "is_returned": false
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "8789dd3fc863",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Consultation"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "patches": [],
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "ifsc_code": "HDFC0001240",
+        "bank_name": "HDFC BANK",
+        "bank_branch": "RACE COURSE ROAD,INDORE",
+        "account_no": "12401050068048",
+        "account_holder_name": "IRFAN KHAN",
+        "account_type": "Savings"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_name": "ALEEZA KHAN",
+        "name_of_treating_doctor": "Dr. Mohammed Ali Motiwala",
+        "treating_doctor_qualification": "Ear, Nose, Throat, Head & Neck and Endoscopic Sinus Surgeon M.B.B.S., D.L.O., D.N.B. (Mumbai)",
+        "treating_doctor_mobile": "918878119148",
+        "treating_doctor_registration": "M.P.-11504",
+        "diagnosis": "ACUTE PHARYNGITIS",
+        "presenting_complaint": "c/o sore throat, ear pain",
+        "hospital_name": "DR. MOTIWALA E.N.T. CLINIC",
+        "hospital_address": "Row House : 3, Royal Bungalow Society, Shivalaya Colony, Indore",
+        "hospital_city": "Indore",
+        "hospital_state": "Madhya Pradesh",
+        "hospital_pincode": "452012",
+        "hospital_phone_number": "+91-88781 19148",
+        "patient_age": 23,
+        "prescription_date": "2026/07/27",
+        "prescribed_items": [
+          {
+            "medicine_name": "T. FEXOFENADINE",
+            "frequency": "1-0-0",
+            "duration": "3 days"
+          },
+          {
+            "medicine_name": "T. PAN-D",
+            "frequency": "1-0-0"
+          },
+          {
+            "medicine_name": "T. LEVOCET",
+            "frequency": "0-0-1"
+          },
+          {
+            "medicine_name": "NASAL SPRAY AT",
+            "frequency": "0-0-1"
+          },
+          {
+            "medicine_name": "T. ABLUMAX-CV",
+            "frequency": "1-0-1",
+            "duration": "3 days"
+          }
+        ]
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "J02.9",
+          "name": "Acute pharyngitis, unspecified",
+          "diagnosis": "ACUTE PHARYNGITIS",
+          "description": "Acute pharyngitis, unspecified",
+          "chapter": "Diseases of the respiratory system",
+          "block": "Acute upper respiratory infections",
+          "source": "ACUTE PHARYNGITIS",
+          "type": "primary",
+          "related_bill_ids": [
+            "8789dd3fc863"
+          ]
+        },
+        {
+          "code": "H92.09",
+          "name": "Otalgia, unspecified ear",
+          "diagnosis": "ear pain",
+          "description": "Otalgia, unspecified ear",
+          "chapter": "Diseases of the ear and mastoid process",
+          "block": "Other disorders of ear",
+          "source": "c/o sore throat, ear pain",
+          "type": "secondary",
+          "related_bill_ids": [
+            "8789dd3fc863"
+          ]
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "ALEEZA KHAN",
+          "patient_bank_account_holder_name": "IRFAN KHAN",
+          "patient_bank_account_no": "12401050068048",
+          "patient_bank_name": "HDFC BANK",
+          "patient_bank_branch_name": "RACE COURSE ROAD,INDORE",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_ifsc_code": "HDFC0001240"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        },
+        "clinical_details": {
+          "hospital_name": "DR. MOTIWALA E.N.T. CLINIC"
+        },
+        "past_history_details": {
+          "physician_mobile_no": "918878119148",
+          "physician_reg_no": "M.P.-11504"
+        }
+      }
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "patient_name": "ALEEZA KHAN",
+            "invoice_number": "1220",
+            "ip_number": null,
+            "bill_date": "2026-07-22",
+            "total_discount": null,
+            "net_amount": 1500.0,
+            "page_number": 2,
+            "facility_details": {
+              "name": "Dr. Motiwala E.N.T. Care",
+              "registration_number": "M.P. -11504",
+              "gst_number": null,
+              "address_line": "Row House: 3, Royal Bungalow Society, Shivalaya Colony",
+              "city": "Indore",
+              "state": null,
+              "pincode": null
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "8789dd3fc863",
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "item_name": "Consultation fee / Endoscopic Inspection / Others",
+              "unit_price": 1500.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 1500.0,
+              "net_amount": 1500.0,
+              "is_returned": false,
+              "s.no.": 1,
+              "gross_before_discount": 1500.0,
+              "allocated_discount": 0.0,
+              "category": "Consultation",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        }
+      ],
+      "policy_violations": [
+        {
+          "rule_name": "Procedure fees during OP consultation excluded",
+          "item_name": "Consultation fee / Endoscopic Inspection / Others",
+          "bill_id": "8789dd3fc863",
+          "item_s_no": 1,
+          "violation_details": "Procedure fees during OP consultation are excluded unless specifically included.",
+          "amount_impacted": 1500.0,
+          "recommendation": "reject"
+        }
+      ]
+    }
+  }
+}

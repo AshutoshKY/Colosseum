@@ -1,0 +1,281 @@
+{
+  "document": "data/uploads/HEWYDZVS_1.pdf",
+  "tasks": {
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "invoice_number": "260027882",
+            "bill_date": "2026-05-15",
+            "net_amount": 2550.0,
+            "page_number": 1,
+            "facility_details": {
+              "name": "DHARAN HOSPITAL"
+            }
+          },
+          "items": [
+            {
+              "item_name": "OP CONSULTING FEES",
+              "unit_price": 400.0,
+              "quantity": 1.0,
+              "final_amount": 400.0,
+              "net_amount": 400.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "OP HANDLING FEES",
+              "unit_price": 50.0,
+              "quantity": 1.0,
+              "final_amount": 50.0,
+              "net_amount": 50.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "GROWTH II (GROWTH + DOPPLER) SINGLE",
+              "unit_price": 2000.0,
+              "quantity": 1.0,
+              "final_amount": 2000.0,
+              "net_amount": 2000.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "HB",
+              "unit_price": 100.0,
+              "quantity": 1.0,
+              "final_amount": 100.0,
+              "net_amount": 100.0,
+              "is_returned": false
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "2395208358ca",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Consultation"
+            },
+            {
+              "s.no.": 2,
+              "category": "Others"
+            },
+            {
+              "s.no.": 3,
+              "category": "Imageology"
+            },
+            {
+              "s.no.": 4,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": [
+        {
+          "nme_item": {
+            "sr.no": 2,
+            "item_name": "OP HANDLING FEES",
+            "bill_amount": 50.0,
+            "deduction_reason": "Administrative Charges / Handling Fees: Not Payable"
+          }
+        }
+      ]
+    },
+    "audit": {
+      "patches": [],
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "ifsc_code": "ICIC0000573",
+        "bank_name": "ICICI Bank",
+        "bank_branch": "MAHINDRA INDUSTRIAL PARK",
+        "account_no": "057301509642",
+        "account_holder_name": "DHIVYAKAYATHRI KARUNANITHY",
+        "account_type": "Savings"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_name": "Mrs. DHIVYA RAYATHRI",
+        "name_of_treating_doctor": "Dr.PRAMYA NANJUNDAN",
+        "treating_doctor_qualification": "MD(OG), DNB(OG), FRM",
+        "presenting_complaint": "CARDIAC + CONSULTATION",
+        "hospital_name": "Dharan Womens Care FERTILITY CENTRE",
+        "hospital_address": "14, Bypass Road, Seelanaickenpatti",
+        "hospital_city": "Salem",
+        "hospital_pincode": "636 201",
+        "hospital_phone_number": "0427 2709999",
+        "patient_age": 30,
+        "prescription_date": "2026/05/15",
+        "prescribed_items": [
+          {
+            "medicine_name": "TABLET. LIVOGEN-Z TABLET",
+            "frequency": "0 0 1",
+            "duration": "3 Weeks",
+            "quantity": 42,
+            "instructions": "AFTER MEAL"
+          },
+          {
+            "medicine_name": "TABLET. SHELCAL-XT TABLET",
+            "frequency": "0 - 0",
+            "duration": "3 Weeks",
+            "quantity": 21,
+            "instructions": "AFTER MEAL"
+          },
+          {
+            "medicine_name": "TABLET. LIMCEE 500MG TABLET",
+            "frequency": "0 0 0",
+            "duration": "3 Weeks",
+            "quantity": 21,
+            "instructions": "BEFORE MEAL"
+          },
+          {
+            "medicine_name": "TABLET. FOTOSIS 60K TAB",
+            "frequency": "Monthly Once",
+            "duration": "1 Day",
+            "quantity": 1,
+            "instructions": "AFTER MEAL"
+          },
+          {
+            "medicine_name": "INJECTION. INFLUVAC TETRA 0.5ML (PFS)",
+            "frequency": "0 0 0",
+            "duration": "1 Day",
+            "quantity": 1,
+            "instructions": "AFTER MEAL"
+          }
+        ]
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": []
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "Mrs. DHIVYA RAYATHRI",
+          "patient_bank_account_holder_name": "DHIVYAKAYATHRI KARUNANITHY",
+          "patient_bank_account_no": "057301509642",
+          "patient_bank_name": "ICICI Bank",
+          "patient_bank_branch_name": "MAHINDRA INDUSTRIAL PARK",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_ifsc_code": "ICIC0000573"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        },
+        "clinical_details": {
+          "hospital_name": "Dharan Womens Care FERTILITY CENTRE"
+        },
+        "past_history_details": {}
+      }
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "patient_name": "Mrs.DHIVYA KAYATHRI",
+            "invoice_number": "260027882",
+            "ip_number": null,
+            "bill_date": "2026-05-15",
+            "total_discount": null,
+            "net_amount": 2550.0,
+            "page_number": 1,
+            "facility_details": {
+              "name": "DHARAN HOSPITAL",
+              "registration_number": null,
+              "gst_number": null,
+              "address_line": "14, SEELANAICKANPATTY BYEPASS",
+              "city": "SALEM",
+              "state": null,
+              "pincode": "636201"
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "2395208358ca",
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "item_name": "OP CONSULTING FEES",
+              "unit_price": 400.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 400.0,
+              "net_amount": 400.0,
+              "is_returned": false,
+              "s.no.": 1,
+              "gross_before_discount": 400.0,
+              "allocated_discount": 0.0,
+              "category": "Consultation",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "OP HANDLING FEES",
+              "unit_price": 50.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 50.0,
+              "net_amount": 50.0,
+              "is_returned": false,
+              "s.no.": 2,
+              "gross_before_discount": 50.0,
+              "allocated_discount": 0.0,
+              "category": "Others",
+              "categorization_source": "llm",
+              "is_nme": true,
+              "deduction_reason": "Administrative Charges / Handling Fees: Not Payable",
+              "nme_item_name": "OP HANDLING FEES",
+              "nme_bill_amount": 50.0
+            },
+            {
+              "item_name": "GROWTH II (GROWTH + DOPPLER) SINGLE",
+              "unit_price": 2000.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 2000.0,
+              "net_amount": 2000.0,
+              "is_returned": false,
+              "s.no.": 3,
+              "gross_before_discount": 2000.0,
+              "allocated_discount": 0.0,
+              "category": "Imageology",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "HB",
+              "unit_price": 100.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 100.0,
+              "net_amount": 100.0,
+              "is_returned": false,
+              "s.no.": 4,
+              "gross_before_discount": 100.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    }
+  }
+}

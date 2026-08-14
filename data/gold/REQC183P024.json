@@ -434,6 +434,83 @@
       ],
       "extraction_ok": true
     },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "R10.9",
+          "name": "Abdominal pain, unspecified",
+          "type": "primary",
+          "block": "R10-R19 Symptoms and signs involving the digestive system and abdomen",
+          "source": "Investigation - USG Abdomen & Pelvis",
+          "chapter": "Chapter XVIII",
+          "diagnosis": "Inferred from USG Abdomen & Pelvis and IV medications",
+          "related_bill_ids": []
+        },
+        {
+          "code": "M54.5",
+          "name": "Low back pain",
+          "type": "secondary",
+          "block": "M50-M54 Other dorsopathies",
+          "source": "Investigation - X-Ray LS Spine",
+          "chapter": "Chapter XIII",
+          "diagnosis": "Inferred from X-Ray LS Spine",
+          "related_bill_ids": []
+        },
+        {
+          "code": "K29.7",
+          "name": "Gastritis, unspecified",
+          "type": "secondary",
+          "block": "K20-K31 Diseases of esophagus, stomach and duodenum",
+          "source": "Prescription - Pantin IV 40MG INJ",
+          "chapter": "Chapter XI",
+          "diagnosis": "Inferred from Pantoprazole (Pantin IV) administration",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {},
+        "clinical_details": {},
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1366421,
+          "benefit_name": "In-Clinic Consults",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Claim flagged for fraud, waste, or abuse review: FWA_PRICE_VARIANCE"
+        },
+        {
+          "benefit_id": 1366425,
+          "benefit_name": "Prescribed Diagnostics",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Claim flagged for fraud, waste, or abuse review: FWA_PRICE_VARIANCE"
+        },
+        {
+          "benefit_id": 1366464,
+          "benefit_name": "Dental Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No dental-related SOC categories found"
+        },
+        {
+          "benefit_id": 1366465,
+          "benefit_name": "Eye Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vision-related SOC categories found"
+        }
+      ],
+      "item_assignments": []
+    },
     "upstream_bills": {
       "bills": [
         {

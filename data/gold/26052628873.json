@@ -439,6 +439,115 @@
       "policy_violations_count": 1,
       "medical_legibility_issues": 1
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "HDFC BANK",
+        "ifsc_code": "HDFC0000113",
+        "account_no": "50100125566947",
+        "bank_branch": "AURANGABAD",
+        "account_type": "Savings",
+        "account_holder_name": "NIKAM CHANDU NAMDEV"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "Acute Gastroenteritis AGE",
+        "hospital_city": "Aurangabad",
+        "hospital_name": "Samarth Hospital",
+        "hospital_state": "Maharashtra",
+        "hospital_address": "Plot No. 61, Gut No. 140, In front of ZP School, Cidco Waluj Mahanagar-1, Aurangabad",
+        "presenting_complaint": "Vomiting (1 Day, Moderate, Frequency-2-5), Loose stools (1 Day, Moderate, Frequency-1-2)",
+        "hospital_phone_number": "9404731394",
+        "treating_doctor_mobile": "9404731394",
+        "name_of_treating_doctor": "Dr. Shahaji B. Taur",
+        "treating_doctor_registration": "2005/08/3299"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "A09.9",
+          "type": "primary",
+          "source": "Diagnosis - Acute Gastroenteritis AGE documented on page 8",
+          "description": "Gastroenteritis and colitis of unspecified origin"
+        },
+        {
+          "code": "R50.9",
+          "type": "secondary",
+          "source": "Chief complaint - Fever documented on page 7; Dolo prescribed",
+          "description": "Fever, unspecified"
+        },
+        {
+          "code": "R11.10",
+          "type": "secondary",
+          "source": "Chief complaint - Vomiting documented on page 7; Emeset prescribed",
+          "description": "Vomiting, unspecified"
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_age": 3,
+          "patient_city": "sambhajinagar",
+          "patient_name": "Shreyansh Chandy Nikam",
+          "patient_state": "Maharastra",
+          "patient_gender": "male",
+          "patient_pan_no": "AXIPN6803H",
+          "patient_pincode": "433900",
+          "patient_district": "sambhajinagar",
+          "patient_aadhar_no": "5625802",
+          "patient_address_1": "Gut No 174 plot NO DI Fat No A-10 Shri Hari complex Tisgao CAD.CO. Waluy Mahanagar of chh sambhajinagar",
+          "patient_bank_name": "HDFC BANK",
+          "patient_policy_no": "433900/48/20261840",
+          "patient_bank_ifsc_code": "HDFC0000113",
+          "patient_bank_account_no": "50100125566947",
+          "patient_bank_branch_name": "AURANGABAD",
+          "patient_bank_account_type": "Savings"
+        },
+        "clinical_details": {
+          "physician_name": "Dr. Shahaji B. Taur",
+          "presenting_complaint": "Vomiting (1 Day, Moderate, Frequency-2-5), Loose stools (1 Day, Moderate, Frequency-1-2)",
+          "hospital_phone_number": "8888795260"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "claimed_amount": 2208.85,
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Dr. Shahaji B. Taur",
+          "provisional_final_diagnosis": "Acute Gastroenteritis AGE",
+          "treating_doctor_registration_number": "2005/08/3299"
+        }
+      }
+    },
+    "claim_form": {
+      "claim_form": {
+        "part_a": {
+          "city": "sambhajinagar",
+          "state": "Maharastra",
+          "total": 2208.85,
+          "gender": "male",
+          "address": "Gut No 174 plot NO DI Fat No A-10 Shri Hari complex Tisgao CAD.CO. Waluy Mahanagar of chh sambhajinagar",
+          "pin_code": "433900",
+          "age_years": 3,
+          "diagnosis": "vomiting, fever, cough",
+          "full_name": "Shreyansh Chandy Nikam",
+          "policy_no": "433900/48/20261840",
+          "date_of_admission": "2026-01-06",
+          "date_of_discharge": "2026-01-20"
+        },
+        "part_b": {
+          "phone_no": "8888795260",
+          "name_of_the_patient": "Shreyansh Chandy Nikam",
+          "name_of_treating_doctor": "Dr. Manoj Jain",
+          "registration_no_with_state_code": "82673"
+        }
+      }
+    },
+    "identity_document": {
+      "pan_card_number": "AXIPN6803H",
+      "aadhar_card_number": "5625802"
+    },
     "upstream_bills": {
       "bills": [
         {

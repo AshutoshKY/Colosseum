@@ -48,14 +48,23 @@ def _text_only_cap() -> ModelCapability:
 def test_opd_pack_has_priority_tasks():
     for name in (
         "segregation",
+        "policy_extraction",
+        "claim_form",
+        "identity_document",
+        "prescription",
+        "cheque_bank",
+        "itemized_bills",
         "consolidated_bills",
+        "merge_bills",
         "items_categorisation",
         "nme_analysis",
-        "audit",
-        "policy_extraction",
+        "extract_icd_codes",
+        "patient_summary",
         "benefit_plan",
+        "audit",
     ):
         assert name in OPD_TASKS, name
+
 
 
 def test_text_tasks_flagged_and_render():

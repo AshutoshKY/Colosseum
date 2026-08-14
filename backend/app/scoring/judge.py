@@ -79,7 +79,13 @@ def _cfg_value(cfg: Any, name: str, default: Any) -> Any:
     return cfg.get(name, default) if isinstance(cfg, dict) else getattr(cfg, name, default)
 
 
-def _load_records(session: Session, run_id: int) -> list[_ResultRecord]:
+def _load_records(
+    session: Session,
+    run_id: int,
+    *,
+    task_names: set[str] | None = None,
+    document_ids: set[int] | None = None,
+) -> list[_ResultRecord]:
     gold = {
         (row.document_id, row.task): row.gold
         for row in session.exec(select(GroundTruth)).all()
@@ -106,6 +112,8 @@ def _load_records(session: Session, run_id: int) -> list[_ResultRecord]:
         )
         for result, cell, document in rows
         if result.id is not None
+        and (task_names is None or cell.task in task_names)
+        and (document_ids is None or cell.document_id in document_ids)
     ]
 
 
@@ -187,12 +195,19 @@ async def judge_run(
         raise ValueError("concurrency must be at least 1")
     model_id = _cfg_value(cfg, "model_id", "gemini-3.1-pro")
     modes = set(_cfg_value(cfg, "modes", ("gold_grade",)))
+    task_names = set(_cfg_value(cfg, "task_names", ()) or ()) or None
+    document_ids = set(_cfg_value(cfg, "document_ids", ()) or ()) or None
     unknown = modes - {"gold_grade", "doc_grade", "head_to_head"}
     if unknown:
         raise ValueError(f"unknown judge modes: {', '.join(sorted(unknown))}")
 
     with Session(get_engine()) as session:
-        records = _load_records(session, run_id)
+        records = _load_records(
+            session,
+            run_id,
+            task_names=task_names,
+            document_ids=document_ids,
+        )
     judge = gateway or ModelGateway()
     semaphore = asyncio.Semaphore(concurrency)
     errors: list[str] = []

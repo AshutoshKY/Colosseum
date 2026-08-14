@@ -1,0 +1,194 @@
+{
+  "document": "data/uploads/CAIZPFRE_1.pdf",
+  "tasks": {
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "invoice_number": "2866",
+            "bill_date": "2026-08-08",
+            "net_amount": 10850.0,
+            "page_number": 3,
+            "facility_details": {
+              "name": "Genesis Women's Clinic"
+            }
+          },
+          "items": [
+            {
+              "item_name": "Vaccine (Gardasil -9) - 3rd Dose",
+              "unit_price": 10850.0,
+              "quantity": 1.0,
+              "final_amount": 10850.0,
+              "net_amount": 10850.0,
+              "is_returned": false
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "ac76032e5dac",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Medicines Supplied By Hospital"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "patches": [],
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "ifsc_code": "UTIB0000037",
+        "bank_name": "AXIS BANK LTD",
+        "bank_branch": "PUNE [MH]",
+        "account_no": "910010046931613",
+        "account_holder_name": "ASHISHKUMAR HARIBHAU MOHEKAR",
+        "account_type": "Savings"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_name": "Swati Mohekar",
+        "name_of_treating_doctor": "Dr. Smita Khose",
+        "treating_doctor_qualification": "MBBS MS (Gynaec) Consultant Obstetrician, Gynaecologist & Infertility Specialist GOLD MEDALIST (Pune University)",
+        "treating_doctor_registration": "90805",
+        "diagnosis": "polymenorrhoea",
+        "hospital_name": "Genesis women's clinic",
+        "hospital_address": "103 & 132, Goodwill Square, Dhanori",
+        "hospital_city": "Pune",
+        "hospital_pincode": "411015",
+        "hospital_phone_number": "7721858188",
+        "prescription_date": "2026/01/22",
+        "prescribed_items": [
+          {
+            "medicine_name": "Inj Gardasil 9",
+            "duration": "3 doses"
+          },
+          {
+            "medicine_name": "C. Doxy LB",
+            "dosage": "100mg",
+            "frequency": "1-0-1",
+            "duration": "10 days",
+            "route": "Oral",
+            "instructions": "ABF"
+          },
+          {
+            "medicine_name": "C. Happi D",
+            "frequency": "1-0-1",
+            "duration": "10 days",
+            "route": "Oral",
+            "instructions": "1/2 hr before food"
+          },
+          {
+            "medicine_name": "T. Metro",
+            "dosage": "400mg",
+            "frequency": "0-0-1",
+            "duration": "10 days",
+            "route": "Oral",
+            "instructions": "after lunch (total 2 wks)"
+          }
+        ]
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "N92.0",
+          "name": "Excessive and frequent menstruation with regular cycle",
+          "diagnosis": "polymenorrhoea",
+          "description": "Excessive and frequent menstruation with regular cycle",
+          "chapter": "XIV",
+          "block": "N80-N98",
+          "source": "polymenorrhoea",
+          "type": "primary",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "Swati Mohekar",
+          "patient_bank_account_holder_name": "ASHISHKUMAR HARIBHAU MOHEKAR",
+          "patient_bank_account_no": "910010046931613",
+          "patient_bank_name": "AXIS BANK LTD",
+          "patient_bank_branch_name": "PUNE [MH]",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_ifsc_code": "UTIB0000037"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        },
+        "clinical_details": {
+          "hospital_name": "Genesis women's clinic"
+        },
+        "past_history_details": {
+          "physician_reg_no": "90805"
+        }
+      }
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "patient_name": "Swati Mohekar",
+            "invoice_number": "2866",
+            "ip_number": null,
+            "bill_date": "2026-08-08",
+            "total_discount": null,
+            "net_amount": 10850.0,
+            "page_number": 3,
+            "facility_details": {
+              "name": "Genesis Women's Clinic",
+              "registration_number": null,
+              "gst_number": null,
+              "address_line": "103, Goodwill Square, Kamal Park, Dhanori",
+              "city": "Pune",
+              "state": null,
+              "pincode": "411015"
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "ac76032e5dac",
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "item_name": "Vaccine (Gardasil -9) - 3rd Dose",
+              "unit_price": 10850.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 10850.0,
+              "net_amount": 10850.0,
+              "is_returned": false,
+              "s.no.": 1,
+              "gross_before_discount": 10850.0,
+              "allocated_discount": 0.0,
+              "category": "Medicines Supplied By Hospital",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    }
+  }
+}

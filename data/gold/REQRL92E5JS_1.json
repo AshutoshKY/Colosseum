@@ -1,0 +1,396 @@
+{
+  "document": "data/uploads/REQRL92E5JS_1.pdf",
+  "tasks": {
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "invoice_number": "AH2-PSB2605384",
+            "bill_date": "2026-08-12",
+            "net_amount": 778.0,
+            "page_number": 5,
+            "facility_details": {
+              "name": "Ayaansh Fertility"
+            }
+          },
+          "items": [
+            {
+              "item_name": "SOLFE (15 S)",
+              "unit_price": 18.91,
+              "quantity": 30.0,
+              "final_amount": 567.18,
+              "net_amount": 566.88,
+              "is_returned": false
+            },
+            {
+              "item_name": "TAB CLOSTOP 500MG",
+              "unit_price": 21.12,
+              "quantity": 10.0,
+              "final_amount": 211.23,
+              "net_amount": 211.12,
+              "is_returned": false
+            }
+          ]
+        },
+        {
+          "bill": {
+            "invoice_number": "AH-BN26001161",
+            "bill_date": "2026-08-12",
+            "net_amount": 2520.0,
+            "page_number": 6,
+            "facility_details": {
+              "name": "Ayaansh Fertility"
+            }
+          },
+          "items": [
+            {
+              "item_name": "TSH",
+              "unit_price": 390.0,
+              "quantity": 1.0,
+              "final_amount": 390.0,
+              "net_amount": 390.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "HBA1C",
+              "unit_price": 1080.0,
+              "quantity": 1.0,
+              "final_amount": 1080.0,
+              "net_amount": 1080.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "CBC",
+              "unit_price": 900.0,
+              "quantity": 1.0,
+              "final_amount": 900.0,
+              "net_amount": 900.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "OP REGISTRATION",
+              "unit_price": 150.0,
+              "quantity": 1.0,
+              "final_amount": 150.0,
+              "net_amount": 150.0,
+              "is_returned": false
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "10c880250383",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 2,
+              "category": "Medicines Supplied By Hospital"
+            }
+          ]
+        },
+        {
+          "bill_id": "195a490672ce",
+          "categorized_items": [
+            {
+              "s.no.": 3,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 4,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 5,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 6,
+              "category": "Registration"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": [
+        {
+          "nme_item": {
+            "sr.no": 6,
+            "item_name": "OP REGISTRATION",
+            "bill_amount": 150.0,
+            "deduction_reason": "Administration/Admission/Registration Charges: Not Payable"
+          }
+        }
+      ]
+    },
+    "audit": {
+      "patches": [],
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "ifsc_code": "HDFC0003962",
+        "bank_name": "HDFC BANK LTD.",
+        "bank_branch": "EPIP",
+        "account_no": "50100462842942",
+        "account_holder_name": "JOSMY JOSEPH",
+        "account_type": "Savings"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_name": "Mrs. JOSMY JOSEPH",
+        "name_of_treating_doctor": "DR. THRUPTHI REDDY",
+        "treating_doctor_qualification": "MBBS, MS, FRM Consultant & Infertility Speicalist Obstetrics & Gynaecology Reproductive Medicine",
+        "presenting_complaint": "Body pains, fatigue, Heavy menstrual bleeding since 25/6/26, 2-3 pads/day, clots +nt, No dysmenorrhoea",
+        "hospital_name": "Ayaansh Fertility",
+        "hospital_address": "No 46, 1st Floor, Thubarahalli, Varthur Road",
+        "hospital_city": "Bangalore",
+        "hospital_pincode": "560066",
+        "hospital_phone_number": "080-22220072",
+        "patient_age": 28,
+        "prescription_date": "2026/08/12",
+        "prescribed_items": [
+          {
+            "medicine_name": "Tab. PAUSE",
+            "dosage": "500 mg",
+            "frequency": "1-1-1",
+            "duration": "3 days"
+          },
+          {
+            "medicine_name": "Tab. OROFER XT",
+            "frequency": "1-0-0",
+            "duration": "continue"
+          }
+        ]
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "N92.0",
+          "name": "Excessive and frequent menstruation with regular cycle",
+          "diagnosis": "Heavy menstrual bleeding",
+          "description": "Excessive and frequent menstruation with regular cycle",
+          "chapter": "Diseases of the genitourinary system",
+          "block": "Noninflammatory disorders of female genital tract",
+          "source": "Heavy menstrual bleeding since 25/6/26, 2-3 pads/day, clots +nt",
+          "type": "primary",
+          "related_bill_ids": [
+            "10c880250383",
+            "195a490672ce"
+          ]
+        },
+        {
+          "code": "R53.83",
+          "name": "Other fatigue",
+          "diagnosis": "Fatigue",
+          "description": "Other fatigue",
+          "chapter": "Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",
+          "block": "General symptoms and signs",
+          "source": "fatigue",
+          "type": "secondary",
+          "related_bill_ids": [
+            "195a490672ce"
+          ]
+        },
+        {
+          "code": "M79.10",
+          "name": "Myalgia, unspecified site",
+          "diagnosis": "Body pains",
+          "description": "Myalgia, unspecified site",
+          "chapter": "Diseases of the musculoskeletal system and connective tissue",
+          "block": "Other soft tissue disorders",
+          "source": "Body pains",
+          "type": "secondary",
+          "related_bill_ids": [
+            "195a490672ce"
+          ]
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "Mrs. JOSMY JOSEPH",
+          "patient_bank_account_holder_name": "JOSMY JOSEPH",
+          "patient_bank_account_no": "50100462842942",
+          "patient_bank_name": "HDFC BANK LTD.",
+          "patient_bank_branch_name": "EPIP",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_ifsc_code": "HDFC0003962"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        },
+        "clinical_details": {
+          "hospital_name": "Ayaansh Fertility"
+        },
+        "past_history_details": {}
+      }
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "patient_name": "Ms. JOSMY JOSEPH",
+            "invoice_number": "AH2-PSB2605384",
+            "ip_number": null,
+            "bill_date": "2026-08-12",
+            "total_discount": null,
+            "net_amount": 778.0,
+            "page_number": 5,
+            "facility_details": {
+              "name": "Ayaansh Fertility",
+              "registration_number": null,
+              "gst_number": null,
+              "address_line": null,
+              "city": null,
+              "state": null,
+              "pincode": null
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "10c880250383",
+            "discount_allocated": true,
+            "applied_total_discount": 0.41
+          },
+          "items": [
+            {
+              "item_name": "SOLFE (15 S)",
+              "unit_price": 18.91,
+              "quantity": 30.0,
+              "discount": null,
+              "final_amount": 567.18,
+              "net_amount": 566.88,
+              "is_returned": false,
+              "s.no.": 1,
+              "gross_before_discount": 567.18,
+              "allocated_discount": 0.3,
+              "category": "Medicines Supplied By Hospital",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "TAB CLOSTOP 500MG",
+              "unit_price": 21.12,
+              "quantity": 10.0,
+              "discount": null,
+              "final_amount": 211.23,
+              "net_amount": 211.12,
+              "is_returned": false,
+              "s.no.": 2,
+              "gross_before_discount": 211.23,
+              "allocated_discount": 0.11,
+              "category": "Medicines Supplied By Hospital",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        },
+        {
+          "bill": {
+            "patient_name": "Ms. JOSMY JOSEPH",
+            "invoice_number": "AH-BN26001161",
+            "ip_number": null,
+            "bill_date": "2026-08-12",
+            "total_discount": null,
+            "net_amount": 2520.0,
+            "page_number": 6,
+            "facility_details": {
+              "name": "Ayaansh Fertility",
+              "registration_number": null,
+              "gst_number": null,
+              "address_line": "No.46, 1st Floor, Thubarahalli, Varthur Road",
+              "city": "Bangalore",
+              "state": null,
+              "pincode": "560066"
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "195a490672ce",
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "item_name": "TSH",
+              "unit_price": 390.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 390.0,
+              "net_amount": 390.0,
+              "is_returned": false,
+              "s.no.": 3,
+              "gross_before_discount": 390.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "HBA1C",
+              "unit_price": 1080.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 1080.0,
+              "net_amount": 1080.0,
+              "is_returned": false,
+              "s.no.": 4,
+              "gross_before_discount": 1080.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "CBC",
+              "unit_price": 900.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 900.0,
+              "net_amount": 900.0,
+              "is_returned": false,
+              "s.no.": 5,
+              "gross_before_discount": 900.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "OP REGISTRATION",
+              "unit_price": 150.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 150.0,
+              "net_amount": 150.0,
+              "is_returned": false,
+              "s.no.": 6,
+              "gross_before_discount": 150.0,
+              "allocated_discount": 0.0,
+              "category": "Registration",
+              "categorization_source": "llm",
+              "is_nme": true,
+              "deduction_reason": "Administration/Admission/Registration Charges: Not Payable",
+              "nme_item_name": "OP REGISTRATION",
+              "nme_bill_amount": 150.0
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    }
+  }
+}

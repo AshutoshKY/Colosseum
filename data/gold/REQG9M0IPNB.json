@@ -179,6 +179,140 @@
       ],
       "extraction_ok": true
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "HDFC BANK",
+        "ifsc_code": "HDFC0000545",
+        "account_no": "05451610500305",
+        "bank_branch": "MADHAPUR",
+        "account_type": "Savings",
+        "account_holder_name": "SUMALATHA KAMALLA"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "FOLLOW UP",
+        "patient_age": 40,
+        "hospital_city": "Hyderabad",
+        "hospital_name": "CONTINENTAL HOSPITALS",
+        "hospital_state": "Telangana",
+        "hospital_address": "Plot # - 3 , Road # - 2 , IT & Financial District , Gachibowli , Nanakaramguda",
+        "hospital_pincode": "500032",
+        "prescribed_items": [
+          {
+            "route": "ORAL",
+            "dosage": "1.0 tab(s)",
+            "duration": "2 weeks",
+            "quantity": 14,
+            "frequency": "OD",
+            "instructions": "Before Breakfast",
+            "medicine_name": "SOMPRAZ 40MG TAB"
+          },
+          {
+            "route": "ORAL",
+            "dosage": "1.0 tab(s)",
+            "duration": "2 weeks",
+            "quantity": 14,
+            "frequency": "OD",
+            "instructions": "AFTER BREAKFAST",
+            "medicine_name": "MAGNILEAD-LC TAB"
+          },
+          {
+            "route": "ORAL",
+            "dosage": "1.0 tab(s)",
+            "duration": "2 weeks",
+            "quantity": 28,
+            "frequency": "BD",
+            "instructions": "AFTER FOOD",
+            "medicine_name": "MYOSPAZ FORTE TAB S10"
+          }
+        ],
+        "prescription_date": "2026/06/09",
+        "presenting_complaint": "PAIN IS NOT REDUCED",
+        "hospital_phone_number": "+914067000000",
+        "treating_doctor_mobile": "+914067000000",
+        "name_of_treating_doctor": "DR. SANNAPUREDDY KIRAN REDDY",
+        "treating_doctor_qualification": "MBBS, MS(Orthopedics)"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "M75.9",
+          "name": "Shoulder lesion, unspecified",
+          "type": "primary",
+          "block": "M70-M79 Other soft tissue disorders",
+          "source": "OP Note - Care Plan: Physio for left shoulder",
+          "chapter": "Chapter XIII",
+          "diagnosis": "Pain in left shoulder / Stretching exercises advised",
+          "related_bill_ids": []
+        },
+        {
+          "code": "M25.51",
+          "name": "C/o pain @ shoulder",
+          "type": "secondary",
+          "block": "M00-M99 Diseases of the musculoskeletal system and connective tissue",
+          "source": "others",
+          "chapter": "Chapter XIII",
+          "diagnosis": "C/o pain @ shoulder",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_bank_name": "HDFC BANK",
+          "patient_bank_ifsc_code": "HDFC0000545",
+          "patient_bank_account_no": "05451610500305",
+          "patient_bank_branch_name": "MADHAPUR",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "SUMALATHA KAMALLA"
+        },
+        "clinical_details": {
+          "physician_name": "DR. SANNAPUREDDY KIRAN REDDY",
+          "presenting_complaint": "PAIN IS NOT REDUCED"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "DR. SANNAPUREDDY KIRAN REDDY",
+          "provisional_final_diagnosis": "FOLLOW UP"
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1366421,
+          "benefit_name": "In-Clinic Consults",
+          "applicable": true,
+          "confidence": 1.0
+        },
+        {
+          "benefit_id": 1366425,
+          "benefit_name": "Prescribed Diagnostics",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No lab/diagnostic/imaging-related SOC categories found"
+        },
+        {
+          "benefit_id": 1366464,
+          "benefit_name": "Dental Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No dental SOC categories found"
+        },
+        {
+          "benefit_id": 1366465,
+          "benefit_name": "Eye Checkup",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vision/eye-related SOC categories found"
+        }
+      ],
+      "item_assignments": []
+    },
     "upstream_bills": {
       "bills": [
         {

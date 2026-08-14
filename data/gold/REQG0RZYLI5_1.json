@@ -1,0 +1,205 @@
+{
+  "document": "data/uploads/REQG0RZYLI5_1.pdf",
+  "tasks": {
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "invoice_number": "937",
+            "bill_date": "2026-08-06",
+            "net_amount": 600.0,
+            "page_number": 1,
+            "facility_details": {
+              "name": "Gastroheal & Gynaecure Clinic"
+            }
+          },
+          "items": [
+            {
+              "item_name": "Consultation",
+              "unit_price": 600.0,
+              "quantity": 1.0,
+              "final_amount": 600.0,
+              "net_amount": 600.0,
+              "is_returned": false
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "7933021600e2",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Consultation"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "patches": [],
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "ifsc_code": "HDFC0000582",
+        "bank_name": "HDFC BANK",
+        "bank_branch": "THAKUR COLLEGE OF SCIENCE & COMM SHYAM NARAYAN, THAKUR MARG, THAKUR VILLAGE MUMBAI-400 101 MAHARASHTRA",
+        "account_no": "50100401786031",
+        "account_holder_name": "DIPESH JAGANNATH TANDEL",
+        "account_type": "Savings"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_name": "Akshara Tandel",
+        "name_of_treating_doctor": "DR. DHANSHREE P. SALUNKHE",
+        "treating_doctor_qualification": "MBBS, DNB (Obstetrics & Gynaecology) Fellowship In Gynaec Laparoscopy (ICOG)",
+        "treating_doctor_registration": "2018/07/3928",
+        "diagnosis": "Dysmenorrhea & HMB",
+        "presenting_complaint": "flow - N, No pain",
+        "hospital_name": "Gastroheal & Gynaecure Clinic",
+        "hospital_address": "Shop No. 16, 17, 18, Building No. B/15, Saraf Choudhary Nagar, Thakur Complex, Kandivali (East)",
+        "hospital_city": "Mumbai",
+        "hospital_pincode": "400101",
+        "hospital_phone_number": "8422030220",
+        "patient_age": 35,
+        "prescription_date": "2026/08/06",
+        "prescribed_items": [
+          {
+            "medicine_name": "Mylotin",
+            "frequency": "0-0-1",
+            "duration": "1 month"
+          },
+          {
+            "medicine_name": "Kdmyo",
+            "frequency": "1-0-0",
+            "duration": "2 month"
+          },
+          {
+            "medicine_name": "KY jelly",
+            "route": "for local application"
+          },
+          {
+            "medicine_name": "Gynaset CR",
+            "dosage": "10mg",
+            "frequency": "1-0-1",
+            "duration": "5 days",
+            "instructions": "ABF AD"
+          }
+        ]
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "N94.6",
+          "name": "Dysmenorrhea, unspecified",
+          "diagnosis": "Dysmenorrhea",
+          "description": "Dysmenorrhea, unspecified",
+          "chapter": "Diseases of the genitourinary system",
+          "block": "Pain and other conditions associated with female genital organs and menstrual cycle",
+          "source": "Dysmenorrhea & HMB",
+          "type": "primary",
+          "related_bill_ids": [
+            "7933021600e2"
+          ]
+        },
+        {
+          "code": "N92.0",
+          "name": "Excessive and frequent menstruation with regular cycle",
+          "diagnosis": "HMB",
+          "description": "Excessive and frequent menstruation with regular cycle",
+          "chapter": "Diseases of the genitourinary system",
+          "block": "Pain and other conditions associated with female genital organs and menstrual cycle",
+          "source": "Dysmenorrhea & HMB",
+          "type": "secondary",
+          "related_bill_ids": [
+            "7933021600e2"
+          ]
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "Akshara Tandel",
+          "patient_bank_account_holder_name": "DIPESH JAGANNATH TANDEL",
+          "patient_bank_account_no": "50100401786031",
+          "patient_bank_name": "HDFC BANK",
+          "patient_bank_branch_name": "THAKUR COLLEGE OF SCIENCE & COMM SHYAM NARAYAN, THAKUR MARG, THAKUR VILLAGE MUMBAI-400 101 MAHARASHTRA",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_ifsc_code": "HDFC0000582"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        },
+        "clinical_details": {
+          "hospital_name": "Gastroheal & Gynaecure Clinic"
+        },
+        "past_history_details": {
+          "physician_reg_no": "2018/07/3928"
+        }
+      }
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "patient_name": "Akshara Tandel",
+            "invoice_number": "937",
+            "ip_number": null,
+            "bill_date": "2026-08-06",
+            "total_discount": null,
+            "net_amount": 600.0,
+            "page_number": 1,
+            "facility_details": {
+              "name": "Gastroheal & Gynaecure Clinic",
+              "registration_number": null,
+              "gst_number": null,
+              "address_line": null,
+              "city": null,
+              "state": null,
+              "pincode": null
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "7933021600e2",
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "item_name": "Consultation",
+              "unit_price": 600.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 600.0,
+              "net_amount": 600.0,
+              "is_returned": false,
+              "s.no.": 1,
+              "gross_before_discount": 600.0,
+              "allocated_discount": 0.0,
+              "category": "Consultation",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    }
+  }
+}

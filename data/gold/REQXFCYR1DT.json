@@ -268,6 +268,129 @@
       ],
       "extraction_ok": true
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "HDFC BANK",
+        "ifsc_code": "HDFC0000545",
+        "account_no": "50100778609737",
+        "bank_branch": "HITEC CITY",
+        "account_type": "Savings",
+        "account_holder_name": "MR PRATEEK SINGH"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "Regular visit",
+        "patient_age": 46,
+        "hospital_city": "Kondapur",
+        "hospital_name": "Lenskart (Hyderabad_Kondapur)",
+        "hospital_state": "Telangana",
+        "hospital_address": "Door No 4-1382, Raja Rajeswara Nagar, Kondapur Village, Serilingampally Mandal, Ranga Reddy, Kondapur, Telangana, 500084",
+        "hospital_pincode": "500084",
+        "prescribed_items": [
+          {
+            "instructions": "Distance Vision 6/6, Near Vision N6",
+            "medicine_name": "Spectacles (Right Eye: SPH 0.00, CYL 0.00, Axis 0, PD 32, Near Add +1.50; Left Eye: SPH 0.00, CYL 0.00, Axis 0, PD 29, Near Add +1.50)"
+          }
+        ],
+        "prescription_date": "2026/06/06",
+        "presenting_complaint": "Regular visit",
+        "hospital_phone_number": "8929808351",
+        "treating_doctor_mobile": "8929808351",
+        "name_of_treating_doctor": "Guguloth Sandhya",
+        "treating_doctor_qualification": "Optometrist"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "H52.4",
+          "name": "Presbyopia",
+          "type": "primary",
+          "block": "H52 Disorders of refraction and accommodation",
+          "source": "Prescription - Near Addition +1.50 for both eyes",
+          "chapter": "Chapter VII: Diseases of the eye and adnexa",
+          "diagnosis": "Near Addition +1.50 required",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_bank_name": "HDFC BANK",
+          "patient_bank_ifsc_code": "HDFC0000545",
+          "patient_bank_account_no": "50100778609737",
+          "patient_bank_branch_name": "HITEC CITY",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "MR PRATEEK SINGH"
+        },
+        "clinical_details": {
+          "physician_name": "Guguloth Sandhya",
+          "presenting_complaint": "Regular visit"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Guguloth Sandhya",
+          "provisional_final_diagnosis": "Regular visit"
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1366527,
+          "benefit_name": "Dermatology Consultations & Treatment",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No dermatology-related SOC categories found"
+        },
+        {
+          "benefit_id": 1366528,
+          "benefit_name": "WHO Approved Vaccinations",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No vaccination-related SOC categories found"
+        },
+        {
+          "benefit_id": 1366531,
+          "benefit_name": "Dental",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No dental SOC categories found"
+        },
+        {
+          "benefit_id": 1366534,
+          "benefit_name": "Prescribed Pharmacy",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No pharmacy-related SOC categories found"
+        },
+        {
+          "benefit_id": 1366543,
+          "benefit_name": "Inclinic consultations",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No consultation-related SOC categories found"
+        },
+        {
+          "benefit_id": 1366553,
+          "benefit_name": "Vision",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Carry bag is a non-medical administrative charge. Reject"
+        },
+        {
+          "benefit_id": 1366556,
+          "benefit_name": "Prescribed Lab Tests",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No lab test-related SOC categories found"
+        }
+      ],
+      "item_assignments": []
+    },
     "upstream_bills": {
       "bills": [
         {

@@ -1,0 +1,334 @@
+{
+  "document": "data/uploads/94UPMB1J_2.pdf",
+  "tasks": {
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "invoice_number": "BE2607070011",
+            "bill_date": "2026-07-07",
+            "total_discount": 250.0,
+            "net_amount": 830.0,
+            "page_number": 5,
+            "facility_details": {
+              "name": "Alluri Sitaramaraju Academy of Medical Sciences"
+            }
+          },
+          "items": [
+            {
+              "item_name": "FBS (FASTING GLUCOSE)",
+              "unit_price": 90.0,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 90.0,
+              "net_amount": 90.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "PPBS (POSTPRANDIAL BLOOD GLUCOSE)",
+              "unit_price": 90.0,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 90.0,
+              "net_amount": 90.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "LIPID PANEL",
+              "unit_price": 650.0,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 650.0,
+              "net_amount": 650.0,
+              "is_returned": false
+            },
+            {
+              "item_name": "CREATININE",
+              "unit_price": 250.0,
+              "quantity": 1.0,
+              "discount": 250.0,
+              "final_amount": 250.0,
+              "net_amount": 0.0,
+              "is_returned": false
+            }
+          ]
+        },
+        {
+          "bill": {
+            "invoice_number": "BE2607070071",
+            "bill_date": "2026-07-07",
+            "net_amount": 700.0,
+            "page_number": 6,
+            "facility_details": {
+              "name": "Alluri Sitaramaraju Academy of Medical Sciences"
+            }
+          },
+          "items": [
+            {
+              "item_name": "CARDIOLOGY SURGICAL FITNESS PACKAGE",
+              "unit_price": 700.0,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 700.0,
+              "net_amount": 700.0,
+              "is_returned": false
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "3a5e8af4df88",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 2,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 3,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            },
+            {
+              "s.no.": 4,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            }
+          ]
+        },
+        {
+          "bill_id": "2bbb9ae65bba",
+          "categorized_items": [
+            {
+              "s.no.": 5,
+              "category": "Consultation"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "patches": [],
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "ifsc_code": "SBIN0011745",
+        "bank_name": "State Bank of India",
+        "bank_branch": "JUBILEE HILLS",
+        "account_no": "20174650961",
+        "account_holder_name": "SARIKA SURESH",
+        "account_type": "Savings"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_name": "S. Subba Rao",
+        "name_of_treating_doctor": "IV TANSU RAJU",
+        "hospital_name": "ASRAM HOSPITAL",
+        "hospital_address": "Malkapuram (V), ELURU (M), ELURUDist., A.P.",
+        "hospital_city": "ELURU",
+        "hospital_state": "A.P.",
+        "hospital_pincode": "534005",
+        "hospital_phone_number": "08812 288288",
+        "patient_age": 59,
+        "prescription_date": "2025/10/15",
+        "prescribed_items": [
+          {
+            "medicine_name": "Glubry M2"
+          },
+          {
+            "medicine_name": "Roslos Gold",
+            "dosage": "20/4.2"
+          },
+          {
+            "medicine_name": "Pantop 40",
+            "dosage": "40mg"
+          },
+          {
+            "medicine_name": "Shelcal XT"
+          }
+        ]
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": []
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "S. Subba Rao",
+          "patient_bank_account_holder_name": "SARIKA SURESH",
+          "patient_bank_account_no": "20174650961",
+          "patient_bank_name": "State Bank of India",
+          "patient_bank_branch_name": "JUBILEE HILLS",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_ifsc_code": "SBIN0011745"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        },
+        "clinical_details": {
+          "hospital_name": "ASRAM HOSPITAL"
+        },
+        "past_history_details": {}
+      }
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "patient_name": "Mr. SUBBARAO S",
+            "invoice_number": "BE2607070011",
+            "ip_number": null,
+            "bill_date": "2026-07-07",
+            "total_discount": 250.0,
+            "net_amount": 830.0,
+            "page_number": 5,
+            "facility_details": {
+              "name": "Alluri Sitaramaraju Academy of Medical Sciences",
+              "registration_number": null,
+              "gst_number": null,
+              "address_line": "ASRAM SUPER SPECIALITY HOSPITAL, Eluru, West Godavari District",
+              "city": "Eluru",
+              "state": "AP",
+              "pincode": "534005"
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "3a5e8af4df88",
+            "discount_allocated": true,
+            "applied_total_discount": 250.0
+          },
+          "items": [
+            {
+              "item_name": "FBS (FASTING GLUCOSE)",
+              "unit_price": 90.0,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 90.0,
+              "net_amount": 90.0,
+              "is_returned": false,
+              "s.no.": 1,
+              "gross_before_discount": 90.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "PPBS (POSTPRANDIAL BLOOD GLUCOSE)",
+              "unit_price": 90.0,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 90.0,
+              "net_amount": 90.0,
+              "is_returned": false,
+              "s.no.": 2,
+              "gross_before_discount": 90.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "LIPID PANEL",
+              "unit_price": 650.0,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 650.0,
+              "net_amount": 650.0,
+              "is_returned": false,
+              "s.no.": 3,
+              "gross_before_discount": 650.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            },
+            {
+              "item_name": "CREATININE",
+              "unit_price": 250.0,
+              "quantity": 1.0,
+              "discount": 250.0,
+              "final_amount": 250.0,
+              "net_amount": 0.0,
+              "is_returned": false,
+              "s.no.": 4,
+              "gross_before_discount": 250.0,
+              "allocated_discount": 250.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        },
+        {
+          "bill": {
+            "patient_name": "Mr. SUBBARAO S",
+            "invoice_number": "BE2607070071",
+            "ip_number": null,
+            "bill_date": "2026-07-07",
+            "total_discount": null,
+            "net_amount": 700.0,
+            "page_number": 6,
+            "facility_details": {
+              "name": "Alluri Sitaramaraju Academy of Medical Sciences",
+              "registration_number": null,
+              "gst_number": null,
+              "address_line": "ASRAM SUPER SPECIALITY HOSPITAL, Eluru, West Godavari District",
+              "city": "Eluru",
+              "state": "AP",
+              "pincode": "534005"
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "2bbb9ae65bba",
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "item_name": "CARDIOLOGY SURGICAL FITNESS PACKAGE",
+              "unit_price": 700.0,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 700.0,
+              "net_amount": 700.0,
+              "is_returned": false,
+              "s.no.": 5,
+              "gross_before_discount": 700.0,
+              "allocated_discount": 0.0,
+              "category": "Consultation",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        }
+      ],
+      "policy_violations": [
+        {
+          "rule_name": "Health Check-ups covered only if enabled",
+          "item_name": "CARDIOLOGY SURGICAL FITNESS PACKAGE",
+          "bill_id": "2bbb9ae65bba",
+          "item_s_no": 5,
+          "violation_details": "Health check-ups and fitness packages are excluded unless explicitly enabled under employer benefits.",
+          "amount_impacted": 700.0,
+          "recommendation": "reject"
+        }
+      ]
+    }
+  }
+}

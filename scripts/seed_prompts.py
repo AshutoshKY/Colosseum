@@ -11,18 +11,9 @@ from sqlmodel import Session, select
 def _provenance(pack: str, task_name: str) -> tuple[str, str, str]:
     if pack == "IPD":
         return "healthpay-ai", "test-fhpl", "healthpay/backend/app/lang_graph/prompts/"
-    if task_name in {
-        "policy_extraction",
-        "benefit_plan",
-        "claim_form",
-        "prescription",
-        "identity_document",
-        "cheque_bank",
-        "extract_icd_codes",
-        "patient_summary",
-    }:
+    if pack == "OPD":
         return "superclaims-ai", "test-ekincare-v2", "backend/app/lang_graph/prompts/"
-    return "healthpay-ai", "test-fhpl", "healthpay/backend/app/lang_graph/prompts/"
+    raise ValueError(f"Unknown task pack: {pack}")
 
 
 def seed_prompts(session: Session) -> int:
@@ -32,22 +23,53 @@ def seed_prompts(session: Session) -> int:
             pack = task_pack_for(pack_name)
         except NotImplementedError:
             continue
+        active_rows = session.exec(
+            select(PromptVersion).where(
+                PromptVersion.pack == pack_name,
+                PromptVersion.active.is_(True),  # type: ignore[union-attr]
+            )
+        ).all()
+        for row in active_rows:
+            if row.task_name not in pack.tasks:
+                row.active = False
+                session.add(row)
         for task in pack.tasks.values():
-            exists = session.exec(
+            repo, branch, path = _provenance(pack_name, task.name)
+            active = session.exec(
                 select(PromptVersion).where(
                     PromptVersion.pack == pack_name,
                     PromptVersion.task_name == task.name,
-                    PromptVersion.version == 1,
+                    PromptVersion.active.is_(True),  # type: ignore[union-attr]
                 )
             ).first()
-            if exists:
+            if active and (
+                active.system_prompt == task.system_prompt
+                and active.instruction_template == task.instruction
+            ):
+                active.source_repo = repo
+                active.source_branch = branch
+                active.source_path = path
+                session.add(active)
                 continue
-            repo, branch, path = _provenance(pack_name, task.name)
+            latest = session.exec(
+                select(PromptVersion.version)
+                .where(
+                    PromptVersion.pack == pack_name,
+                    PromptVersion.task_name == task.name,
+                )
+                .order_by(PromptVersion.version.desc())
+            ).first()
+            if active:
+                active.source_repo = repo
+                active.source_branch = branch
+                active.source_path = path
+                active.active = False
+                session.add(active)
             session.add(
                 PromptVersion(
                     pack=pack_name,
                     task_name=task.name,
-                    version=1,
+                    version=(latest or 0) + 1,
                     system_prompt=task.system_prompt,
                     instruction_template=task.instruction,
                     source_repo=repo,

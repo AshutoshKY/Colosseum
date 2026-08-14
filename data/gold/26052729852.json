@@ -263,6 +263,88 @@
       "policy_violations_count": 0,
       "medical_legibility_issues": 0
     },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "HT (Hypertension), Cervical Spondylosis",
+        "hospital_city": "Jamshedpur",
+        "hospital_name": "RAJASTHAN SEVA SADAN",
+        "claimed_amount": 400.0,
+        "hospital_state": "Jharkhand",
+        "hospital_address": "M.E. School Road, Jugsalai",
+        "hospital_pincode": "831006",
+        "presenting_complaint": "F/U (Follow up)",
+        "hospital_phone_number": "2291436, 2291434",
+        "name_of_treating_doctor": "DR. SHEO PRASAD",
+        "treating_doctor_registration": "24916 (Bihar)"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "I10",
+          "type": "primary",
+          "source": "Diagnosis - HT (Hypertension) documented on prescription and claim form",
+          "description": "Essential (primary) hypertension"
+        },
+        {
+          "code": "M47.812",
+          "type": "secondary",
+          "source": "Diagnosis - Cervical Spondylosis documented on prescription and claim form",
+          "description": "Spondylosis without myelopathy or radiculopathy, cervical region"
+        },
+        {
+          "code": "E78.5",
+          "type": "secondary",
+          "source": "Prescription - Lipid Profile ordered; Atorvastatin (Storvas) prescribed",
+          "description": "Hyperlipidemia, unspecified"
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_city": "JAMSHEDPUR",
+          "patient_email": "skumardutta1953@gmail.com",
+          "patient_state": "JHARKHAND",
+          "patient_mobile": "8986707269",
+          "patient_pincode": "831012",
+          "patient_district": "JAMSHEDPUR",
+          "patient_aadhar_no": "8040",
+          "patient_address_1": "ENO-4/1 TRIVENI KASHRI COMPLEX, NAAR BASU VILLA DIMNAA ROAD",
+          "patient_policy_no": "4101026010000019400"
+        },
+        "clinical_details": {
+          "physician_name": "DR. SHEO PRASAD",
+          "presenting_complaint": "F/U (Follow up)"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "DR. SHEO PRASAD",
+          "claim_registered_email_id": "skumardutta1953@gmail.com",
+          "claim_registered_mobile_no": "8986707269",
+          "provisional_final_diagnosis": "HT (Hypertension), Cervical Spondylosis",
+          "treating_doctor_registration_number": "24916 (Bihar)"
+        }
+      }
+    },
+    "claim_form": {
+      "claim_form": {
+        "part_a": {
+          "city": "JAMSHEDPUR",
+          "state": "JHARKHAND",
+          "address": "ENO-4/1 TRIVENI KASHRI COMPLEX, NAAR BASU VILLA DIMNAA ROAD",
+          "email_id": "skumardutta1953@gmail.com",
+          "phone_no": "8986707269",
+          "pin_code": "831012",
+          "policy_no": "4101026010000019400"
+        },
+        "part_b": {}
+      }
+    },
+    "identity_document": {
+      "aadhar_card_number": "8040"
+    },
     "upstream_bills": {
       "bills": [
         {

@@ -151,6 +151,103 @@
       ],
       "extraction_ok": true
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "HDFC BANK",
+        "ifsc_code": "HDFC0004216",
+        "account_no": "50100539142276",
+        "bank_branch": "HITECH CITY 2",
+        "account_type": "Savings",
+        "account_holder_name": "JAGADALA PAWAN KUMAR"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_age": 25,
+        "hospital_city": "Amalapuram",
+        "hospital_name": "Apollo Hospitals",
+        "hospital_state": "Andhra Pradesh",
+        "hospital_address": "Amalapuram East Godavari",
+        "hospital_pincode": "533251",
+        "prescribed_items": [],
+        "prescription_date": "2026/06/09",
+        "presenting_complaint": "abdominal bloating, post prandial discomfort",
+        "treating_doctor_mobile": "91-9885028537",
+        "name_of_treating_doctor": "DR. KOYYODA PRASHANTH",
+        "treating_doctor_qualification": "MS (General Surgery), MCh (Surgical Gastroenterology-Osmania) Consultant Surgical Gastroenterologist HPB (Liver/Pancreas/Biliary), GI Oncology & Advanced Laparoscopic Surgeon"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "R14.0",
+          "name": "Abdominal distension (gaseous)",
+          "type": "primary",
+          "block": "R10-R19 Symptoms and signs involving the digestive system and abdomen",
+          "source": "Prescription - Chief Complaints",
+          "chapter": "Symptoms, signs and abnormal clinical and laboratory findings",
+          "diagnosis": "abdominal bloating",
+          "related_bill_ids": []
+        },
+        {
+          "code": "K30",
+          "name": "Functional dyspepsia",
+          "type": "secondary",
+          "block": "K20-K31 Diseases of esophagus, stomach and duodenum",
+          "source": "Prescription - Chief Complaints",
+          "chapter": "Diseases of the digestive system",
+          "diagnosis": "post prandial discomfort",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_bank_name": "HDFC BANK",
+          "patient_bank_ifsc_code": "HDFC0004216",
+          "patient_bank_account_no": "50100539142276",
+          "patient_bank_branch_name": "HITECH CITY 2",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "JAGADALA PAWAN KUMAR"
+        },
+        "clinical_details": {
+          "physician_name": "DR. KOYYODA PRASHANTH",
+          "presenting_complaint": "abdominal bloating, post prandial discomfort"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "DR. KOYYODA PRASHANTH"
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1353025,
+          "benefit_name": "Order Pharmacy",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "The medicine billed (Sompraz IT) is a standard treatment for the symptoms described (abdominal bloating/discomfort), but the provided prescription page does not list any medications in the advice section, only 'follow up'."
+        },
+        {
+          "benefit_id": 1353027,
+          "benefit_name": "Prescribed Diagnostics",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No lab/diagnostic/imaging-related SOC categories found"
+        },
+        {
+          "benefit_id": 1353028,
+          "benefit_name": "In-Clinic Consults",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "No consultation-related SOC categories found"
+        }
+      ],
+      "item_assignments": []
+    },
     "upstream_bills": {
       "bills": [
         {

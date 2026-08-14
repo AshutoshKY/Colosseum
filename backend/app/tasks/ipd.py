@@ -202,7 +202,7 @@ AUDIT = Task(
         model_id="gemini-3.1-pro",
         thinking_level="medium",
         max_output_tokens=16000,
-        timeout_s=300,
+        timeout_s=600,
     ),
     gold_feed_keys=("nme_analysis", "patient_summary", "segregation"),
 )

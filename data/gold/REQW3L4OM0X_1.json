@@ -1,0 +1,173 @@
+{
+  "document": "data/uploads/REQW3L4OM0X_1.pdf",
+  "tasks": {
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "invoice_number": "LEK01O1785209076137",
+            "bill_date": "2026-07-28",
+            "net_amount": 1999.0,
+            "page_number": 1,
+            "facility_details": {
+              "name": "Thyrocare Technologies Ltd."
+            }
+          },
+          "items": [
+            {
+              "item_name": "TOTAL HEALTH PROFILE PLUS, VITD3",
+              "unit_price": 1999.0,
+              "quantity": 1.0,
+              "final_amount": 1999.0,
+              "net_amount": 1999.0,
+              "is_returned": false
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "a7736e367ad3",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "patches": [],
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "ifsc_code": "KKBK0008107",
+        "bank_name": "Kotak Mahindra Bank",
+        "bank_branch": "Bren Mercury Kaikondrahalli, Sarjapur Main Road, Bangalore Bengaluru",
+        "account_no": "1349767678",
+        "account_holder_name": "BHABESH CHANDRA ACHARYA",
+        "account_type": "Savings"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_name": "Mr. Bhabesh Acharya",
+        "name_of_treating_doctor": "Dr. Vijayakumar",
+        "treating_doctor_qualification": "MPT, MIAP",
+        "presenting_complaint": "Neck pain x 1 month",
+        "hospital_name": "VIJAY'S PHYSIO & LIFESTYLE CLINIC",
+        "hospital_address": "9 Lokesh Complex, Opposite to Shriram Smrithi Apartments, Attibele - Sarjapur Road",
+        "hospital_city": "Bangalore",
+        "hospital_pincode": "562107",
+        "hospital_phone_number": "9632198016",
+        "patient_age": 43,
+        "prescription_date": "2026/07/13",
+        "prescribed_items": [
+          {
+            "medicine_name": "IFT",
+            "duration": "2 weeks"
+          },
+          {
+            "medicine_name": "US",
+            "duration": "2 weeks"
+          }
+        ]
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "M54.2",
+          "name": "Cervicalgia",
+          "diagnosis": "Neck pain",
+          "description": "Cervicalgia",
+          "chapter": "Diseases of the musculoskeletal system and connective tissue",
+          "block": "Dorsopathies",
+          "source": "Presenting complaint: Neck pain x 1 month",
+          "type": "primary",
+          "related_bill_ids": []
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "Mr. Bhabesh Acharya",
+          "patient_bank_account_holder_name": "BHABESH CHANDRA ACHARYA",
+          "patient_bank_account_no": "1349767678",
+          "patient_bank_name": "Kotak Mahindra Bank",
+          "patient_bank_branch_name": "Bren Mercury Kaikondrahalli, Sarjapur Main Road, Bangalore Bengaluru",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_ifsc_code": "KKBK0008107"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        },
+        "clinical_details": {
+          "hospital_name": "VIJAY'S PHYSIO & LIFESTYLE CLINIC"
+        },
+        "past_history_details": {}
+      }
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "patient_name": "BHABESH ACHARYA",
+            "invoice_number": "LEK01O1785209076137",
+            "ip_number": null,
+            "bill_date": "2026-07-28",
+            "total_discount": null,
+            "net_amount": 1999.0,
+            "page_number": 1,
+            "facility_details": {
+              "name": "Thyrocare Technologies Ltd.",
+              "registration_number": null,
+              "gst_number": null,
+              "address_line": "D-37/1, MIDC, Turbhe",
+              "city": "Navi Mumbai",
+              "state": null,
+              "pincode": "400703"
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "a7736e367ad3",
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "item_name": "TOTAL HEALTH PROFILE PLUS, VITD3",
+              "unit_price": 1999.0,
+              "quantity": 1.0,
+              "discount": null,
+              "final_amount": 1999.0,
+              "net_amount": 1999.0,
+              "is_returned": false,
+              "s.no.": 1,
+              "gross_before_discount": 1999.0,
+              "allocated_discount": 0.0,
+              "category": "Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    }
+  }
+}

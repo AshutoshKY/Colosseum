@@ -166,6 +166,99 @@
       "policy_violations_count": 1,
       "medical_legibility_issues": 0
     },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "State Bank Of India",
+        "ifsc_code": "SBIN0010539",
+        "account_no": "32807606519",
+        "bank_branch": "MADANPUR",
+        "account_type": "Savings",
+        "account_holder_name": "ARUP KUMAR GOSWAMI"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "BE Pseudophakia",
+        "hospital_city": "Kalyani",
+        "hospital_name": "Joti Optics",
+        "hospital_state": "West Bengal",
+        "hospital_address": "B-4/18(S), Buddha Park, Kalyani, Nadia-741235",
+        "hospital_pincode": "741235",
+        "presenting_complaint": "Routine check up",
+        "hospital_phone_number": "2582-0294",
+        "treating_doctor_mobile": "7687985459",
+        "name_of_treating_doctor": "Dr. Satyajit Bhattacharyya"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "Z01.00",
+          "type": "primary",
+          "source": "Prescription - Routine check up",
+          "description": "Encounter for examination of eyes and vision without abnormal findings"
+        },
+        {
+          "code": "Z96.1",
+          "type": "secondary",
+          "source": "Diagnosis - BE Pseudophakia",
+          "description": "Presence of intraocular lens"
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_city": "MADANPUR",
+          "patient_name": "KRISHNA GOSWAMI",
+          "patient_email": "arup.goswami@tmibask.com",
+          "patient_state": "WB",
+          "patient_mobile": "9775035529",
+          "patient_pincode": "741245",
+          "patient_district": "MADANPUR",
+          "patient_address_1": "I NO. GOBINDANAGAR, PO-MADANPUR, DIST-NADIA, PS-CHAKDAHA",
+          "patient_bank_name": "State Bank Of India",
+          "patient_policy_no": "OIC60671431",
+          "patient_bank_ifsc_code": "SBIN0010539",
+          "patient_bank_account_no": "32807606519",
+          "patient_bank_branch_name": "MADANPUR",
+          "patient_bank_account_type": "Savings"
+        },
+        "clinical_details": {
+          "physician_name": "Dr. Satyajit Bhattacharyya",
+          "presenting_complaint": "Routine check up"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "claimed_amount": 8650,
+          "patient_paid_amount": 0,
+          "treating_doctor_name": "Dr. Satyajit Bhattacharyya",
+          "claim_registered_email_id": "arup.goswami@tmibask.com",
+          "claim_registered_mobile_no": "9775035529",
+          "provisional_final_diagnosis": "BE Pseudophakia"
+        }
+      }
+    },
+    "claim_form": {
+      "claim_form": {
+        "part_a": {
+          "city": "MADANPUR",
+          "state": "WB",
+          "total": 8650,
+          "address": "I NO. GOBINDANAGAR, PO-MADANPUR, DIST-NADIA, PS-CHAKDAHA",
+          "email_id": "arup.goswami@tmibask.com",
+          "phone_no": "9775035529",
+          "pin_code": "741245",
+          "full_name": "KRISHNA GOSWAMI",
+          "policy_no": "OIC60671431",
+          "hospitalization_expenses": 8250
+        },
+        "part_b": {
+          "name_of_the_patient": "KRISHNA GOSWAMI"
+        }
+      }
+    },
+    "identity_document": {},
     "upstream_bills": {
       "bills": [
         {

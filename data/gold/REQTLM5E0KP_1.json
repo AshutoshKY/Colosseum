@@ -1,0 +1,132 @@
+{
+  "document": "data/uploads/REQTLM5E0KP_1.pdf",
+  "tasks": {
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "invoice_number": "APFD-OCS-67350",
+            "bill_date": "2026-08-13",
+            "total_discount": 0.0,
+            "net_amount": 1000.0,
+            "page_number": 1,
+            "facility_details": {
+              "name": "APOLLO HOSPITALS"
+            }
+          },
+          "items": [
+            {
+              "item_name": "OP Consultation - Follow Up Visit",
+              "unit_price": 1000.0,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 1000.0,
+              "net_amount": 1000.0,
+              "is_returned": false
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "487e16223044",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Consultation"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "patches": [],
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "ifsc_code": "ICIC0000598",
+        "bank_name": "ICICI Bank",
+        "bank_branch": "Hyderabad - Mindspace Branch",
+        "account_no": "059801580990",
+        "account_holder_name": null,
+        "account_type": "Savings"
+      }
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "Mrs. AKANCHHA KUMARI",
+          "patient_bank_account_no": "059801580990",
+          "patient_bank_name": "ICICI Bank",
+          "patient_bank_branch_name": "Hyderabad - Mindspace Branch",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_ifsc_code": "ICIC0000598"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        },
+        "clinical_details": {},
+        "past_history_details": {}
+      }
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "patient_name": "Mrs. AKANCHHA KUMARI",
+            "invoice_number": "APFD-OCS-67350",
+            "ip_number": null,
+            "bill_date": "2026-08-13",
+            "total_discount": 0.0,
+            "net_amount": 1000.0,
+            "page_number": 1,
+            "facility_details": {
+              "name": "APOLLO HOSPITALS",
+              "registration_number": null,
+              "gst_number": "36AAACA5443N3ZH",
+              "address_line": "D.No-2-105/6/SE, Financial District, Nanakramguda, Serilingampally Mandal, Rangareddy",
+              "city": "Hyderabad",
+              "state": "Telangana",
+              "pincode": "500032"
+            },
+            "bill_type": "itemized_bill",
+            "bill_id": "487e16223044",
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "item_name": "OP Consultation - Follow Up Visit",
+              "unit_price": 1000.0,
+              "quantity": 1.0,
+              "discount": 0.0,
+              "final_amount": 1000.0,
+              "net_amount": 1000.0,
+              "is_returned": false,
+              "s.no.": 1,
+              "gross_before_discount": 1000.0,
+              "allocated_discount": 0.0,
+              "category": "Consultation",
+              "categorization_source": "llm",
+              "is_nme": false
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    }
+  }
+}
