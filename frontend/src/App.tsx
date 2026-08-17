@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useTheme } from './theme'
-import { BuildIcon, CatalogIcon, DatasetIcon, MoonIcon, PromptIcon, RunsIcon, SettingsIcon, SunIcon } from './components/icons'
+import { BuildIcon, CatalogIcon, ChevronLeftIcon, ChevronRightIcon, DatasetIcon, MoonIcon, PromptIcon, RunsIcon, SettingsIcon, SunIcon } from './components/icons'
 import logoUrl from './logo.jpg'
 
 const NAV = [
@@ -64,23 +64,30 @@ export default function App() {
               <div className="sidebar-toolbar">
                 <button
                   type="button"
-                  className="sidebar-collapse"
+                  className="sidebar-collapse-btn"
                   onClick={() => setSidebarCollapsed(value => !value)}
                   aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                   title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                 >
-                  {sidebarCollapsed ? '›' : '‹'}
+                  {sidebarCollapsed ? <ChevronRightIcon width={14} height={14} /> : <ChevronLeftIcon width={14} height={14} />}
                 </button>
               </div>
             )}
 
             <nav className="sidebar-nav" aria-label="Main navigation">
               {NAV.map(group => (
-                <div key={group.section} style={{ display: 'contents' }}>
+                <div key={group.section} className="sidebar-section-wrap">
                   <span className="sidebar-section">{group.section}</span>
                   {group.items.map(({ to, label, icon: Icon, end }) => (
-                    <NavLink key={to} to={to} end={end} aria-label={label} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                      <Icon />
+                    <NavLink
+                      key={to}
+                      to={to}
+                      end={end}
+                      aria-label={label}
+                      title={sidebarCollapsed ? label : undefined}
+                      className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+                    >
+                      <span className="nav-icon-wrap"><Icon width={18} height={18} /></span>
                       <span className="nav-label">{label}</span>
                     </NavLink>
                   ))}
@@ -94,8 +101,13 @@ export default function App() {
                   V2 · New UI
                 </button>
               )}
-              <NavLink to="/settings" aria-label="Settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                <SettingsIcon />
+              <NavLink
+                to="/settings"
+                aria-label="Settings"
+                title={sidebarCollapsed ? 'Settings' : undefined}
+                className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+              >
+                <span className="nav-icon-wrap"><SettingsIcon width={18} height={18} /></span>
                 <span className="nav-label">Settings</span>
               </NavLink>
               {uiMode === 'v1' && <ThemeToggle dark={dark} setPreference={setPreference} />}

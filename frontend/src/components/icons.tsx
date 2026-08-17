@@ -81,3 +81,15 @@ export const MoonIcon = (props: SVGProps<SVGSVGElement>) => (
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 )
+
+export const ChevronLeftIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...props}>
+    <polyline points="15 18 9 12 15 6" />
+  </svg>
+)
+
+export const ChevronRightIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...props}>
+    <polyline points="9 18 15 12 9 6" />
+  </svg>
+)

@@ -134,6 +134,48 @@ export function formatPriceSummary(pricing?: { input?: number | null; output?: n
   return `$${inVal >= 1 ? inVal.toFixed(2) : inVal.toFixed(4)}/M in`
 }
 
+export interface ModelSpecs {
+  hasPdf: boolean
+  hasVision: boolean
+  isTextOnly: boolean
+  context: string | null
+  releaseDate: string | null
+  price: string
+}
+
+export function getModelSpecs(model: {
+  capabilities?: string[] | Record<string, unknown>
+  context_window?: number | null
+  release_date?: string | null
+  pricing?: {
+    input?: number | null
+    output?: number | null
+    input_per_million?: number | null
+    output_per_million?: number | null
+  }
+}): ModelSpecs {
+  const caps = model.capabilities
+  let hasPdf = false
+  let hasVision = false
+
+  if (Array.isArray(caps)) {
+    hasPdf = caps.some(c => ['pdf', 'pdf_native', 'pdf native'].includes(c.toLowerCase()))
+    hasVision = caps.some(c => ['vision', 'image'].includes(c.toLowerCase()))
+  } else if (caps && typeof caps === 'object') {
+    const modalities = Array.isArray(caps.modalities) ? (caps.modalities as string[]) : []
+    hasPdf = Boolean(caps.pdf_native || caps.pdf || modalities.includes('pdf'))
+    hasVision = Boolean(caps.vision || modalities.includes('image') || modalities.includes('vision'))
+  }
+
+  const isTextOnly = !hasPdf && !hasVision && !supportsDocuments(model)
+  const ctx = getContextWindow(model)
+  const context = formatContextWindow(ctx)
+  const releaseDate = formatReleaseDate(model.release_date)
+  const price = formatPriceSummary(model.pricing)
+
+  return { hasPdf, hasVision, isTextOnly, context, releaseDate, price }
+}
+
 /** Human-friendly date: "Today, 14:03" or "8 Jul, 09:41". */
 export function formatBriefDate(dateStr: string) {
   const date = new Date(dateStr)

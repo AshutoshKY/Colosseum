@@ -3,13 +3,8 @@ import type { ModelItem } from '../types'
 import { useOpenRouterSearch } from '../api/hooks'
 import { useRunBuilder } from '../context/RunBuilderContext'
 import {
-  Badge,
   Spinner,
-  capabilityList,
-  formatContextWindow,
-  formatPriceSummary,
-  formatReleaseDate,
-  getContextWindow,
+  getModelSpecs,
   modelId,
   supportsDocuments,
 } from './common'
@@ -120,71 +115,104 @@ export function ModelPicker({
               {entries.map(model => {
                 const id = modelId(model)
                 const disabled = model.enabled === false || Boolean(model.gate_reason)
-                const docCapable = supportsDocuments(model)
-                const ctx = getContextWindow(model)
-                const ctxFormatted = formatContextWindow(ctx)
-                const relDate = formatReleaseDate(model.release_date)
-                const priceSummary = formatPriceSummary(model.pricing)
+                const isSelected = selected.includes(id)
+                const { hasPdf, hasVision, isTextOnly, context, releaseDate, price } = getModelSpecs(model)
+                const isVerifying = verifyingId === id
 
                 return (
                   <div
-                    className={`model-row ${disabled ? 'disabled' : ''} ${selected.includes(id) ? 'selected-row' : ''}`}
+                    className={`model-card ${disabled ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`}
                     key={id}
-                    title={model.gate_reason ?? ''}
+                    title={model.gate_reason ?? undefined}
                   >
-                    <label className="model-select-label">
-                      <input
-                        type="checkbox"
-                        checked={selected.includes(id)}
-                        disabled={disabled}
-                        onChange={event =>
-                          onChange(
-                            event.target.checked
-                              ? [...selected, id]
-                              : selected.filter(value => value !== id),
-                          )
-                        }
-                      />
-                      <span className="model-name-text">
-                        <strong>{model.name ?? id}</strong>
-                      </span>
-                    </label>
+                    <div className="model-card-top">
+                      <label className="model-card-label" title={model.name ?? id}>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          disabled={disabled}
+                          onChange={event =>
+                            onChange(
+                              event.target.checked
+                                ? [...selected, id]
+                                : selected.filter(value => value !== id),
+                            )
+                          }
+                        />
+                        <span className="model-card-name">
+                          <strong>{model.name ?? id}</strong>
+                        </span>
+                      </label>
 
-                    <div className="model-meta-info grow">
-                      {relDate && (
-                        <span className="model-meta-pill date-pill" title={`Released: ${model.release_date}`}>
-                          📅 {relDate}
-                        </span>
-                      )}
-                      {ctxFormatted && (
-                        <span className="model-meta-pill ctx-pill" title={ctx ? `Context: ${ctx.toLocaleString()} tokens` : ''}>
-                          ⚡ {ctxFormatted}
-                        </span>
-                      )}
-                      {!docCapable && (
-                        <Badge tone="warn">text-only</Badge>
-                      )}
-                      {capabilityList(model.capabilities).slice(0, 2).map(cap => (
-                        <Badge key={cap}>{cap}</Badge>
-                      ))}
+                      <div className="model-card-actions">
+                        {model.gate_reason ? (
+                          <span className="model-status-chip gated" title={model.gate_reason}>
+                            {model.gate_reason}
+                          </span>
+                        ) : model.verified ? (
+                          <span className="model-status-chip verified" title="API connection verified">
+                            ✓ verified
+                          </span>
+                        ) : (
+                          <span className="model-status-chip unverified" title="Unverified model">
+                            unverified
+                          </span>
+                        )}
+
+                        <button
+                          type="button"
+                          className={`model-verify-btn ${model.verified ? 'is-verified' : 'needs-verify'}`}
+                          disabled={isVerifying || disabled}
+                          onClick={event => {
+                            event.stopPropagation()
+                            onVerify(id)
+                          }}
+                          title={model.verified ? 'Re-verify API connection' : 'Test API connection'}
+                        >
+                          {isVerifying ? (
+                            <>
+                              <Spinner /> <span className="btn-text">Checking…</span>
+                            </>
+                          ) : (
+                            <span className="btn-text">Verify</span>
+                          )}
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="model-pricing-info" title="Per million tokens (in · out)">
-                      <small>{priceSummary}</small>
+                    <div className="model-card-bottom">
+                      <div className="model-spec-pills">
+                        {hasPdf && (
+                          <span className="spec-pill pill-pdf" title="Native PDF document support">
+                            📄 PDF
+                          </span>
+                        )}
+                        {hasVision && (
+                          <span className="spec-pill pill-vision" title="Vision & image understanding">
+                            👁 Vision
+                          </span>
+                        )}
+                        {isTextOnly && (
+                          <span className="spec-pill pill-text" title="Text-only model (cannot read PDFs or images)">
+                            📝 Text-only
+                          </span>
+                        )}
+                        {context && (
+                          <span className="spec-pill pill-ctx" title={model.context_window ? `Context: ${model.context_window.toLocaleString()} tokens` : 'Context window'}>
+                            ⚡ {context}
+                          </span>
+                        )}
+                        {releaseDate && (
+                          <span className="spec-pill pill-date" title={`Released: ${model.release_date}`}>
+                            📅 {releaseDate}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="model-card-price" title="Pricing per million tokens (in · out)">
+                        {price}
+                      </div>
                     </div>
-
-                    <Badge tone={model.verified ? 'good' : disabled ? 'bad' : 'neutral'}>
-                      {model.gate_reason ?? (model.verified ? 'verified' : 'unverified')}
-                    </Badge>
-
-                    <button
-                      type="button"
-                      className="small"
-                      disabled={verifyingId === id}
-                      onClick={() => onVerify(id)}
-                    >
-                      {verifyingId === id ? 'Verifying…' : 'Verify'}
-                    </button>
                   </div>
                 )
               })}
@@ -305,42 +333,40 @@ function OpenRouterSearch({
           {results.map(model => {
             const id = modelId(model)
             const checked = selected.includes(id)
-            const ctx = getContextWindow(model)
-            const ctxFormatted = formatContextWindow(ctx)
-            const relDate = formatReleaseDate(model.release_date)
-            const priceSummary = formatPriceSummary(model.pricing)
+            const { hasPdf, hasVision, isTextOnly, context, releaseDate, price } = getModelSpecs(model)
 
             return (
-              <label className={`or-result-row ${checked ? 'checked-row' : ''}`} key={id}>
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={event => {
-                    onDiscover([model]) // keep it renderable & persistent in dashboard
-                    onChange(
-                      event.target.checked
-                        ? [...selected, id]
-                        : selected.filter(value => value !== id),
-                    )
-                  }}
-                />
-                <strong className="or-model-name">{model.name ?? id}</strong>
-                <code className="muted or-model-code" title={id}>{id}</code>
-
-                <div className="or-meta-group">
-                  {relDate && (
-                    <span className="or-meta-pill date" title={`Released: ${model.release_date}`}>
-                      📅 {relDate}
-                    </span>
-                  )}
-                  {ctxFormatted && (
-                    <span className="or-meta-pill ctx" title={ctx ? `Context: ${ctx.toLocaleString()} tokens` : ''}>
-                      ⚡ {ctxFormatted}
-                    </span>
-                  )}
-                  <span className="or-pricing">{priceSummary}</span>
+              <div className={`or-result-card ${checked ? 'selected' : ''}`} key={id}>
+                <div className="or-card-top">
+                  <label className="or-card-label" title={model.name ?? id}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={event => {
+                        onDiscover([model]) // keep it renderable & persistent in dashboard
+                        onChange(
+                          event.target.checked
+                            ? [...selected, id]
+                            : selected.filter(value => value !== id),
+                        )
+                      }}
+                    />
+                    <strong className="or-model-name">{model.name ?? id}</strong>
+                  </label>
+                  <code className="muted or-model-code" title={id}>{id}</code>
                 </div>
-              </label>
+
+                <div className="or-card-bottom">
+                  <div className="model-spec-pills">
+                    {hasPdf && <span className="spec-pill pill-pdf" title="PDF support">📄 PDF</span>}
+                    {hasVision && <span className="spec-pill pill-vision" title="Vision support">👁 Vision</span>}
+                    {isTextOnly && <span className="spec-pill pill-text" title="Text only">📝 Text-only</span>}
+                    {context && <span className="spec-pill pill-ctx" title="Context window">⚡ {context}</span>}
+                    {releaseDate && <span className="spec-pill pill-date" title={`Released: ${model.release_date}`}>📅 {releaseDate}</span>}
+                  </div>
+                  <div className="model-card-price" title="Pricing per million tokens (in · out)">{price}</div>
+                </div>
+              </div>
             )
           })}
         </div>
