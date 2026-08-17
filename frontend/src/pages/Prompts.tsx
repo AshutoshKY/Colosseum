@@ -144,6 +144,24 @@ export default function Prompts() {
                             Activate this version
                           </button>
                         )}
+                        {version.version != null && (
+                          <button
+                            type="button"
+                            className="ghost sm danger"
+                            disabled={actions.deletePromptVersion.isPending}
+                            onClick={event => {
+                              event.preventDefault()
+                              event.stopPropagation()
+                              if (!activeTask) return
+                              if (confirm(`Delete prompt version v${version.version}? This cannot be undone.`)) {
+                                actions.deletePromptVersion.mutate({ pack, task: activeTask, version: version.version! })
+                              }
+                            }}
+                            title="Delete this prompt version"
+                          >
+                            Delete
+                          </button>
+                        )}
                       </div>
                     </summary>
                     <p className="muted">{[version.source_repo, version.source_branch, version.source_path].filter(Boolean).join(' · ')}</p>
@@ -157,7 +175,7 @@ export default function Prompts() {
             ) : (
               <Empty>No versions.</Empty>
             )}
-            <ErrorBox error={actions.activatePrompt.error || versions.error} />
+            <ErrorBox error={actions.activatePrompt.error || actions.deletePromptVersion.error || versions.error} />
           </Card>
         </div>
       </div>

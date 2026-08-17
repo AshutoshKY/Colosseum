@@ -77,5 +77,12 @@ export function useActions() {
         client.invalidateQueries({queryKey: ['promptVersions']})
       },
     }),
+    deletePromptVersion: useMutation({
+      mutationFn: ({pack, task, version}: {pack: string; task: string; version: number}) => api(`/prompts/${pack}/${task}/versions/${version}`, {method: 'DELETE'}),
+      onSuccess: () => {
+        client.invalidateQueries({queryKey: ['prompts']})
+        client.invalidateQueries({queryKey: ['promptVersions']})
+      },
+    }),
   }
 }

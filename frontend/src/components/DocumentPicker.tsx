@@ -26,7 +26,7 @@ function useStarredDocs() {
       else next.add(id)
       try {
         localStorage.setItem('colosseum_starred_docs', JSON.stringify([...next]))
-      } catch {}
+      } catch { /* Ignore unavailable storage. */ }
       return next
     })
   }
@@ -107,7 +107,7 @@ export function DocumentPicker({
   if (loading) return <Spinner />
 
   return (
-    <>
+    <div className="document-picker">
       <div className="picker-toolbar">
         <label className="search">
           <input
@@ -117,38 +117,32 @@ export function DocumentPicker({
             aria-label="Search documents"
           />
         </label>
-        <div className="segmented">
-          <button type="button" className={goldFilter === 'all' ? 'active' : ''} onClick={() => setGoldFilter('all')}>All</button>
-          <button type="button" className={goldFilter === 'gold' ? 'active' : ''} onClick={() => setGoldFilter('gold')}>Gold</button>
-          <button type="button" className={goldFilter === 'missing' ? 'active' : ''} onClick={() => setGoldFilter('missing')}>No gold</button>
-          <button type="button" className={goldFilter === 'starred' ? 'active' : ''} onClick={() => setGoldFilter('starred')}>
-            ⭐ Starred {starred.size > 0 ? `(${starred.size})` : ''}
-          </button>
+        <div className="picker-filters">
+          <select value={goldFilter} onChange={event => setGoldFilter(event.target.value as GoldFilter)} aria-label="Filter claims">
+            <option value="all">All claims</option>
+            <option value="gold">Has gold</option>
+            <option value="missing">Missing gold</option>
+            <option value="starred">Starred{starred.size ? ` (${starred.size})` : ''}</option>
+          </select>
+          <select value={sortBy} onChange={event => setSortBy(event.target.value as SortBy)} aria-label="Sort claims">
+            <option value="date-desc">Newest</option>
+            <option value="date-asc">Oldest</option>
+            <option value="name-asc">Name A–Z</option>
+            <option value="pages-desc">Most pages</option>
+            <option value="pages-asc">Fewest pages</option>
+            <option value="id-desc">Highest ID</option>
+          </select>
         </div>
-        <select
-          value={sortBy}
-          onChange={event => setSortBy(event.target.value as SortBy)}
-          aria-label="Sort documents"
-          title="Sort documents by"
-        >
-          <option value="date-desc">🕒 Date (Newest)</option>
-          <option value="date-asc">🕒 Date (Oldest)</option>
-          <option value="name-asc">🔤 Name (A → Z)</option>
-          <option value="pages-desc">📄 Pages (High → Low)</option>
-          <option value="pages-asc">📄 Pages (Low → High)</option>
-          <option value="id-desc">🔢 ID (#)</option>
-        </select>
         <div className="picker-actions">
           {allShownSelected
             ? <button type="button" className="small" onClick={deselectShown}>Deselect all</button>
             : <button type="button" className="small" onClick={selectShown} disabled={!shown.length}>Select all{shown.length !== documents.length ? ` (${shown.length})` : ''}</button>}
-          <button type="button" className="small ghost" onClick={selectGold} title="Select all documents with ground truth">Select gold</button>
+          <button type="button" className="small ghost" onClick={selectGold} title="Select every claim with ground truth">Select gold</button>
           {starred.size > 0 && (
             <button type="button" className="small ghost" onClick={selectStarred} title="Select all starred documents">Select starred</button>
           )}
           {selected.length > 0 && <button type="button" className="small ghost danger" onClick={() => onChange([])}>Clear</button>}
         </div>
-        <span className="count-pill">{selected.length} / {documents.length} selected</span>
       </div>
 
       {shown.length ? (
@@ -169,27 +163,27 @@ export function DocumentPicker({
                   {isStarred ? '⭐' : '☆'}
                 </button>
                 <span className="grow">
-                  <strong>{doc.filename ?? doc.name}</strong>
+                  <strong title={doc.filename ?? doc.name}>{doc.filename ?? doc.name}</strong>
                   <small>
-                    #{doc.id} · {doc.page_count ?? '—'} pages · {doc.origin ?? 'test-docs'}
+                    #{doc.id} · {doc.page_count ?? '—'} pages
                     {doc.created_at && (
                       <span title={`Uploaded: ${new Date(doc.created_at).toLocaleString()}`}>
-                        {' · 🕒 '}{formatBriefDate(doc.created_at)}
+                        {' · '}{formatBriefDate(doc.created_at)}
                       </span>
                     )}
                   </small>
                 </span>
                 <Badge tone={hasGold(doc) ? 'good' : 'warn'}>{hasGold(doc) ? 'gold' : 'no gold'}</Badge>
                 <a
-                  className="button ghost sm"
+                  className="button ghost small"
                   href={`/api/documents/${doc.id}/file`}
                   target="_blank"
                   rel="noreferrer"
                   onClick={event => event.stopPropagation()}
                   title="Open PDF in new tab"
-                  style={{ marginLeft: '0.5rem', padding: '0.1rem 0.4rem', fontSize: '0.75rem' }}
+                  aria-label={`Open ${doc.filename ?? doc.name} in a new tab`}
                 >
-                  📄 View PDF
+                  ↗
                 </a>
               </label>
             )
@@ -198,7 +192,6 @@ export function DocumentPicker({
       ) : (
         <Empty>{documents.length ? 'No documents match the current filter.' : 'No documents yet. Upload PDFs to start.'}</Empty>
       )}
-    </>
+    </div>
   )
 }
-

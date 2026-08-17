@@ -192,19 +192,21 @@ export default function Datasets() {
                     >
                       📄 View PDF
                     </a>
-                    {doc.origin === 'upload' && (
-                      <span
-                        className="danger-link"
-                        role="button"
-                        tabIndex={0}
-                        onClick={event => {
-                          event.stopPropagation()
-                          if (confirm('Delete this uploaded document?')) actions.deleteDocument.mutate(doc.id)
-                        }}
-                      >
-                        Delete
-                      </span>
-                    )}
+                    <span
+                      className="danger-link"
+                      role="button"
+                      tabIndex={0}
+                      onClick={event => {
+                        event.stopPropagation()
+                        if (confirm(`Delete document "${doc.filename ?? doc.name}"? This cannot be undone.`)) {
+                          if (selected === doc.id) setSelected(0)
+                          actions.deleteDocument.mutate(doc.id)
+                        }
+                      }}
+                      title="Delete document"
+                    >
+                      Delete
+                    </span>
                   </button>
                 )
               })}
@@ -212,7 +214,7 @@ export default function Datasets() {
           ) : (
             <Empty>{documents.data?.length ? 'No documents match your search.' : 'No documents.'}</Empty>
           )}
-          <ErrorBox error={documents.error ?? actions.upload.error ?? actions.importGold.error} />
+          <ErrorBox error={documents.error ?? actions.upload.error ?? actions.importGold.error ?? actions.deleteDocument.error} />
 
         </Card>
 

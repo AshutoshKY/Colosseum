@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useActions, useFields, useLeaderboard, useResults, useRun, useSideBySide } from '../api/hooks'
 import { AccuracyCostChart, LeaderboardTable } from '../components/LeaderboardTable'
 import { CostBreakdown } from '../components/CostBreakdown'
@@ -39,6 +39,7 @@ type ModelOutput = Omit<NonNullable<SideBySide['outputs']>[number], 'model_id'>
 
 export default function RunResults() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [tab, setTab] = useState<Tab>('leaderboard')
   const [judgeRequested, setJudgeRequested] = useState(false)
   const [showPdfModal, setShowPdfModal] = useState(false)
@@ -46,6 +47,15 @@ export default function RunResults() {
   const run = useRun(id, tab === 'judge' && (judgeRequested || actions.judge.isPending))
   const results = useResults(id)
   const board = useLeaderboard(id)
+
+  const handleDeleteRun = async () => {
+    if (!id) return
+    const runName = run.data?.run.name ?? `Run #${id}`
+    if (confirm(`Delete run "${runName}" and all its results? This cannot be undone.`)) {
+      await actions.deleteRun.mutateAsync(Number(id))
+      navigate('/runs')
+    }
+  }
 
   const tasks = useMemo(() => run.data?.run.spec.selected_tasks ?? [], [run.data?.run.spec.selected_tasks])
   const docs = [...new Map(
@@ -138,8 +148,18 @@ export default function RunResults() {
           <a className="button" href={`/api/runs/${id}/export?format=json`} download>Export JSON</a>
           <a className="button" href={`/api/runs/${id}/export?format=csv`} download>Export CSV</a>
           <Link className="button" to={`/runs/${id}`}>Live grid</Link>
+          <button
+            type="button"
+            className="danger"
+            disabled={actions.deleteRun.isPending}
+            onClick={() => void handleDeleteRun()}
+            title="Delete this run and all its results"
+          >
+            {actions.deleteRun.isPending ? 'Deleting…' : 'Delete run'}
+          </button>
         </div>
       </header>
+      <ErrorBox error={actions.deleteRun.error} />
 
       <nav className="tabs">
         {TABS.map(([key, label]) => (

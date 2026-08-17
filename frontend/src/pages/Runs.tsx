@@ -155,7 +155,7 @@ function RunRow({
             { label: 'Rename', onClick: () => onRename(run) },
             { label: 'Export JSON', href: `/api/runs/${id}/export?format=json`, download: true },
             { label: 'Export CSV', href: `/api/runs/${id}/export?format=csv`, download: true },
-            terminal && { label: 'Delete', danger: true, onClick: () => !deletePending && onDelete(run) },
+            { label: 'Delete', danger: true, onClick: () => !deletePending && onDelete(run) },
           ]}
         />
       </td>

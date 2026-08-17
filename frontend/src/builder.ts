@@ -34,3 +34,13 @@ export function includeDependencies(pack: PackMeta, selected: string[]): string[
 }
 
 export const matrixSize = (spec: RunSpec) => spec.document_ids.length * spec.model_ids.length * spec.selected_tasks.length
+
+const MIN_BUILDER_COLUMN = [0.7, 0.75, 0.9, 0.8]
+
+/** Keep adjacent builder panes usable while a divider is dragged. */
+export function resizeBuilderColumns(columns: number[], divider: number, deltaX: number, containerWidth: number): number[] {
+  if (!containerWidth || divider < 0 || divider >= columns.length - 1) return columns
+  const total = columns[divider] + columns[divider + 1]
+  const next = Math.min(total - MIN_BUILDER_COLUMN[divider + 1], Math.max(MIN_BUILDER_COLUMN[divider], columns[divider] + deltaX / containerWidth * columns.reduce((sum, value) => sum + value, 0)))
+  return columns.map((value, index) => index === divider ? next : index === divider + 1 ? total - next : value)
+}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { subscribeToRun } from '../api/sse'
 import { useActions, useResults, useRun } from '../api/hooks'
@@ -29,12 +29,22 @@ function tryParseJson(value: unknown) {
 
 export default function RunLive() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const client = useQueryClient()
   const [polling, setPolling] = useState(false)
   const [selected, setSelected] = useState<Cell>()
   const detail = useRun(id, polling)
   const results = useResults(id)
   const actions = useActions()
+
+  const handleDeleteRun = async () => {
+    if (!id) return
+    const runName = detail.data?.run?.name ?? `Run #${id}`
+    if (confirm(`Delete run "${runName}" and all its results? This cannot be undone.`)) {
+      await actions.deleteRun.mutateAsync(Number(id))
+      navigate('/runs')
+    }
+  }
 
   // Live updates over SSE; fall back to polling if the stream drops.
   useEffect(() => {
@@ -80,6 +90,15 @@ export default function RunLive() {
               Cancel run
             </button>
           )}
+          <button
+            type="button"
+            className="danger"
+            disabled={actions.deleteRun.isPending}
+            onClick={() => void handleDeleteRun()}
+            title="Delete this run and all its results"
+          >
+            {actions.deleteRun.isPending ? 'Deleting…' : 'Delete run'}
+          </button>
           <Link className="button" to="/runs">All runs</Link>
         </div>
       </header>
@@ -106,7 +125,7 @@ export default function RunLive() {
         ) : (
           <RunGrid cells={cells} spec={run?.spec} onCell={cell => { setSelected(cell); void results.refetch() }} />
         )}
-        <ErrorBox error={detail.error ?? actions.cancel.error} />
+        <ErrorBox error={detail.error ?? actions.cancel.error ?? actions.deleteRun.error} />
       </Card>
 
       {selectedDetail && (
