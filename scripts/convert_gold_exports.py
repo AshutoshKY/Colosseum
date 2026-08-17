@@ -114,21 +114,107 @@ def _find_pdf(stem: str) -> str:
     return f"data/uploads/{stem}.pdf"
 
 
-def _gold_segregation(row: dict[str, Any]) -> dict[str, Any] | None:
-    segs = row.get("segments") or []
-    if not segs and isinstance(row.get("extracted"), dict):
-        segs = row.get("extracted", {}).get("segregation", {}).get("segments", [])
-    if not segs:
+def _format_page_ranges(ranges: Any) -> str | None:
+    if isinstance(ranges, str):
+        return ranges.strip() if ranges.strip() else None
+    if isinstance(ranges, (int, float)):
+        return str(int(ranges))
+    if not isinstance(ranges, list):
         return None
-    out_segs = []
-    for s in segs:
-        if not isinstance(s, dict):
-            continue
-        dtype = s.get("document_type") or s.get("segment_type")
-        prange = s.get("pages") or s.get("page_range")
-        if dtype and prange:
-            out_segs.append({"document_type": dtype, "pages": str(prange)})
-    return {"segments": out_segs} if out_segs else None
+    parts = []
+    for r in ranges:
+        if isinstance(r, dict):
+            start = r.get("start") or r.get("start_page") or r.get("page")
+            end = r.get("end") or r.get("end_page") or start
+            if start is not None and end is not None:
+                if start == end:
+                    parts.append(str(start))
+                else:
+                    parts.append(f"{start}-{end}")
+            elif start is not None:
+                parts.append(str(start))
+        elif isinstance(r, (int, float)):
+            parts.append(str(int(r)))
+        elif isinstance(r, str) and r.strip():
+            parts.append(r.strip())
+    return ", ".join(parts) if parts else None
+
+
+def _gold_segregation(row: dict[str, Any]) -> dict[str, Any] | None:
+    raw_segs = row.get("segments")
+    if not raw_segs and isinstance(row.get("extracted"), dict):
+        raw_segs = row.get("extracted", {}).get("segregation") or row.get("extracted", {}).get("document_segregator")
+    if not raw_segs:
+        reviews = row.get("review") or []
+        latest = reviews[0] if reviews else {}
+        edited = latest.get("edited_payload") or latest.get("original_payload") or {}
+        raw_segs = edited.get("segments") or edited.get("segregation")
+
+    if isinstance(raw_segs, str):
+        try:
+            raw_segs = json.loads(raw_segs)
+        except json.JSONDecodeError:
+            return None
+
+    if not raw_segs:
+        return None
+
+    if isinstance(raw_segs, list):
+        out_segs = []
+        for s in raw_segs:
+            if not isinstance(s, dict):
+                continue
+            dtype = s.get("document_type") or s.get("segment_type")
+            prange = s.get("pages") or s.get("page_range") or _format_page_ranges(s.get("page_ranges"))
+            if dtype and prange:
+                seg_dict: dict[str, Any] = {"document_type": str(dtype), "pages": str(prange)}
+                if "is_pharmacy_bill" in s and s["is_pharmacy_bill"] is not None:
+                    seg_dict["is_pharmacy_bill"] = bool(s["is_pharmacy_bill"])
+                out_segs.append(seg_dict)
+        return {"segments": out_segs} if out_segs else None
+
+    if isinstance(raw_segs, dict):
+        if "segments" in raw_segs and isinstance(raw_segs["segments"], list):
+            return _gold_segregation({"segments": raw_segs["segments"]})
+
+        agg = raw_segs.get("aggregated_segments")
+        if not agg or not isinstance(agg, dict):
+            agg = raw_segs
+
+        out_segs = []
+        for dtype, dinfo in agg.items():
+            if isinstance(dinfo, dict):
+                pranges = dinfo.get("page_ranges") or []
+                if isinstance(pranges, list) and dtype == "itemized_bill":
+                    groups: dict[bool | None, list[Any]] = {}
+                    for pr in pranges:
+                        pb = pr.get("is_pharmacy_bill") if isinstance(pr, dict) else None
+                        groups.setdefault(pb, []).append(pr)
+                    for pb, sub_pranges in groups.items():
+                        pages_str = _format_page_ranges(sub_pranges)
+                        if pages_str:
+                            seg_dict = {"document_type": str(dtype), "pages": pages_str}
+                            if pb is not None:
+                                seg_dict["is_pharmacy_bill"] = bool(pb)
+                            out_segs.append(seg_dict)
+                else:
+                    pages_str = (
+                        _format_page_ranges(pranges)
+                        or _format_page_ranges(dinfo.get("pages"))
+                        or _format_page_ranges(dinfo.get("page_range"))
+                    )
+                    if pages_str:
+                        out_segs.append({"document_type": str(dtype), "pages": pages_str})
+            elif isinstance(dinfo, list):
+                pages_str = _format_page_ranges(dinfo)
+                if pages_str:
+                    out_segs.append({"document_type": str(dtype), "pages": pages_str})
+            elif isinstance(dinfo, (str, int)):
+                out_segs.append({"document_type": str(dtype), "pages": str(dinfo)})
+
+        return {"segments": out_segs} if out_segs else None
+
+    return None
 
 
 
@@ -244,10 +330,12 @@ def _gold_policy(row: dict[str, Any]) -> dict[str, Any] | None:
     }
 
 
-def _gold_benefits(edited: dict[str, Any]) -> dict[str, Any] | None:
-    """Benefit-plan catalog for this claim (from the production breakdown) — upstream context
+def _gold_benefits(source: dict[str, Any] | None) -> dict[str, Any] | None:
+    """Benefit-plan catalog for this claim (from the production breakdown or doc_details) — upstream context
     for the benefit_plan task, NOT scored gold."""
-    breakdown = (edited or {}).get("benefit_plan_breakdown") or []
+    if not source or not isinstance(source, dict):
+        return None
+    breakdown = source.get("benefit_plan_breakdown") or source.get("benefits") or []
     benefits = [
         _drop_nulls(
             {
@@ -257,7 +345,7 @@ def _gold_benefits(edited: dict[str, Any]) -> dict[str, Any] | None:
             }
         )
         for b in breakdown
-        if b.get("benefit_id") or b.get("benefit_name")
+        if isinstance(b, dict) and (b.get("benefit_id") or b.get("benefit_name"))
     ]
     return {"benefits": benefits} if benefits else None
 
