@@ -189,6 +189,44 @@ def activate_prompt_version(
     return _version_out(target)
 
 
+@router.delete("/{pack}/{task}/versions/{version}")
+def delete_prompt_version(
+    pack: str,
+    task: str,
+    version: int,
+    session: SessionDep,
+) -> dict[str, Any]:
+    task_pack = _pack(pack)
+    if task not in task_pack.tasks:
+        raise HTTPException(status_code=404, detail="Task not found in pack")
+    target = session.exec(
+        select(PromptVersion).where(
+            PromptVersion.pack == pack.upper(),
+            PromptVersion.task_name == task,
+            (PromptVersion.version == version) | (PromptVersion.id == version),
+        )
+    ).first()
+    if not target:
+        raise HTTPException(status_code=404, detail="Prompt version not found")
+
+    was_active = target.active
+    session.delete(target)
+    session.flush()
+
+    if was_active:
+        latest = session.exec(
+            select(PromptVersion)
+            .where(PromptVersion.pack == pack.upper(), PromptVersion.task_name == task)
+            .order_by(PromptVersion.version.desc())  # type: ignore[union-attr]
+        ).first()
+        if latest:
+            latest.active = True
+            session.add(latest)
+
+    session.commit()
+    return {"status": "deleted", "version": version}
+
+
 def _preview_context(session: Session, document_id: int | None) -> dict[str, Any]:
     if document_id is None:
         return {}

@@ -371,24 +371,26 @@ def rename_run(run_id: int, body: RunPatch, session: SessionDep) -> RunOut:
 
 
 @router.delete("/{run_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_run(run_id: int, session: SessionDep, manager: RunManagerDep) -> None:
+async def delete_run(run_id: int, session: SessionDep, manager: RunManagerDep) -> None:
     run = session.get(BenchmarkRun, run_id)
     if run is None:
         raise HTTPException(status_code=404, detail="Run not found")
-    if _status(run.status) in {"running", "pending"} and _known_to_manager(manager, run_id):
-        raise HTTPException(status_code=409, detail="Cancel the run before deleting it")
-    cell_ids = select(RunCell.id).where(RunCell.run_id == run_id)
-    result_ids = select(RunResult.id).where(RunResult.cell_id.in_(cell_ids))  # type: ignore[union-attr]
-    for score in session.exec(select(Score).where(Score.result_id.in_(result_ids))).all():  # type: ignore[union-attr]
-        session.delete(score)
-    for result in session.exec(select(RunResult).where(RunResult.cell_id.in_(cell_ids))).all():  # type: ignore[union-attr]
-        session.delete(result)
+    if _known_to_manager(manager, run_id):
+        await manager.cancel(run_id)
+    cell_ids = session.exec(select(RunCell.id).where(RunCell.run_id == run_id)).all()
+    if cell_ids:
+        result_ids = session.exec(select(RunResult.id).where(RunResult.cell_id.in_(cell_ids))).all()
+        if result_ids:
+            for score in session.exec(select(Score).where(Score.result_id.in_(result_ids))).all():
+                session.delete(score)
+            for result in session.exec(select(RunResult).where(RunResult.id.in_(result_ids))).all():
+                session.delete(result)
+        for cell in session.exec(select(RunCell).where(RunCell.id.in_(cell_ids))).all():
+            session.delete(cell)
     for comparison in session.exec(
         select(JudgeComparison).where(JudgeComparison.run_id == run_id)
     ).all():
         session.delete(comparison)
-    for cell in session.exec(select(RunCell).where(RunCell.run_id == run_id)).all():
-        session.delete(cell)
     session.delete(run)
     session.commit()
     _judge_states.pop(run_id, None)

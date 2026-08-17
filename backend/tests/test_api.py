@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import asyncio
+import csv
+import io
 import json
 from io import BytesIO
 
@@ -13,6 +15,7 @@ from app.db import create_all
 from app.db import engine as db_engine
 from app.models import (
     BenchmarkRun,
+    DocumentSample,
     GroundTruth,
     RunCell,
     RunResult,
@@ -525,6 +528,134 @@ async def test_upload_pdf_then_upload_gold_binds_seamlessly(client):
 
     file_res = await client.get(f"/api/documents/{doc_id}/file")
     assert file_res.status_code == 200
+
+
+async def test_import_superclaims_csv_with_aggregated_segments(client, tmp_path):
+    # Create sample PDF
+    writer = PdfWriter()
+    writer.add_blank_page(width=100, height=100)
+    writer.add_blank_page(width=100, height=100)
+    writer.add_blank_page(width=100, height=100)
+    pdf_bytes = BytesIO()
+    writer.write(pdf_bytes)
+
+    pdf_res = await client.post(
+        "/api/documents",
+        files=[("files", ("STEM123_1.pdf", pdf_bytes.getvalue(), "application/pdf"))],
+    )
+    assert pdf_res.status_code == 201
+    doc_id = pdf_res.json()[0]["id"]
+
+    row_payload = {
+        "stem": "STEM123_1",
+        "claim_id": "STEM123_1",
+        "segments": {
+            "aggregated_segments": {
+                "investigation_report": {"page_ranges": [{"start": 1, "end": 1}], "total_pages": 1},
+                "itemized_bill": {
+                    "page_ranges": [
+                        {"start": 2, "end": 2, "is_pharmacy_bill": False},
+                        {"start": 3, "end": 3, "is_pharmacy_bill": True},
+                    ],
+                    "total_pages": 2,
+                },
+            }
+        },
+        "doc_details": {
+            "benefits": [{"benefit_id": 101, "benefit_name": "Consultations"}],
+        },
+        "extracted": {
+            "pharmacy_bills": {
+                "bills": [{
+                    "bill": {"invoice_number": "INV-1", "net_amount": 100.0},
+                    "items": [{"item_name": "Medicine", "final_amount": 100.0}],
+                }]
+            }
+        },
+    }
+    import io
+    buf = io.StringIO()
+    writer_csv = csv.writer(buf)
+    writer_csv.writerow(["json_build_object"])
+    writer_csv.writerow([json.dumps(row_payload)])
+    csv_content = buf.getvalue()
+
+    gold_res = await client.post(
+        "/api/gold/import",
+        files=[("file", ("export.csv", csv_content.encode("utf-8"), "text/csv"))],
+    )
+    assert gold_res.status_code == 200
+
+    gold_get = await client.get(f"/api/gold/{doc_id}")
+    assert gold_get.status_code == 200
+    tasks = gold_get.json()["tasks"]
+    assert "segregation" in tasks
+    assert "upstream_benefits" in tasks
+    assert "itemized_bills" in tasks
+    segments = tasks["segregation"]["segments"]
+    assert len(segments) == 3
+    assert any(s["document_type"] == "investigation_report" and s["pages"] == "1" for s in segments)
+    assert any(s["document_type"] == "itemized_bill" and s["pages"] == "2" and s.get("is_pharmacy_bill") is False for s in segments)
+    assert any(s["document_type"] == "itemized_bill" and s["pages"] == "3" and s.get("is_pharmacy_bill") is True for s in segments)
+
+
+async def test_delete_prompt_version(client):
+    # 1. Create v1 and v2
+    v1_resp = await client.post(
+        "/api/prompts/OPD/segregation/versions",
+        json={"system_prompt": "v1 sys", "instruction_template": "v1 inst", "activate": True},
+    )
+    assert v1_resp.status_code == 201
+
+    v2_resp = await client.post(
+        "/api/prompts/OPD/segregation/versions",
+        json={"system_prompt": "v2 sys", "instruction_template": "v2 inst", "activate": True},
+    )
+    assert v2_resp.status_code == 201
+    assert v2_resp.json()["version"] == 2
+    assert v2_resp.json()["active"] is True
+
+    # 2. Delete v2 (active). v1 should now become active.
+    del_v2 = await client.delete("/api/prompts/OPD/segregation/versions/2")
+    assert del_v2.status_code == 200
+    assert del_v2.json()["status"] == "deleted"
+
+    versions = (await client.get("/api/prompts/OPD/segregation/versions")).json()
+    assert len(versions) == 1
+    assert versions[0]["version"] == 1
+    assert versions[0]["active"] is True
+
+    # 3. Delete v1 (last version). Should succeed.
+    del_v1 = await client.delete("/api/prompts/OPD/segregation/versions/1")
+    assert del_v1.status_code == 200
+
+    versions_empty = (await client.get("/api/prompts/OPD/segregation/versions")).json()
+    assert versions_empty == []
+
+    # 4. Deleting non-existent version returns 404
+    del_none = await client.delete("/api/prompts/OPD/segregation/versions/999")
+    assert del_none.status_code == 404
+
+
+async def test_delete_document_with_cascades(client, api_engine, tmp_path):
+    run_id, doc_id = _seed_run(api_engine, tmp_path)
+
+    # Add ground truth for document
+    gt_resp = await client.put(f"/api/gold/{doc_id}", json={"tasks": {"segregation": {"gold": 1}}})
+    assert gt_resp.status_code == 200
+
+    # Delete document should cascade-delete cell, result, score, ground truth, and document
+    del_resp = await client.delete(f"/api/documents/{doc_id}")
+    assert del_resp.status_code == 200
+    assert del_resp.json()["status"] == "deleted"
+
+    # Confirm document no longer exists
+    assert (await client.get(f"/api/documents/{doc_id}/file")).status_code == 404
+    with Session(api_engine) as session:
+        assert session.get(DocumentSample, doc_id) is None
+        assert session.exec(select(GroundTruth).where(GroundTruth.document_id == doc_id)).all() == []
+        assert session.exec(select(RunCell).where(RunCell.document_id == doc_id)).all() == []
+
 
 
 

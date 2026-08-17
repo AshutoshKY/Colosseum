@@ -53,7 +53,7 @@ def test_bedrock_kwargs_require_token_and_include_region(monkeypatch):
 
     monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "test-token")
     kwargs = gateway._provider_kwargs(cap, {})
-    assert kwargs["aws_region_name"] == "ap-south-1"
+    assert kwargs["aws_region_name"] == gateway.settings.aws_region_name
     assert kwargs["api_key"] == "test-token"
 
 

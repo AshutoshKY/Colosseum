@@ -14,7 +14,7 @@ from sqlmodel import Session, select
 
 from app.api.deps import SessionDep
 from app.api.schemas import DocumentOut
-from app.models import DocumentSample, GroundTruth, RunCell
+from app.models import DocumentSample, GroundTruth, JudgeComparison, RunCell, RunResult, Score
 from app.runner.persistence import register_document
 
 router = APIRouter(prefix="/documents", tags=["documents"])
@@ -181,15 +181,31 @@ def delete_document(
     document = session.get(DocumentSample, document_id)
     if document is None:
         raise HTTPException(status_code=404, detail="Document not found")
-    if document.origin != "upload" and not (document.sha256 and document.sha256.startswith("stub-")):
-        raise HTTPException(status_code=403, detail="Bundled test documents cannot be deleted")
-    in_use = session.exec(select(RunCell.id).where(RunCell.document_id == document_id)).first()
-    if in_use is not None:
-        raise HTTPException(status_code=409, detail="Document is referenced by a benchmark run")
+
+    # Clean up any run results and scores associated with run cells for this document
+    cell_ids = session.exec(select(RunCell.id).where(RunCell.document_id == document_id)).all()
+    if cell_ids:
+        result_ids = session.exec(select(RunResult.id).where(RunResult.cell_id.in_(cell_ids))).all()
+        if result_ids:
+            for score in session.exec(select(Score).where(Score.result_id.in_(result_ids))).all():
+                session.delete(score)
+            for result in session.exec(select(RunResult).where(RunResult.id.in_(result_ids))).all():
+                session.delete(result)
+        for cell in session.exec(select(RunCell).where(RunCell.id.in_(cell_ids))).all():
+            session.delete(cell)
+
+    # Clean up judge comparisons for this document
+    for comparison in session.exec(
+        select(JudgeComparison).where(JudgeComparison.document_id == document_id)
+    ).all():
+        session.delete(comparison)
+
+    # Clean up ground truth
     for row in session.exec(
         select(GroundTruth).where(GroundTruth.document_id == document_id)
     ).all():
         session.delete(row)
+
     path = Path(document.path)
     session.delete(document)
     session.commit()
