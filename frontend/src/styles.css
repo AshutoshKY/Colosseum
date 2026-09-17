@@ -1078,6 +1078,16 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
   background: color-mix(in srgb, #34d399 15%, transparent);
 }
 
+.spec-pill.pill-region {
+  background: color-mix(in srgb, #06b6d4 12%, transparent);
+  color: #0891b2;
+  border: 1px solid color-mix(in srgb, #06b6d4 28%, transparent);
+}
+:root[data-theme='dark'] .spec-pill.pill-region {
+  color: #22d3ee;
+  background: color-mix(in srgb, #22d3ee 15%, transparent);
+}
+
 .spec-pill.pill-date {
   background: var(--surface-2);
   color: var(--muted);
@@ -1225,7 +1235,8 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
   transform: scale(1.05);
 }
 
-/* OpenRouter live search (single unified search to pick & keep models). */
+/* Provider-specific search & OpenRouter search */
+.provider-search-section { margin: 0.4rem 0 0.6rem; }
 .openrouter-section { margin: 0.5rem 0 0.7rem; }
 .openrouter-search { margin: 0 0 0.4rem; }
 .search-input-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
@@ -1736,6 +1747,42 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 .status-dot.red {
   background: #ef4444;
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+.discovery-region-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.5rem;
+  background: color-mix(in srgb, var(--surface) 96%, black);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.discovery-region-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.region-select-dropdown {
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  min-width: 220px;
+}
+.region-select-dropdown:focus {
+  border-color: var(--accent);
 }
 
 .discovery-controls {

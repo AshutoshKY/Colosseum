@@ -86,8 +86,10 @@ class Settings(BaseSettings):
     judge_default_model: str = "gemini-3.1-pro"
 
     # ---- AWS Bedrock ----
+    aws_access_key_id: str | None = None
+    aws_secret_access_key: str | None = None
     aws_bearer_token_bedrock: str | None = None
-    aws_region_name: str = "ap-south-1"
+    aws_region_name: str = "us-east-1"
 
     # ---- Self-deployed Qwen3-VL (vLLM / OpenAI-compatible) ----
     qwen_vl_base_url: str = "http://15.252.27.168:8000/v1"
@@ -116,6 +118,18 @@ class Settings(BaseSettings):
         )
         project = self.vertexai_project or os.environ.get("GOOGLE_CLOUD_PROJECT")
         return bool(creds and Path(creds).expanduser().is_file()) and bool(project)
+
+    @property
+    def has_bedrock_credentials(self) -> bool:
+        """Whether enough is present to attempt a real Bedrock call."""
+        has_iam = bool(
+            (self.aws_access_key_id or os.environ.get("AWS_ACCESS_KEY_ID"))
+            and (self.aws_secret_access_key or os.environ.get("AWS_SECRET_ACCESS_KEY"))
+        )
+        has_token = bool(
+            self.aws_bearer_token_bedrock or os.environ.get("AWS_BEARER_TOKEN_BEDROCK")
+        )
+        return has_iam or has_token
 
 
 @lru_cache(maxsize=1)

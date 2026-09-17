@@ -97,20 +97,29 @@ class RunSpec(BaseModel):
 
         disabled: list[str] = []
         for model_id in self.model_ids:
-            capability = get_capability(model_id)
+            try:
+                capability = get_capability(model_id)
+            except KeyError as e:
+                raise ValueError(str(e)) from e
             if not capability.enabled:
                 disabled.append(model_id)
         for task_name, override in self.runtime_overrides.items():
             if task_name not in pack.tasks:
                 raise ValueError(f"Unknown runtime override task: {task_name}")
             if override.model_id:
-                capability = get_capability(override.model_id)
+                try:
+                    capability = get_capability(override.model_id)
+                except KeyError as e:
+                    raise ValueError(str(e)) from e
                 if not capability.enabled:
                     disabled.append(override.model_id)
         if disabled:
             raise ValueError(f"Models are not enabled: {', '.join(disabled)}")
         if self.judge.enabled:
-            judge_capability = get_capability(self.judge.model_id)
+            try:
+                judge_capability = get_capability(self.judge.model_id)
+            except KeyError as e:
+                raise ValueError(str(e)) from e
             if not judge_capability.enabled or not judge_capability.verified:
                 raise ValueError(f"Judge model must be enabled and verified: {self.judge.model_id}")
         cells = len(self.document_ids) * len(self.model_ids) * len(self.selected_tasks)

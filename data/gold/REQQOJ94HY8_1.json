@@ -1,0 +1,491 @@
+{
+  "document": "data/uploads/REQQOJ94HY8_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "prescription",
+          "pages": "1, 3-4"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "5",
+          "is_pharmacy_bill": false
+        },
+        {
+          "document_type": "investigation_report",
+          "pages": "2, 6-7"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "8"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-10-08",
+            "net_amount": 220.0,
+            "page_number": 5,
+            "invoice_number": "BNPG27032092",
+            "total_discount": 0.0,
+            "facility_details": {
+              "name": "Meditrina Hospital"
+            }
+          },
+          "items": [
+            {
+              "discount": 0.0,
+              "quantity": 1.0,
+              "item_name": "IV CANNULATION",
+              "net_amount": 40.0,
+              "unit_price": 40.0,
+              "is_returned": false,
+              "final_amount": 40.0
+            },
+            {
+              "discount": 0.0,
+              "quantity": 1.5,
+              "item_name": "Observation Charge",
+              "net_amount": 180.0,
+              "unit_price": 120.0,
+              "is_returned": false,
+              "final_amount": 180.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "d0a228e8756d",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Medicines Supplied By Hospital"
+            },
+            {
+              "s.no.": 2,
+              "category": "Room Rent"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": [
+        {
+          "nme_item": {
+            "sr.no": 1,
+            "item_name": "IV CANNULATION",
+            "bill_amount": 40.0,
+            "deduction_reason": "IV Cannulation Charges: Not Payable"
+          }
+        }
+      ]
+    },
+    "audit": {
+      "patches": [
+        {
+          "key": "bill_date",
+          "type": "EDIT_BILL_DETAILS",
+          "impact": "0.0",
+          "reason": "Bill date corrected from 2026-10-08 to 2026-08-10 based on document date format (10-08-2026).",
+          "bill_id": "d0a228e8756d",
+          "new_value": "2026-08-10",
+          "old_value": "2026-10-08",
+          "page_reference": "4",
+          "bill_net_amount": 220.0,
+          "bill_invoice_number": "BNPG27032092"
+        },
+        {
+          "key": "page_number",
+          "type": "EDIT_BILL_DETAILS",
+          "impact": "0.0",
+          "reason": "Corrected page number from 5 to 4 where the bill is present.",
+          "bill_id": "d0a228e8756d",
+          "new_value": 4,
+          "old_value": 5,
+          "page_reference": "4",
+          "bill_net_amount": 220.0,
+          "bill_invoice_number": "BNPG27032092"
+        }
+      ],
+      "bills_analyzed": 1,
+      "duplicates_found": 0,
+      "discrepancy_amount": 0.0,
+      "bills_with_corrections": 1,
+      "original_total_of_bills": 220.0,
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "Food, Food Supplements or Dietary Pills (Example, Horlicks, Glucose, Whey Protein, etc.)",
+        "Dietary supplements and substances purchased without prescription (Vitamins, minerals and organic substances)",
+        "Non-medical expenses or standard deductions incurred during inpatient hospitalization or day-care treatments",
+        "Wigs",
+        "Toupees",
+        "Hearing aid"
+      ],
+      "policy_rules": [
+        "Tele Consultation (GP & Specialist): Unlimited, Cashless",
+        "Health Check: 1 Health Check per family up to INR 1200, Cashless",
+        "In-Clinic Consultations (GP & Specialist): Allopathy consultations up to INR 6000, Cashless + Reimbursement",
+        "Prescribed Diagnostics: Covers Pathology & Radiology prescribed by Allopathic practitioner up to INR 5000, Cashless + Reimbursement",
+        "Vaccination: WHO-approved vaccinations for adults and children up to INR 2500, Cashless + Reimbursement",
+        "Prescribed Pharmacy: Medicines prescribed by Allopathic practitioner up to INR 5000, Cashless + Reimbursement",
+        "Dental Wellness: Covers Examination, Scaling and Polishing (in case of root canal and extraction), X-ray, Fluoride Treatment, Filling, Prophylaxis, Root Canal Treatment, Extractions, Oral Surgery, Re-cementation, Medication, Restoration, Crowning / Capping, Implants, Braces up to INR 5000, Cashless + Reimbursement",
+        "Vision Wellness: Covers Consultations & check-ups by optometrist/optician, Prescribed glasses and frames up to INR 5000, Cashless + Reimbursement",
+        "Dermatology: Covers dermatology consultations and non-cosmetic treatments up to INR 1500, Cashless + Reimbursement",
+        "Excludes Food, Food Supplements or Dietary Pills even if prescribed",
+        "Excludes Dietary supplements and substances purchased without prescription unless prescribed by a medical practitioner as part of treatment",
+        "Excludes Inpatient hospitalization or day-care treatments under the policy",
+        "Excludes non-medical expenses or standard deductions during inpatient hospitalization or day-care treatments",
+        "Excludes Procedure fees or any type of procedures paid during an OP consultation (e.g., wound cleaning/dressing)",
+        "Excludes Over the counter (OTC) Medicines or medicines purchased without doctor's prescriptions",
+        "Excludes Diagnostic Tests/Investigations done without doctor's prescriptions",
+        "Excludes all cosmetic related consultations, diagnostics, and medicines unless explicitly specified in inclusions",
+        "Excludes Treatment for or related to alopecia, baldness, wigs, toupees, Alcoholism, drug/substance abuse, change in gender, IVF, infertility, Maternity, Management of pregnancy, obesity, AYUSH, physiotherapy, Cataract, Lasik, hearing aid, cosmetics",
+        "All claims must be raised within 45 days from the service taken date or claim can be rejected",
+        "Excludes AYUSH, physiotherapy, and cosmetic-related consultations"
+      ],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "State Bank Of India",
+        "ifsc_code": "SBIN0009157",
+        "account_no": "20325149625",
+        "bank_branch": "MERCY COLLEGE (PALAKKAD)",
+        "account_type": "Savings",
+        "account_holder_name": "NAVEEN SATISH"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_name": "Rugma",
+        "hospital_city": "Palakkad",
+        "hospital_name": "Meditrina Hospital",
+        "hospital_state": "Kerala",
+        "hospital_address": "Mercy College Junction",
+        "hospital_pincode": "678006",
+        "prescribed_items": [
+          {
+            "route": "IV",
+            "dosage": "40mg",
+            "frequency": "stat",
+            "medicine_name": "Inj PANTOP"
+          },
+          {
+            "route": "IV",
+            "dosage": "4mg",
+            "frequency": "stat",
+            "medicine_name": "Inj EMESET"
+          },
+          {
+            "route": "IV",
+            "dosage": "500 ml",
+            "duration": "2 hrs",
+            "instructions": "Over 2hrs",
+            "medicine_name": "IVF - NS"
+          }
+        ],
+        "prescription_date": "2026/08/10",
+        "hospital_phone_number": "0491 3500300"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": []
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "Rugma",
+          "patient_bank_name": "State Bank Of India",
+          "patient_bank_ifsc_code": "SBIN0009157",
+          "patient_bank_account_no": "20325149625",
+          "patient_bank_branch_name": "MERCY COLLEGE (PALAKKAD)",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "NAVEEN SATISH"
+        },
+        "clinical_details": {
+          "hospital_name": "Meditrina Hospital"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1366527,
+          "benefit_name": "Dermatology Consultations & Treatment",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No specialty clinical context or dermatology charges present in billed items."
+        },
+        {
+          "benefit_id": 1366528,
+          "benefit_name": "WHO Approved Vaccinations",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No vaccination services found in billed items."
+        },
+        {
+          "benefit_id": 1366531,
+          "benefit_name": "Dental",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No dental services or clinical context present in billed items."
+        },
+        {
+          "benefit_id": 1366534,
+          "benefit_name": "Prescribed Pharmacy",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "Billed items include pharmacy/medicines supplied by hospital."
+        },
+        {
+          "benefit_id": 1366543,
+          "benefit_name": "Inclinic consultations",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Observation/room charges during consultation visit map to consultation/in-clinic benefit."
+        },
+        {
+          "benefit_id": 1366553,
+          "benefit_name": "Vision",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No vision services found in billed items."
+        },
+        {
+          "benefit_id": 1366556,
+          "benefit_name": "Prescribed Lab Tests",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No lab test items found in billed items."
+        }
+      ],
+      "item_assignments": [
+        {
+          "bill_id": "d0a228e8756d",
+          "item_s_no": 2,
+          "benefit_id": 1366543,
+          "benefit_name": "Inclinic consultations"
+        },
+        {
+          "bill_id": "d0a228e8756d",
+          "item_s_no": 1,
+          "benefit_id": 1366543,
+          "benefit_name": "Inclinic consultations"
+        }
+      ]
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "d0a228e8756d",
+            "bill_date": "2026-10-08",
+            "bill_type": "itemized_bill",
+            "ip_number": null,
+            "net_amount": 220.0,
+            "page_number": 5,
+            "patient_name": "Mrs RUGMA SATEESH",
+            "invoice_number": "BNPG27032092",
+            "total_discount": 0.0,
+            "facility_details": {
+              "city": "Palakkad",
+              "name": "Meditrina Hospital",
+              "state": "Kerala",
+              "pincode": "678006",
+              "gst_number": "32AAPCM8008G1ZG",
+              "address_line": "Mercy College Junction",
+              "registration_number": null
+            },
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": true,
+              "category": "Medicines Supplied By Hospital",
+              "discount": 0.0,
+              "quantity": 1.0,
+              "item_name": "IV CANNULATION",
+              "net_amount": 40.0,
+              "unit_price": 40.0,
+              "is_returned": false,
+              "final_amount": 40.0,
+              "nme_item_name": "IV CANNULATION",
+              "nme_bill_amount": 40.0,
+              "deduction_reason": "IV Cannulation Charges: Not Payable",
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 40.0
+            },
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "category": "Room Rent",
+              "discount": 0.0,
+              "quantity": 1.5,
+              "item_name": "Observation Charge",
+              "net_amount": 180.0,
+              "unit_price": 120.0,
+              "is_returned": false,
+              "final_amount": 180.0,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 180.0
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1366527,
+          "benefit_name": "Dermatology Consultations & Treatment",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366528,
+          "benefit_name": "WHO Approved Vaccinations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "vaccination_card",
+              "requirement_type": "conditional",
+              "condition_description": "Required only if the reimbursement claim is for a child’s vaccination."
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366531,
+          "benefit_name": "Dental",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "x_ray",
+              "requirement_type": "conditional",
+              "condition_description": ""
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366534,
+          "benefit_name": "Prescribed Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366543,
+          "benefit_name": "Inclinic consultations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366553,
+          "benefit_name": "Vision",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366556,
+          "benefit_name": "Prescribed Lab Tests",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    },
+    "policy": {
+      "text": "Inclusions:\nTele Consultation (GP & Specialist)\nOnline GP and Specialist consultations are covered\nType: Cashless\nLimit: Unlimited\nHealth Check\n1 Health Check per family\nType: Cashless\nLimit: 1 Health Check (INR 1200)\nIn-Clinic Consultations (GP & Specialist)\nAll in-clinic Allopathy consultations are covered\nType: Cashless + Reimbursement\nLimit: Up to INR 6000\nPrescribed Diagnostics\nCovers prescribed diagnostic tests across Pathology & Radiology (Prescribed by Allopathic practitioner)\nType: Cashless + Reimbursement\nLimit: Up to INR 5000\nVaccination\nCovers WHO-approved vaccinations for adults and children\nType: Cashless + Reimbursement\nLimit: Up to INR 2500\nPrescribed Pharmacy\nCovers medicines prescribed by doctors(Prescribed by Allopathic practitioner) (unless excluded)\nType: Cashless + Reimbursement\nLimit: Up to INR 5000\nDental Wellness\nCovers:\nExamination\nScaling and Polishing (in case of root canal and extraction)\nX-ray\nFluoride Treatment\nFilling\nProphylaxis\nRoot Canal Treatment\nExtractions\nOral Surgery\nRe-cementation\nMedication\nRestoration\nCrowning / Capping\nImplants\nBraces\nType: Cashless + Reimbursement\nLimit: Up to INR 5000\nVision Wellness\nCovers:\nConsultations & check-ups by optometrist/optician\nPrescribed glasses and frames\nType: Cashless + Reimbursement\nLimit: Up to INR 5000\nDermatology\nCovers dermatology consultations and non-cosmetic treatments\nSkin related consultations with dermatologists and Treatment related to skin which is non cosmetic in nature will be covered under Dermatology benefit only.\nType: Cashless + Reimbursement\nLimit: Up to INR 1500\nTop of Form\nExclusions:\n(Which are not covered/ cannot be claimed for)\n1. Food, Food Supplements or Dietary Pills (Example, Horlicks, Glucose, Whey Protein, etc.) even prescribed are not covered\n2. Dietary supplements and substances that can be purchased without prescription, including but not limited to Vitamins, minerals and organic substances unless prescribed by a medical practitioner as part of treatment\n3. Inpatient hospitalization or day-care treatments will not be covered under the policy\n4. All non-medical expense or standard deductions incurred during inpatient hospitalization or day-care treatments will not be covered under OPD Policy\n5. Procedure fees or any type of procedures of fees paid during an OP consultation are not covered. Example - wound cleaning/dressing\n6. Over the counter (OTC)Medicines are not covered. Medicines purchased without doctor's prescriptions are not covered\n7. Diagnostic Tests/Investigations done without doctor's prescriptions are not covered.\n8. All cosmetic related consultations or diagnostics, and medicines (unless called out in inclusion) are not covered. Cosmetic Surgery or Treatment means surgery or medical treatment solely or primarily to improve or preserve physical appearance, but not physical function or treatment of an underlying ailment/conditions (Example - Chemical peel treatment, Laser hair removal and others). The exact nature of the procedure will be determined by claim adjudicators at the time of processing the claim\n9. Treatment for or related to alopecia, baldness, wigs, toupees, Alcoholism, drug/substance abuse, change in gender, IVF, infertility, Maternity, Management of pregnancy, obesity, AYUSH, physiotherapy, Cataract, Lasik, hearing aid, cosmetics are not covered\n10. All claims should be raised within 45 days from the service taken date, if not the claim can be rejected. Bottom of Form\n11. AYUSH, physiotherapy, and cosmetic-related consultations : Not covered"
+    }
+  }
+}

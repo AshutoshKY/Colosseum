@@ -65,3 +65,25 @@ def test_vision_model_with_no_pdf_native_still_passes_gate():
     assert cap.vision is True
     assert cap.pdf_native is False
     assert cap.max_image_mb == 4.0  # the 4 MB caveat is encoded
+
+
+def test_gemini_3_1_pro_and_flash_registered_and_enabled():
+    pro_cap = get_capability("gemini-3.1-pro")
+    assert pro_cap.enabled is True
+    assert pro_cap.verified is True
+    assert pro_cap.pdf_native is True
+    assert pro_cap.thinking == "level"
+    assert pro_cap.transport_model == "vertex_ai/gemini-3.1-pro-preview"
+
+    flash_cap = get_capability("gemini-3-flash")
+    assert flash_cap.enabled is True
+    assert flash_cap.verified is True
+    assert flash_cap.pdf_native is True
+    assert flash_cap.thinking == "level"
+
+
+def test_alias_and_short_id_resolution():
+    cap1 = get_capability("gemini-2.5-flash")
+    cap2 = get_capability("vertex_ai/gemini-2.5-flash")
+    assert cap1.display_name == cap2.display_name
+    assert cap1.enabled is True

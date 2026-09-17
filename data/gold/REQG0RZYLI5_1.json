@@ -1,6 +1,27 @@
 {
   "document": "data/uploads/REQG0RZYLI5_1.pdf",
   "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "itemized_bill",
+          "pages": "1",
+          "is_pharmacy_bill": false
+        },
+        {
+          "document_type": "prescription",
+          "pages": "2"
+        },
+        {
+          "document_type": "cash_receipt",
+          "pages": "3"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "4"
+        }
+      ]
+    },
     "itemized_bills": {
       "bills": [
         {
@@ -200,6 +221,82 @@
         }
       ],
       "policy_violations": []
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1360217,
+          "benefit_name": "In-Clinic Consults",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1360219,
+          "benefit_name": "Prescribed Diagnostics",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1360222,
+          "benefit_name": "Eye Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1360223,
+          "benefit_name": "Order Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    },
+    "policy": {
+      "text": "Inclusions:\n1. Consultations:\nGeneral Physician, Specialist, Super Specialist. All consultation documents to have Doctors Registration Number, illness/diagnosis mentioned and to be duly signed and stamped along with a stamped receipt of consultation fee.\nExcluded: Psychiatric/psychologist consultation/AYUSH consultation.\n2. Prescribed Diagnostics:\nTo cover Pathology, Radiology and scans by the prescription of the consultant. Consultation prescription to have Doctors Registration Number (MBBS only) and to be duly signed and stamped. Screening tests not covered unless prescribed.\n3. Diagnostic Tests:\nA diagnostic procedure is an examination to identify an individual's specific areas in order to determine a condition, disease or illness. The purpose of a diagnostic test is to establish the presence (or absence) of disease as a basis for treatment decisions in symptomatic or screen positive individuals (confirmatory test)\n4. Screening Tests:\nThe primary purpose of screening tests is to detect early disease or risk factors for disease in large numbers of apparently healthy individuals. Various kinds of Annual Health checks etc. and tests done by individual without any recommendation by a doctor/without any underlying disease/ symptom come in this category. These prescribed diagnostic tests are diagnostic scans limited to computerized tomography, magnetic resonance imaging, positron emission tomography, Upper GI Endoscopy, ultrasound scans (pelvis, abdomen, thyroid gland and breast), mammogram, bone densitometry, x-rays and gait scans and laboratory tests and pathology received as part of an outpatient treatment and not part of health screening or preventative measures.\n5. Pharmacy (Only with prescription)\nThe Pharmacy Expenses incurred in respect of that Insured Member, provided that the treating Medical Practitioner has prescribed such medicine. Medical expenses covered excluding All preventive care, Vaccination, including Inoculation and Immunizations (except in case of post -bite treatment will be covered as per WHO guidelines)\n6. Vision\nConsultations to Ophthalmologist & Optometrist and Subsequent tests recommended by the Ophthalmologist are covered. Prescription glass vision corrective Lens and Frames.\n7. Annual Health checkup(cashless only)\nPredefined Annual healthcheckup (super platinum) for employees only. once in a policy year\nExclusions:\n1. The policy excludes pre-post hospitalization/daycare/ maternity/ domiciliary /opd procedure claims payable under GMC policy.\n2. Maternity consultation and pre-post natal care will not be covered\n3. Pharmacy charges including self-medication, cost of Health drinks, Vitamins and supplements, medicated shampoos, acne creams face wash and other OTC drugs.\n4. Any health equipment including but not limited to Thermometers, BP apparatus, CPAP/Bi PAP machines.\n5. Dermatologist consultation (cosmetic in nature)\n6. Physiotherapy & Chiropractic consultation or sessions are not covered.\n7. Any treatment directly related to Birth control, Sterility and Infertility and surrogacy Treatment taken from anyone who is not a Medical Practitioner or from a Medical Practitioner who is practicing outside the discipline for which he is licensed or any kind of self-medication.\n8. Obesity/ Weight Control treatment for aesthetic purpose.\n9. Cosmetic or plastic Surgery treatment\n10. Change of gender treatments\n11. Acne and hair fall treatment\n12. All expenses related to donor treatment, including screening, surgery to remove organs from the donor, in case of transplant surgery.\n13. Expenses related to any kind of RMO charges, Service charge, Surcharge, night charges levied by the hospital under whatever head or any room upgrades, menu items not included as standard or visitors meals\n14. Alopecia wigs and/or toupee and all hair or hair fall treatment and products including any investigations; all forms of acne\n15. Treatments received in heath hydros, nature cure clinics, spas or similar establishments or private beds registered as a nursing home attached to such establishments or where admission is arranged wholly or partly for domestic reasons.\n16. Any charges made by the medical practitioner, hospital, laboratory or any such medical services which are not reasonable and customary.\n17. Genetic tests undertaken to establish whether or not the Insured may be genetically disposed to the development of a medical condition in the future unless requires for current medical treatment.\n18. Ear or body piercing and tattooing or treatment needed as a result of any of these\n19. For Home visit- Dr Visiting Charges will not be covered\n20. Cosmetic and contact lenses, spectacles even if prescribed and procedures, cataract and Lasik surgery, powered sunglasses, blue color lenses\n21. AYUSH prescribed pharmacy(allopathy/Ayush) and AYUSH prescribed diagnostics will not be covered\n22. Consumables are not covered udner the policy coverage ( Ex: Disposable & Routine Consumables, Injection & Infusion Related Consumables, Dressing & Wound Care Materials, Personal Comfort & Hygiene Items, Miscellaneous (Non-Medical / Daily-Use Items)\n23. Claims Submission clause - All claims to be submitted for processing within 45 days from date of expenses made, if not submitted the claim may be rejected"
     }
   }
 }

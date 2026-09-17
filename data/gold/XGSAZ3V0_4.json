@@ -1,0 +1,604 @@
+{
+  "document": "data/uploads/XGSAZ3V0_4.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "other",
+          "pages": "4"
+        },
+        {
+          "document_type": "prescription",
+          "pages": "2"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "1",
+          "is_pharmacy_bill": false
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "3, 5",
+          "is_pharmacy_bill": true
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "6-14"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-08-07",
+            "net_amount": 250.0,
+            "page_number": 1,
+            "invoice_number": "OPD-13438",
+            "facility_details": {
+              "name": "RAKSHA HEALTH CARE"
+            }
+          },
+          "items": [
+            {
+              "quantity": 1.0,
+              "item_name": "Follow-up Appointment - Dr. Raghavendra Jigalikoppa",
+              "net_amount": 250.0,
+              "unit_price": 250.0,
+              "is_returned": false,
+              "final_amount": 250.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-08-07",
+            "net_amount": 2704.0,
+            "page_number": 5,
+            "invoice_number": "S-10982",
+            "facility_details": {
+              "name": "M/s RAKSHA MEDICALS"
+            }
+          },
+          "items": [
+            {
+              "quantity": 30.0,
+              "item_name": "ITRALASE SB(130 MG)CAPSULES",
+              "net_amount": 799.71,
+              "unit_price": 266.57,
+              "is_returned": false,
+              "final_amount": 799.71
+            },
+            {
+              "quantity": 30.0,
+              "item_name": "MAXEVO 10-TABLET",
+              "net_amount": 225.0,
+              "unit_price": 75.0,
+              "is_returned": false,
+              "final_amount": 225.0
+            },
+            {
+              "quantity": 1.0,
+              "item_name": "MEPRECORT-8-TABLET",
+              "net_amount": 68.44,
+              "unit_price": 68.44,
+              "is_returned": false,
+              "final_amount": 68.44
+            },
+            {
+              "quantity": 1.0,
+              "item_name": "LOGIFEEL MOIST LOTION (BIG)",
+              "net_amount": 520.0,
+              "unit_price": 520.0,
+              "is_returned": false,
+              "final_amount": 520.0
+            },
+            {
+              "quantity": 1.0,
+              "item_name": "N SWET ANTIFUNGAL SOAP",
+              "net_amount": 140.0,
+              "unit_price": 140.0,
+              "is_returned": false,
+              "final_amount": 140.0
+            },
+            {
+              "quantity": 1.0,
+              "item_name": "TEEZOL-B-LOTION",
+              "net_amount": 126.56,
+              "unit_price": 126.56,
+              "is_returned": false,
+              "final_amount": 126.56
+            },
+            {
+              "quantity": 30.0,
+              "item_name": "AZTOFA-TABLET",
+              "net_amount": 824.0,
+              "unit_price": 412.0,
+              "is_returned": false,
+              "final_amount": 824.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "618d59e46876",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Consultation"
+            }
+          ]
+        },
+        {
+          "bill_id": "6ac0006fcbe6",
+          "categorized_items": [
+            {
+              "s.no.": 2,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 3,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 4,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 5,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 6,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 7,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 8,
+              "category": "Medicines From Shop"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": [
+        {
+          "nme_item": {
+            "sr.no": 5,
+            "item_name": "LOGIFEEL MOIST LOTION (BIG)",
+            "bill_amount": 520.0,
+            "deduction_reason": "Creams Powders Lotions: Not Payable (NME - Toiletries / Cosmetics / Personal Care)"
+          }
+        },
+        {
+          "nme_item": {
+            "sr.no": 6,
+            "item_name": "N SWET ANTIFUNGAL SOAP",
+            "bill_amount": 140.0,
+            "deduction_reason": "Toiletries / Cosmetics / Personal Care: Not Payable"
+          }
+        }
+      ]
+    },
+    "audit": {
+      "patches": [],
+      "bills_analyzed": 2,
+      "duplicates_found": 0,
+      "discrepancy_amount": 0.0,
+      "bills_with_corrections": 0,
+      "original_total_of_bills": 2954.0,
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "OTC medicines",
+        "food items",
+        "dietary supplements",
+        "protein powders",
+        "vitamins",
+        "minerals",
+        "wigs",
+        "toupees",
+        "hearing aids",
+        "cosmetic lenses"
+      ],
+      "policy_rules": [
+        "Hospitalization, IPD, day-care procedures, pre/post-hospitalization expenses, or expenses covered under group medical/IPD policy are not covered under OPD.",
+        "Medicines, diagnostics, or investigations taken without a valid doctor prescription are not covered.",
+        "OTC medicines, food items, dietary supplements, protein powders, vitamins, minerals, and similar products are not covered unless explicitly allowed and medically prescribed as part of treatment.",
+        "Cosmetic consultations, cosmetic medicines, cosmetic diagnostics, cosmetic procedures, chemical peel, laser hair removal, and other appearance-improvement treatments are not covered unless explicitly included.",
+        "Maternity, pre-natal/post-natal expenses, infertility, IVF, sterility, contraception, and related treatments are not covered unless explicitly included.",
+        "Obesity, weight-loss, slimming, hair fall, alopecia, baldness, acne, vitiligo, wigs, toupees, and similar treatments are not covered unless explicitly included.",
+        "Procedure fees during OP consultation such as dressing, wound cleaning, burn care, saline drips, and minor procedures are not covered unless specifically included.",
+        "Lasik, cataract surgery, hearing aids, cosmetic lenses, and similar vision/hearing procedures or devices are not covered unless specifically included.",
+        "Mental health, psychiatric, psychosomatic, developmental disorder-related treatment, counselling, and therapy are not covered unless specifically included.",
+        "Naturopathy, nature cure, spa, health hydros, experimental/unproven treatments, and non-medical/general advice-only consultations are not covered.",
+        "Treatment related to alcohol, drug/substance abuse, sexually transmitted diseases, hazardous/adventure sports, or breach of law/criminal intent is not covered.",
+        "Consultation claim requires Invoice + prescription / OP notes.",
+        "Diagnostics claim requires Invoice + prescription + test report.",
+        "Pharmacy claim requires Invoice + prescription.",
+        "Vaccination claim requires Invoice + prescription / recommendation.",
+        "Dental claim requires Invoice + prescription / treatment note.",
+        "Vision claim requires Invoice + prescription.",
+        "Dermatology claim requires Invoice + prescription."
+      ],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "Axis Bank",
+        "ifsc_code": "UTIB0000008",
+        "account_no": "922010034541854",
+        "bank_branch": null,
+        "account_type": "Savings",
+        "account_holder_name": "VISHALAKSHI MALAGI"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "diagnosis": "Pruritus",
+        "patient_age": 47,
+        "patient_name": "NAGAMMA MALAGI",
+        "hospital_city": "HAVERI",
+        "hospital_name": "RAKSHA HEALTHCARE",
+        "hospital_address": "High School Road, Near Suvarna Bank",
+        "hospital_pincode": "581 110",
+        "prescribed_items": [
+          {
+            "duration": "5 days",
+            "quantity": 5,
+            "frequency": "1-0-0",
+            "medicine_name": "Tab Nizol"
+          },
+          {
+            "duration": "5 days",
+            "quantity": 5,
+            "frequency": "1-0-0",
+            "medicine_name": "Any Cream"
+          },
+          {
+            "duration": "10 days",
+            "quantity": 10,
+            "frequency": "0-0-1",
+            "medicine_name": "Tab Maxx"
+          },
+          {
+            "duration": "10 days",
+            "quantity": 10,
+            "frequency": "0-0-1",
+            "medicine_name": "Tab PN"
+          },
+          {
+            "frequency": "1-1-0",
+            "medicine_name": "Lotion Feel"
+          },
+          {
+            "frequency": "0-1-0",
+            "medicine_name": "Nvt Fry"
+          },
+          {
+            "frequency": "1-1-0",
+            "medicine_name": "Tab Texlok"
+          }
+        ],
+        "prescription_date": "2026/08/07",
+        "hospital_phone_number": "7349156276",
+        "name_of_treating_doctor": "DR. RAGHAVENDRA JIGALIKOPPA",
+        "treating_doctor_qualification": "M.B.B.S. DDVL. FCSC"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": [
+        {
+          "code": "L29.9",
+          "name": "Pruritus, unspecified",
+          "type": "primary",
+          "block": "Other disorders of the skin and subcutaneous tissue",
+          "source": "Pruritus",
+          "chapter": "Diseases of the skin and subcutaneous tissue",
+          "diagnosis": "Pruritus",
+          "description": "Pruritus, unspecified",
+          "related_bill_ids": [
+            "618d59e46876",
+            "6ac0006fcbe6"
+          ]
+        }
+      ]
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "NAGAMMA MALAGI",
+          "patient_bank_name": "Axis Bank",
+          "patient_bank_ifsc_code": "UTIB0000008",
+          "patient_bank_account_no": "922010034541854",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "VISHALAKSHI MALAGI"
+        },
+        "clinical_details": {
+          "hospital_name": "RAKSHA HEALTHCARE"
+        },
+        "past_history_details": {},
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1362978,
+          "benefit_name": "Order Pharmacy",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Pharmacy items are present in the bill."
+        }
+      ],
+      "item_assignments": [
+        {
+          "bill_id": "6ac0006fcbe6",
+          "item_s_no": 2,
+          "benefit_id": 1362978,
+          "benefit_name": "Order Pharmacy"
+        },
+        {
+          "bill_id": "6ac0006fcbe6",
+          "item_s_no": 3,
+          "benefit_id": 1362978,
+          "benefit_name": "Order Pharmacy"
+        },
+        {
+          "bill_id": "6ac0006fcbe6",
+          "item_s_no": 4,
+          "benefit_id": 1362978,
+          "benefit_name": "Order Pharmacy"
+        },
+        {
+          "bill_id": "618d59e46876",
+          "item_s_no": 1,
+          "benefit_id": null,
+          "benefit_name": null
+        },
+        {
+          "bill_id": "6ac0006fcbe6",
+          "item_s_no": 5,
+          "benefit_id": null,
+          "benefit_name": null
+        },
+        {
+          "bill_id": "6ac0006fcbe6",
+          "item_s_no": 6,
+          "benefit_id": null,
+          "benefit_name": null
+        },
+        {
+          "bill_id": "6ac0006fcbe6",
+          "item_s_no": 7,
+          "benefit_id": null,
+          "benefit_name": null
+        },
+        {
+          "bill_id": "6ac0006fcbe6",
+          "item_s_no": 8,
+          "benefit_id": null,
+          "benefit_name": null
+        }
+      ]
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "618d59e46876",
+            "bill_date": "2026-08-07",
+            "bill_type": "itemized_bill",
+            "ip_number": null,
+            "net_amount": 250.0,
+            "page_number": 1,
+            "patient_name": "NAGAMMA MALAGI",
+            "invoice_number": "OPD-13438",
+            "total_discount": null,
+            "facility_details": {
+              "city": "HAVERI",
+              "name": "RAKSHA HEALTH CARE",
+              "state": "KARNATAKA",
+              "pincode": "581110",
+              "gst_number": null,
+              "address_line": "SURAJ COMPLEX, HIGHSCHOOL ROAD, NEAR SUVARNA BANK",
+              "registration_number": null
+            },
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "category": "Consultation",
+              "discount": null,
+              "quantity": 1.0,
+              "item_name": "Follow-up Appointment - Dr. Raghavendra Jigalikoppa",
+              "net_amount": 250.0,
+              "unit_price": 250.0,
+              "is_returned": false,
+              "final_amount": 250.0,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 250.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "6ac0006fcbe6",
+            "bill_date": "2026-08-07",
+            "bill_type": "itemized_bill",
+            "ip_number": null,
+            "net_amount": 2704.0,
+            "page_number": 5,
+            "patient_name": "NAGAMMA MALAGI",
+            "invoice_number": "S-10982",
+            "total_discount": null,
+            "facility_details": {
+              "city": "HAVERI",
+              "name": "M/s RAKSHA MEDICALS",
+              "state": null,
+              "pincode": "581110",
+              "gst_number": "29AUTPJ2514P1ZW",
+              "address_line": "CTS No: 104/B, Shop No: 2, Suraj Complex, Near Suvarna Bank",
+              "registration_number": null
+            },
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 30.0,
+              "item_name": "ITRALASE SB(130 MG)CAPSULES",
+              "net_amount": 799.71,
+              "unit_price": 266.57,
+              "is_returned": false,
+              "final_amount": 799.71,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 799.71
+            },
+            {
+              "s.no.": 3,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 30.0,
+              "item_name": "MAXEVO 10-TABLET",
+              "net_amount": 225.0,
+              "unit_price": 75.0,
+              "is_returned": false,
+              "final_amount": 225.0,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 225.0
+            },
+            {
+              "s.no.": 4,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 1.0,
+              "item_name": "MEPRECORT-8-TABLET",
+              "net_amount": 68.44,
+              "unit_price": 68.44,
+              "is_returned": false,
+              "final_amount": 68.44,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 68.44
+            },
+            {
+              "s.no.": 5,
+              "is_nme": true,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 1.0,
+              "item_name": "LOGIFEEL MOIST LOTION (BIG)",
+              "net_amount": 520.0,
+              "unit_price": 520.0,
+              "is_returned": false,
+              "final_amount": 520.0,
+              "nme_item_name": "LOGIFEEL MOIST LOTION (BIG)",
+              "nme_bill_amount": 520.0,
+              "deduction_reason": "Creams Powders Lotions: Not Payable (NME - Toiletries / Cosmetics / Personal Care)",
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 520.0
+            },
+            {
+              "s.no.": 6,
+              "is_nme": true,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 1.0,
+              "item_name": "N SWET ANTIFUNGAL SOAP",
+              "net_amount": 140.0,
+              "unit_price": 140.0,
+              "is_returned": false,
+              "final_amount": 140.0,
+              "nme_item_name": "N SWET ANTIFUNGAL SOAP",
+              "nme_bill_amount": 140.0,
+              "deduction_reason": "Toiletries / Cosmetics / Personal Care: Not Payable",
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 140.0
+            },
+            {
+              "s.no.": 7,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 1.0,
+              "item_name": "TEEZOL-B-LOTION",
+              "net_amount": 126.56,
+              "unit_price": 126.56,
+              "is_returned": false,
+              "final_amount": 126.56,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 126.56
+            },
+            {
+              "s.no.": 8,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 30.0,
+              "item_name": "AZTOFA-TABLET",
+              "net_amount": 824.0,
+              "unit_price": 412.0,
+              "is_returned": false,
+              "final_amount": 824.0,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 824.0
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1362978,
+          "benefit_name": "Order Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    },
+    "policy": {
+      "text": "## Inclusions\n\n1. Doctor consultations including General Physician, Specialist, and Super Specialist consultations.\n\n2. Prescribed diagnostics including pathology, radiology, and other investigations advised by a registered medical practitioner.\n\n3. Prescribed pharmacy expenses for medicines supported by a valid doctor prescription and invoice.\n\n4. WHO-approved vaccinations, if enabled under the employer benefit.\n\n5. Annual health check-up, if enabled under the employer benefit.\n\n6. Dental treatment, if enabled under the employer benefit.\n\n7. Vision care including prescribed lenses, glasses, or frames, if enabled under the employer benefit.\n\n8. Alternative medicines such as Ayurveda or Homeopathy, physiotherapy, dietician/nutritionist consultation, menopause-related treatment, or counselling are covered only if specifically enabled in the employer/insurer policy.\n\n---\n\n## Exclusions\n\n1. Hospitalization, IPD, day-care procedures, pre/post-hospitalization expenses, or expenses covered under group medical/IPD policy are not covered under OPD.\n\n2. Medicines, diagnostics, or investigations taken without a valid doctor prescription are not covered.\n\n3. OTC medicines, food items, dietary supplements, protein powders, vitamins, minerals, and similar products are not covered unless explicitly allowed and medically prescribed as part of treatment.\n\n4. Cosmetic consultations, cosmetic medicines, cosmetic diagnostics, cosmetic procedures, chemical peel, laser hair removal, and other appearance-improvement treatments are not covered unless explicitly included.\n\n5. Maternity, pre-natal/post-natal expenses, infertility, IVF, sterility, contraception, and related treatments are not covered unless explicitly included.\n\n6. Obesity, weight-loss, slimming, hair fall, alopecia, baldness, acne, vitiligo, wigs, toupees, and similar treatments are not covered unless explicitly included.\n\n7. Procedure fees during OP consultation such as dressing, wound cleaning, burn care, saline drips, and minor procedures are not covered unless specifically included.\n\n8. Lasik, cataract surgery, hearing aids, cosmetic lenses, and similar vision/hearing procedures or devices are not covered unless specifically included.\n\n9. Mental health, psychiatric, psychosomatic, developmental disorder-related treatment, counselling, and therapy are not covered unless specifically included.\n\n10. Naturopathy, nature cure, spa, health hydros, experimental/unproven treatments, and non-medical/general advice-only consultations are not covered.\n\n11. Treatment related to alcohol, drug/substance abuse, sexually transmitted diseases, hazardous/adventure sports, or breach of law/criminal intent is not covered.\n\n---\n\n## Minimum Documents Required\n\n| Benefit | Required Documents |\n|---|---|\n| Consultation | Invoice + prescription / OP notes |\n| Diagnostics | Invoice + prescription + test report |\n| Pharmacy | Invoice + prescription |\n| Vaccination | Invoice + prescription / recommendation |\n| Dental | Invoice + prescription / treatment note |\n| Vision | Invoice + prescription |\n| Dermatology | Invoice + prescription |\n\n---"
+    }
+  }
+}

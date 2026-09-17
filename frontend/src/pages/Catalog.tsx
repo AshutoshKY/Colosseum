@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useActions, useCatalog, useDiscoverVertexModels } from '../api/hooks'
+import { useActions, useCatalog, useDiscoverBedrockModels, useDiscoverVertexModels } from '../api/hooks'
 import {
   Badge,
   Card,
@@ -10,6 +10,7 @@ import {
   formatContextWindow,
   formatReleaseDate,
   getContextWindow,
+  getModelSpecs,
   modelId,
   money,
 } from '../components/common'
@@ -19,7 +20,11 @@ export default function Catalog() {
   const catalog = useCatalog()
   const actions = useActions()
   const [search, setSearch] = useState('')
+  const [selectedProvider, setSelectedProvider] = useState<string>('all')
+  const [selectedRegion, setSelectedRegion] = useState<string>('all')
+  const [selectedModality, setSelectedModality] = useState<string>('all')
   const [showDiscoverModal, setShowDiscoverModal] = useState(false)
+  const [showBedrockModal, setShowBedrockModal] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
   const [toast, setToast] = useState<{ msg: string; type: 'good' | 'bad' } | null>(null)
 
@@ -28,19 +33,57 @@ export default function Catalog() {
     setTimeout(() => setToast(null), 4500)
   }
 
+  const allCatalogModels = catalog.data ?? []
+
   const groups = useMemo(() => {
     const query = search.trim().toLowerCase()
-    const shown = (catalog.data ?? []).filter(model =>
-      (model.name ?? '').toLowerCase().includes(query) ||
-      modelId(model).toLowerCase().includes(query) ||
-      model.provider.toLowerCase().includes(query) ||
-      (model.family ?? '').toLowerCase().includes(query),
-    )
+    const shown = allCatalogModels.filter(model => {
+      const id = modelId(model).toLowerCase()
+      const name = (model.name ?? '').toLowerCase()
+      const provider = (model.provider ?? '').toLowerCase()
+      const family = (model.family ?? '').toLowerCase()
+      const region = (model.region ?? '').toLowerCase()
+      const regions = (model.regions ?? []).map(r => r.toLowerCase())
+
+      // Provider filter
+      if (selectedProvider !== 'all' && (model.provider || 'other') !== selectedProvider) {
+        return false
+      }
+
+      // Region filter
+      if (selectedRegion !== 'all') {
+        const matchReg = region === selectedRegion.toLowerCase() || regions.includes(selectedRegion.toLowerCase())
+        if (!matchReg) return false
+      }
+
+      // Modality filter
+      const specs = getModelSpecs(model)
+      if (selectedModality === 'vision' && !specs.hasVision) {
+        return false
+      }
+      if (selectedModality === 'pdf' && !specs.hasPdf) {
+        return false
+      }
+      if (selectedModality === 'thinking') {
+        const caps = model.capabilities
+        const hasThinking = typeof caps === 'object' && caps !== null && !Array.isArray(caps) && Boolean((caps as Record<string, unknown>).thinking)
+        if (!hasThinking) return false
+      }
+
+      if (query) {
+        const tokens = query.split(/\s+/).filter(Boolean)
+        const searchable = `${id} ${name} ${provider} ${family} ${region} ${regions.join(' ')}`.toLowerCase()
+        const match = tokens.every(tok => searchable.includes(tok))
+        if (!match) return false
+      }
+
+      return true
+    })
     return shown.reduce<Record<string, ModelItem[]>>((all, model) => {
       ;(all[model.provider] ??= []).push(model)
       return all
     }, {})
-  }, [catalog.data, search])
+  }, [allCatalogModels, search, selectedProvider, selectedRegion, selectedModality])
 
   const providers = Object.entries(groups)
 
@@ -61,14 +104,14 @@ export default function Catalog() {
         <div>
           <span className="eyebrow">Providers & Models</span>
           <h1>Model catalog</h1>
-          <p>Capabilities, pricing, availability gates, and live verification across Vertex AI & partners.</p>
+          <p>Capabilities, pricing, availability gates, and live multi-region verification across AWS Bedrock, Google Vertex AI, OpenRouter & partners.</p>
         </div>
         <div className="catalog-header-actions">
           <label className="search">
             <input
               value={search}
               onChange={event => setSearch(event.target.value)}
-              placeholder="Search models or providers…"
+              placeholder="Search models, providers, or regions (e.g. us-west-2, virginia, sonnet)…"
               aria-label="Search catalog"
             />
           </label>
@@ -76,9 +119,17 @@ export default function Catalog() {
             type="button"
             className="secondary discover-btn"
             onClick={() => setShowDiscoverModal(true)}
-            title="Scan & discover Vertex AI and Partner models"
+            title="Scan & discover Vertex AI and Partner models across locations"
           >
-            🔍 Check Vertex Models
+            🔍 Discover Vertex Models
+          </button>
+          <button
+            type="button"
+            className="secondary discover-btn"
+            onClick={() => setShowBedrockModal(true)}
+            title="Scan & discover AWS Bedrock models across any region (us-east-1, us-west-2, ap-south-1, etc.)"
+          >
+            🔍 Discover Bedrock Models
           </button>
           <button
             type="button"
@@ -90,6 +141,154 @@ export default function Catalog() {
           </button>
         </div>
       </header>
+
+      {/* Catalog Filters Bar */}
+      <div className="universal-search-container" style={{ margin: '0.75rem 0 1.25rem 0' }}>
+        <div className="model-filter-tabs">
+          <button
+            type="button"
+            className={`filter-tab-pill ${selectedProvider === 'all' ? 'active' : ''}`}
+            onClick={() => setSelectedProvider('all')}
+          >
+            All Providers ({allCatalogModels.length})
+          </button>
+          <button
+            type="button"
+            className={`filter-tab-pill ${selectedProvider === 'bedrock' ? 'active' : ''}`}
+            onClick={() => setSelectedProvider('bedrock')}
+          >
+            AWS Bedrock
+          </button>
+          <button
+            type="button"
+            className={`filter-tab-pill ${selectedProvider === 'vertex_ai' || selectedProvider === 'vertex_partner' ? 'active' : ''}`}
+            onClick={() => setSelectedProvider(p => p.startsWith('vertex') ? 'all' : 'vertex_ai')}
+          >
+            Vertex AI
+          </button>
+          <button
+            type="button"
+            className={`filter-tab-pill ${selectedProvider === 'openrouter' ? 'active' : ''}`}
+            onClick={() => setSelectedProvider('openrouter')}
+          >
+            OpenRouter
+          </button>
+        </div>
+
+        {/* Region & Modality Filter Chips */}
+        <div className="modality-filter-chips">
+          <span className="filter-chips-label">Region:</span>
+          <button
+            type="button"
+            className={`modality-chip ${selectedRegion === 'all' ? 'active' : ''}`}
+            onClick={() => setSelectedRegion('all')}
+          >
+            All Regions
+          </button>
+          <button
+            type="button"
+            className={`modality-chip ${selectedRegion === 'us-east-1' ? 'active' : ''}`}
+            onClick={() => setSelectedRegion(r => r === 'us-east-1' ? 'all' : 'us-east-1')}
+          >
+            🌐 us-east-1 (N. Virginia)
+          </button>
+          <button
+            type="button"
+            className={`modality-chip ${selectedRegion === 'us-west-2' ? 'active' : ''}`}
+            onClick={() => setSelectedRegion(r => r === 'us-west-2' ? 'all' : 'us-west-2')}
+          >
+            🌐 us-west-2 (Oregon)
+          </button>
+          <button
+            type="button"
+            className={`modality-chip ${selectedRegion === 'ap-south-1' ? 'active' : ''}`}
+            onClick={() => setSelectedRegion(r => r === 'ap-south-1' ? 'all' : 'ap-south-1')}
+          >
+            🌐 ap-south-1 (Mumbai)
+          </button>
+          <button
+            type="button"
+            className={`modality-chip ${selectedRegion === 'eu-west-1' ? 'active' : ''}`}
+            onClick={() => setSelectedRegion(r => r === 'eu-west-1' ? 'all' : 'eu-west-1')}
+          >
+            🌐 eu-west-1 (Ireland)
+          </button>
+          <button
+            type="button"
+            className={`modality-chip ${selectedRegion === 'us-central1' ? 'active' : ''}`}
+            onClick={() => setSelectedRegion(r => r === 'us-central1' ? 'all' : 'us-central1')}
+          >
+            🌐 us-central1 (Vertex)
+          </button>
+          <button
+            type="button"
+            className={`modality-chip ${selectedRegion === 'global' ? 'active' : ''}`}
+            onClick={() => setSelectedRegion(r => r === 'global' ? 'all' : 'global')}
+          >
+            🌐 Global (OpenRouter)
+          </button>
+        </div>
+
+        <div className="modality-filter-chips" style={{ borderTop: 'none', paddingTop: 0 }}>
+          <span className="filter-chips-label">Features:</span>
+          <button
+            type="button"
+            className={`modality-chip ${selectedModality === 'all' ? 'active' : ''}`}
+            onClick={() => setSelectedModality('all')}
+          >
+            All Modalities
+          </button>
+          <button
+            type="button"
+            className={`modality-chip ${selectedModality === 'vision' ? 'active' : ''}`}
+            onClick={() => setSelectedModality(m => m === 'vision' ? 'all' : 'vision')}
+          >
+            👁 Vision
+          </button>
+          <button
+            type="button"
+            className={`modality-chip ${selectedModality === 'pdf' ? 'active' : ''}`}
+            onClick={() => setSelectedModality(m => m === 'pdf' ? 'all' : 'pdf')}
+          >
+            📄 PDF Native
+          </button>
+          <button
+            type="button"
+            className={`modality-chip ${selectedModality === 'thinking' ? 'active' : ''}`}
+            onClick={() => setSelectedModality(m => m === 'thinking' ? 'all' : 'thinking')}
+          >
+            🧠 Thinking
+          </button>
+        </div>
+      </div>
+
+      {search.trim() && (
+        <div
+          className="discovery-search-hint"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'rgba(255, 153, 0, 0.08)',
+            border: '1px solid rgba(255, 153, 0, 0.28)',
+            borderRadius: '8px',
+            padding: '0.65rem 1rem',
+            margin: '0.5rem 0 1.25rem 0',
+          }}
+        >
+          <span style={{ fontSize: '0.9rem', color: '#ffb347' }}>
+            🌐 Searching live AWS Bedrock models? Discover & import foundation models & inference profiles directly from AWS.
+          </span>
+          <button
+            type="button"
+            className="secondary small"
+            onClick={() => setShowBedrockModal(true)}
+            style={{ marginLeft: '1rem', whiteSpace: 'nowrap' }}
+          >
+            🔍 Discover Bedrock Models
+          </button>
+        </div>
+      )}
 
       {toast && (
         <div className={`alert ${toast.type}`} style={{ margin: '0.75rem 0' }}>
@@ -104,7 +303,13 @@ export default function Catalog() {
         providers.map(([provider, models]) => (
           <section key={provider}>
             <h2 className="section-title">
-              {provider.replaceAll('_', ' ')}
+              {provider === 'vertex_ai'
+                ? 'Google Vertex AI'
+                : provider === 'bedrock'
+                ? 'AWS Bedrock (us-east-1)'
+                : provider === 'openrouter'
+                ? 'OpenRouter'
+                : provider.replaceAll('_', ' ')}
               <span className="count-pill">{models.length}</span>
             </h2>
             <div className="catalog-grid">
@@ -121,7 +326,7 @@ export default function Catalog() {
           </section>
         ))
       ) : (
-        <Empty>No models match your search.</Empty>
+        <Empty>No models match your search filters.</Empty>
       )}
 
       <ErrorBox error={catalog.error ?? actions.verify.error ?? actions.addModel.error} />
@@ -130,6 +335,18 @@ export default function Catalog() {
       {showDiscoverModal && (
         <DiscoverModal
           onClose={() => setShowDiscoverModal(false)}
+          onAdded={(name) => {
+            showToast(`✓ Added ${name} to Catalog!`)
+            catalog.refetch()
+          }}
+        />
+      )}
+
+      {/* Discover AWS Bedrock Models Modal */}
+      {showBedrockModal && (
+        <BedrockDiscoverModal
+          initialSearch={search}
+          onClose={() => setShowBedrockModal(false)}
           onAdded={(name) => {
             showToast(`✓ Added ${name} to Catalog!`)
             catalog.refetch()
@@ -168,6 +385,7 @@ function ModelCard({
   const ctxFormatted = formatContextWindow(ctx)
   const relDate = formatReleaseDate(model.release_date)
   const isCustom = model.family === 'custom' || id.startsWith('dyn:') || model.family === 'openrouter'
+  const specs = getModelSpecs(model)
 
   return (
     <Card>
@@ -180,6 +398,9 @@ function ModelCard({
       <code>{id}</code>
       <div className="badges">
         {capabilityList(model.capabilities).map(cap => <Badge key={cap}>{cap}</Badge>)}
+        <span className="spec-pill pill-region" title={`Cloud Region: ${specs.region}`}>
+          🌐 {specs.region}
+        </span>
       </div>
       <dl className="details">
         <dt>Input / 1M</dt>
@@ -214,9 +435,10 @@ function ModelCard({
   )
 }
 
-/** Modal to scan, inspect, and add Vertex AI and Partner models */
+/** Modal to scan, inspect, and add Vertex AI and Partner models across locations */
 function DiscoverModal({ onClose, onAdded }: { onClose: () => void; onAdded: (name: string) => void }) {
-  const discover = useDiscoverVertexModels()
+  const [selectedLoc, setSelectedLoc] = useState<string>('us-central1')
+  const discover = useDiscoverVertexModels(selectedLoc)
   const actions = useActions()
   const [filterPub, setFilterPub] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
@@ -224,6 +446,14 @@ function DiscoverModal({ onClose, onAdded }: { onClose: () => void; onAdded: (na
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set())
 
   const items = discover.data?.discovered ?? []
+
+  const locations = [
+    { id: 'us-central1', name: 'us-central1 (Iowa)' },
+    { id: 'us-east4', name: 'us-east4 (N. Virginia)' },
+    { id: 'us-west1', name: 'us-west1 (Oregon)' },
+    { id: 'europe-west4', name: 'europe-west4 (Netherlands)' },
+    { id: 'asia-east1', name: 'asia-east1 (Taiwan)' },
+  ]
 
   const publishers = useMemo(() => {
     const pubs = new Set<string>()
@@ -235,14 +465,13 @@ function DiscoverModal({ onClose, onAdded }: { onClose: () => void; onAdded: (na
 
   const filteredItems = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
+    const tokens = term ? term.split(/\s+/).filter(Boolean) : []
     return items.filter(item => {
       const matchPub = filterPub === 'all' || item.publisher === filterPub
-      const matchTerm = !term ||
-        item.model_id.toLowerCase().includes(term) ||
-        item.name.toLowerCase().includes(term) ||
-        item.family.toLowerCase().includes(term) ||
-        item.publisher.toLowerCase().includes(term)
-      return matchPub && matchTerm
+      if (!matchPub) return false
+      if (!tokens.length) return true
+      const searchable = `${item.model_id} ${item.name} ${item.family} ${item.publisher} ${item.description || ''}`.toLowerCase()
+      return tokens.every(tok => searchable.includes(tok))
     })
   }, [items, filterPub, searchTerm])
 
@@ -254,6 +483,8 @@ function DiscoverModal({ onClose, onAdded }: { onClose: () => void; onAdded: (na
         display_name: item.name,
         provider: item.provider,
         family: item.family,
+        region: selectedLoc,
+        regions: [selectedLoc],
         modalities: Array.isArray(item.capabilities.modalities) ? item.capabilities.modalities : ['text'],
         pdf_native: Boolean(item.capabilities.pdf_native),
         vision: Boolean(item.capabilities.vision),
@@ -287,19 +518,39 @@ function DiscoverModal({ onClose, onAdded }: { onClose: () => void; onAdded: (na
       <div className="modal-content discover-modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <div>
-            <h2>🔍 Check Vertex AI & Partner Models</h2>
+            <h2>🔍 Discover Vertex AI & Partner Models ({selectedLoc})</h2>
             <p className="muted">
-              Live probe of Foundation Models and Model Garden partners available on your Vertex project.
+              Live probe of Foundation Models and Model Garden partners available in your selected location.
             </p>
           </div>
           <button type="button" className="close-btn" onClick={onClose} aria-label="Close modal">✕</button>
+        </div>
+
+        {/* Location Selector Bar */}
+        <div className="discovery-region-selector">
+          <span className="discovery-region-label">🌐 Vertex Location:</span>
+          <select
+            className="region-select-dropdown"
+            value={selectedLoc}
+            onChange={e => setSelectedLoc(e.target.value)}
+          >
+            {locations.map(loc => (
+              <option key={loc.id} value={loc.id}>
+                {loc.name}
+              </option>
+            ))}
+          </select>
+          {discover.data && (
+            <span className="muted small" style={{ marginLeft: 'auto' }}>
+              <strong>Project:</strong> <code>{discover.data.project || 'vertex-internal-testing'}</code>
+            </span>
+          )}
         </div>
 
         {discover.data && (
           <div className="discovery-status-bar">
             <span className={`status-dot ${discover.data.has_credentials ? 'green' : 'red'}`} />
             <span>
-              <strong>Project:</strong> <code>{discover.data.project || 'vertex-internal-testing'}</code> ·{' '}
               <strong>Location:</strong> <code>{discover.data.location}</code> ·{' '}
               <strong>Discovered:</strong> {discover.data.total} models
             </span>
@@ -342,7 +593,7 @@ function DiscoverModal({ onClose, onAdded }: { onClose: () => void; onAdded: (na
           {discover.isLoading ? (
             <div className="discovery-loading">
               <Spinner />
-              <p>Scanning Vertex AI Model Garden & checking model availability…</p>
+              <p>Scanning Vertex AI ({selectedLoc}) Model Garden & checking availability…</p>
             </div>
           ) : filteredItems.length === 0 ? (
             <div className="discovery-empty">
@@ -398,7 +649,278 @@ function DiscoverModal({ onClose, onAdded }: { onClose: () => void; onAdded: (na
 
         <div className="modal-footer">
           <span className="muted">
-            Showing {filteredItems.length} of {items.length} discovered models
+            Showing {filteredItems.length} of {items.length} discovered models in {selectedLoc}
+          </span>
+          <div className="row gap">
+            <button
+              type="button"
+              className="secondary"
+              onClick={handleAddAll}
+              disabled={discover.isLoading || filteredItems.every(i => i.is_registered || addedIds.has(i.model_id))}
+            >
+              + Add All Unregistered Models
+            </button>
+            <button type="button" className="primary" onClick={onClose}>
+              Done
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/** Modal to discover and import AWS Bedrock foundation models across any AWS region */
+function BedrockDiscoverModal({
+  initialSearch = '',
+  onClose,
+  onAdded,
+}: {
+  initialSearch?: string
+  onClose: () => void
+  onAdded: (name: string) => void
+}) {
+  const [selectedRegion, setSelectedRegion] = useState<string>('us-east-1')
+  const discover = useDiscoverBedrockModels(selectedRegion)
+  const actions = useActions()
+  const [filterPub, setFilterPub] = useState<string>('all')
+  const [searchTerm, setSearchTerm] = useState(initialSearch)
+  const [addingId, setAddingId] = useState<string | null>(null)
+  const [addedIds, setAddedIds] = useState<Set<string>>(new Set())
+  const [settingActive, setSettingActive] = useState(false)
+  const [activeMsg, setActiveMsg] = useState<string | null>(null)
+
+  const items = discover.data?.discovered ?? []
+
+  const bedrockRegions = [
+    { id: 'us-east-1', name: 'us-east-1 (N. Virginia)' },
+    { id: 'us-west-2', name: 'us-west-2 (Oregon)' },
+    { id: 'ap-south-1', name: 'ap-south-1 (Mumbai)' },
+    { id: 'eu-west-1', name: 'eu-west-1 (Ireland)' },
+    { id: 'us-east-2', name: 'us-east-2 (Ohio)' },
+    { id: 'eu-central-1', name: 'eu-central-1 (Frankfurt)' },
+    { id: 'ap-southeast-1', name: 'ap-southeast-1 (Singapore)' },
+    { id: 'ap-northeast-1', name: 'ap-northeast-1 (Tokyo)' },
+  ]
+
+  const publishers = useMemo(() => {
+    const pubs = new Set<string>()
+    for (const item of items) {
+      if (item.publisher) pubs.add(item.publisher)
+    }
+    return ['all', ...Array.from(pubs).sort()]
+  }, [items])
+
+  const filteredItems = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase()
+    const tokens = term ? term.split(/\s+/).filter(Boolean) : []
+    return items.filter(item => {
+      const matchPub = filterPub === 'all' || item.publisher === filterPub
+      if (!matchPub) return false
+      if (!tokens.length) return true
+      const searchable = `${item.model_id} ${item.name} ${item.family} ${item.publisher} ${item.description || ''}`.toLowerCase()
+      return tokens.every(tok => searchable.includes(tok))
+    })
+  }, [items, filterPub, searchTerm])
+
+  const handleMakeActiveRegion = async () => {
+    setSettingActive(true)
+    try {
+      await actions.setBedrockRegion.mutateAsync(selectedRegion)
+      setActiveMsg(`✓ Set ${selectedRegion} as active Bedrock region!`)
+      setTimeout(() => setActiveMsg(null), 3500)
+    } catch (err) {
+      setActiveMsg(`Failed to set region: ${err}`)
+    } finally {
+      setSettingActive(false)
+    }
+  }
+
+  const handleAddModel = async (item: DiscoveredModelItem) => {
+    setAddingId(item.model_id)
+    try {
+      await actions.addModel.mutateAsync({
+        model_id: item.model_id,
+        display_name: item.name,
+        provider: 'bedrock',
+        family: item.family,
+        region: selectedRegion,
+        regions: [selectedRegion],
+        modalities: Array.isArray(item.capabilities.modalities) ? item.capabilities.modalities : ['text'],
+        pdf_native: Boolean(item.capabilities.pdf_native),
+        vision: Boolean(item.capabilities.vision),
+        context_window: item.capabilities.context_window,
+        structured_method: (item.capabilities.structured_method as string) ?? 'json_mode',
+        thinking: Boolean(item.capabilities.thinking),
+        caching: Boolean(item.capabilities.caching),
+        input_per_million: item.pricing.input_per_million ?? item.pricing.input ?? 0,
+        output_per_million: item.pricing.output_per_million ?? item.pricing.output ?? 0,
+        enabled: true,
+        verify_now: false,
+      })
+      setAddedIds(prev => new Set(prev).add(item.model_id))
+      onAdded(item.name)
+    } catch (err) {
+      console.error('Failed to add Bedrock model:', err)
+    } finally {
+      setAddingId(null)
+    }
+  }
+
+  const handleAddAll = async () => {
+    const unreg = filteredItems.filter(item => !item.is_registered && !addedIds.has(item.model_id))
+    for (const item of unreg) {
+      await handleAddModel(item)
+    }
+  }
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content discover-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <div>
+            <h2>🔍 Discover AWS Bedrock Models ({selectedRegion})</h2>
+            <p className="muted">
+              Select any AWS region to scan live foundation models and cross-region inference profiles.
+            </p>
+          </div>
+          <button type="button" className="close-btn" onClick={onClose} aria-label="Close modal">✕</button>
+        </div>
+
+        {/* Region Selector Bar */}
+        <div className="discovery-region-selector">
+          <span className="discovery-region-label">🌐 Bedrock Region:</span>
+          <select
+            className="region-select-dropdown"
+            value={selectedRegion}
+            onChange={e => setSelectedRegion(e.target.value)}
+          >
+            {bedrockRegions.map(reg => (
+              <option key={reg.id} value={reg.id}>
+                {reg.name}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="small secondary"
+            onClick={handleMakeActiveRegion}
+            disabled={settingActive}
+            title="Set as active region in Colosseum backend settings"
+          >
+            {settingActive ? 'Setting…' : '⭐ Set as Active Region'}
+          </button>
+          {activeMsg && (
+            <span className="small text-good" style={{ marginLeft: '0.5rem', fontWeight: 600 }}>
+              {activeMsg}
+            </span>
+          )}
+        </div>
+
+        {discover.data && (
+          <div className="discovery-status-bar">
+            <span className={`status-dot ${discover.data.has_credentials ? 'green' : 'red'}`} />
+            <span>
+              <strong>Region:</strong> <code>{discover.data.region}</code> ·{' '}
+              <strong>Discovered:</strong> {discover.data.total} models ·{' '}
+              <strong>Auth:</strong> {discover.data.has_credentials ? 'IAM SigV4 (Auto-renewing)' : 'Credentials missing'}
+            </span>
+            <button
+              type="button"
+              className="small ghost"
+              disabled={discover.isFetching}
+              onClick={() => discover.refetch()}
+              title="Rescan Bedrock"
+            >
+              {discover.isFetching ? 'Scanning…' : '🔄 Refresh'}
+            </button>
+          </div>
+        )}
+
+        <div className="discovery-controls">
+          <input
+            type="search"
+            className="discovery-search"
+            placeholder="Filter discovered Bedrock models (e.g. qwen, claude, sonnet, nova, deepseek, mistral, llama)…"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+
+          <div className="discovery-filter-tabs">
+            {publishers.map(pub => (
+              <button
+                key={pub}
+                type="button"
+                className={`tab-btn ${filterPub === pub ? 'active' : ''}`}
+                onClick={() => setFilterPub(pub)}
+              >
+                {pub === 'all' ? 'All Publishers' : pub.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="discovery-items-container">
+          {discover.isLoading ? (
+            <div className="discovery-loading">
+              <Spinner />
+              <p>Scanning AWS Bedrock ({selectedRegion}) foundation models…</p>
+            </div>
+          ) : filteredItems.length === 0 ? (
+            <div className="discovery-empty">
+              <p className="muted">No models match your search filters in {selectedRegion}.</p>
+            </div>
+          ) : (
+            <div className="discovery-items-grid">
+              {filteredItems.map(item => {
+                const inCatalog = item.is_registered || addedIds.has(item.model_id)
+                const isAdding = addingId === item.model_id
+                const ctxFmt = formatContextWindow(item.capabilities.context_window)
+
+                return (
+                  <div className={`discovery-item-card ${inCatalog ? 'in-catalog' : ''}`} key={item.model_id}>
+                    <div className="item-header">
+                      <div className="item-title">
+                        <span className="publisher-badge">{item.publisher}</span>
+                        <strong>{item.name}</strong>
+                      </div>
+                      <Badge tone={inCatalog ? 'good' : 'neutral'}>
+                        {inCatalog ? 'In Catalog' : 'Available'}
+                      </Badge>
+                    </div>
+
+                    <code className="item-code">{item.model_id}</code>
+
+                    <div className="item-meta">
+                      {item.capabilities.pdf_native && <Badge tone="good">PDF Native</Badge>}
+                      {item.capabilities.vision && <Badge>Vision</Badge>}
+                      {item.capabilities.thinking && <Badge tone="info">Thinking</Badge>}
+                      {ctxFmt && <span className="meta-tag">⚡ {ctxFmt}</span>}
+                      <span className="meta-tag">
+                        💰 ${item.pricing.input_per_million ?? item.pricing.input ?? 0} / ${item.pricing.output_per_million ?? item.pricing.output ?? 0}
+                      </span>
+                    </div>
+
+                    <div className="item-actions">
+                      <button
+                        type="button"
+                        className={inCatalog ? 'small ghost disabled-btn' : 'small primary'}
+                        disabled={inCatalog || isAdding}
+                        onClick={() => handleAddModel(item)}
+                      >
+                        {isAdding ? 'Adding…' : inCatalog ? '✓ Added to Catalog' : '+ Add to Catalog'}
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        <div className="modal-footer">
+          <span className="muted">
+            Showing {filteredItems.length} of {items.length} discovered models in {selectedRegion}
           </span>
           <div className="row gap">
             <button
@@ -425,6 +947,7 @@ function AddModelModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
   const [modelIdInput, setModelIdInput] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [provider, setProvider] = useState('vertex_ai')
+  const [region, setRegion] = useState('us-east-1')
   const [family, setFamily] = useState('gemini')
   const [pdfNative, setPdfNative] = useState(false)
   const [vision, setVision] = useState(true)
@@ -453,10 +976,13 @@ function AddModelModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
       } else {
         setProvider('vertex_ai')
       }
+      setRegion('us-central1')
     } else if (lower.startsWith('openrouter/')) {
       setProvider('openrouter')
+      setRegion('global')
     } else if (lower.startsWith('bedrock/')) {
       setProvider('bedrock')
+      setRegion('us-east-1')
     }
 
     if (lower.includes('gemini')) {
@@ -508,6 +1034,8 @@ function AddModelModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
         display_name: displayName.trim() || modelIdInput.trim(),
         provider,
         family,
+        region,
+        regions: [region],
         pdf_native: pdfNative,
         vision,
         thinking,
@@ -548,6 +1076,8 @@ function AddModelModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
         display_name: displayName.trim() || modelIdInput.trim(),
         provider,
         family,
+        region,
+        regions: [region],
         modalities: [
           'text',
           ...(pdfNative ? ['pdf'] : []),
@@ -578,7 +1108,7 @@ function AddModelModal({ onClose, onSuccess }: { onClose: () => void; onSuccess:
         <div className="modal-header">
           <div>
             <h2>+ Add New Model</h2>
-            <p className="muted">Register any Vertex AI, Model Garden, Bedrock, or OpenAI-compatible model.</p>
+            <p className="muted">Register any Bedrock, Vertex AI, Model Garden, or OpenAI-compatible model with regional routing.</p>
           </div>
           <button type="button" className="close-btn" onClick={onClose} aria-label="Close modal">✕</button>
         </div>

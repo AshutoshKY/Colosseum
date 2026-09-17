@@ -1,6 +1,27 @@
 {
   "document": "data/uploads/SH4ZKYPI_1.pdf",
   "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "investigation_report",
+          "pages": "1-4"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "5-6",
+          "is_pharmacy_bill": false
+        },
+        {
+          "document_type": "prescription",
+          "pages": "7"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "8-11"
+        }
+      ]
+    },
     "itemized_bills": {
       "bills": [
         {
@@ -400,6 +421,34 @@
         }
       ],
       "policy_violations": []
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1364298,
+          "benefit_name": "Prescribed Diagnostics",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    },
+    "policy": {
+      "text": "INCLUSION CRITERIA CELL ===\nINCLUSIONS\nPLANS & SUM INSURED (PER FAMILY)\n1. Core: Overall SI (per family) - Rs. 35,000 | Diagnostic cover cap - Rs. 15,000\n2. Silver: Overall SI (per family) - Rs. 40,000 | Diagnostic cover cap - Rs. 20,000\n3. Gold: Overall SI (per family) - Rs. 50,000 | Diagnostic cover cap - Rs. 30,000\n4. Platinum: Overall SI (per family) - Rs. 60,000 | Diagnostic cover cap - Rs. 40,000\n5. Platinum Plus: Overall SI (per family) - Rs. 75,000 | Diagnostic cover cap - Rs. 50,000\n6. Platinum Advanced: Overall SI (per family) - Rs. 85,000 | Diagnostic cover cap - Rs. 60,000\nSECTION B - OUTPATIENT BENEFIT (COMMON ACROSS PLANS)\n1. Base Benefit: Outpatient Cover - overall SI per family, 0% co-pay on Consultation, Diagnostic, Pharmacy and Minor Procedure services.\n2. Consultation / Minor Procedure / Pharmacy / Diagnostic (cashless & reimbursement): in-person consultations for vision & dental only; Vision - prescribed lens cost, frames up to Rs. 3,500; Dental - except cosmetic, scaling up to Rs. 3,000; Diagnostic (vision & dental only) up to the plan cap above.\n3. Consultation cover (in-person) up to Rs. 5,000.\n4. Teleconsultation - unlimited with GP & specialist, applicable to all members.\nSECTION C - WELLNESS COVER\n1. C.1 Routine Physical & Preventive Examinations - 1 pre-defined annual health check-up package, employee only, cashless.\n2. C.2 Onsite Health Services - Cancer Vaccination (cervical cancer only, WHO approved) up to Rs. 7,500 for employee, spouse and children.\nOTHER CONDITIONS\n1. Waiting period 0 days; deductible not applicable.\n2. Cashless services only through network providers; every OPD claim (except cervical cancer vaccine) requires a prescription, including eyeware.\n3. Diagnostic tests covered are per Annexure A of the policy (107-test list).\n=== EXCLUSION CRITERIA CELL ===\nEXCLUSIONS\nStandard Exclusions (Section B):\n1. 30-day waiting period (Excl 03)\n2. Change of Gender treatments (Excl 07)\n3. Unproven Treatment (Excl 16)\n4. Alcoholism, drug or substance abuse (Excl 12)\n5. Breach of Law (Excl 10)\n6. Sterility and Infertility (Excl 17)\n7. Cosmetic or Plastic Surgery (Excl 08)\n8. Hazardous or Adventure Sport (Excl 09)\n9. Treatments in heath hydros, nature cure clinics, spas or similar establishments (Excl 13)\n10. Dietary supplements/substances purchasable without prescription unless prescribed (Excl 14)\nSpecific Exclusions (Section B):\n11. Expenses due to contraction of illness necessitating hospitalisation; personal comfort / cosmetics convenience\n12. War, invasion, act of foreign enemy or war-like operations\n13. Defects/anomalies, venereal disease except HIV, intentional self-injury; alternative treatment except AYUSH\n14. HTLV-III / LAV (or mutants) related conditions\n15. Nuclear weapons/materials, ionising radiation or radioactive contamination\n16. Voluntary medical termination of pregnancy within the first 12 weeks\n17. Instruments used for sleep apnoea, CAPD, or oxygen concentrator for bronchial asthma\n18. Any sexually transmitted disease except HIV\n19. Treatment received outside India"
     }
   }
 }

@@ -7,7 +7,7 @@ export interface Runtime { model_id: string | null; thinking_budget: number | nu
 export interface RunSpec { name: string; pack: PackName; variant: string | null; selected_tasks: string[]; document_ids: number[]; model_ids: string[]; upstream_mode: 'gold' | 'model'; prompt_overrides: Record<string, {system_prompt: string; instruction_template: string}>; runtime_overrides: Record<string, Partial<Runtime>>; concurrency: {global: number; per_provider: Record<string, number>}; judge: {enabled: boolean; model_id: string; modes: JudgeMode[]}; compression: {enabled: boolean; max_megapixels: number; max_image_mb: number | null}; confirm_large: boolean }
 export interface DocumentItem { id: number; filename: string; name?: string; sha256?: string; page_count?: number; origin?: string; created_at?: string | null; has_gold?: boolean | Record<string, boolean>; gold_keys?: string[] }
 
-export interface TaskMeta { name: string; deterministic: boolean; depends_on: string[]; document_types?: string[]; is_text_task?: boolean; reference_runtime: Runtime; gold_feed_keys: string[]; system_prompt?: string; instruction_template?: string }
+export interface TaskMeta { name: string; deterministic: boolean; depends_on: string[]; document_types?: string[]; is_text_task?: boolean; reference_runtime: Runtime; gold_feed_keys: string[]; gold_context_keys?: string[]; system_prompt?: string; instruction_template?: string }
 export interface PackMeta { name: PackName; variants?: string[]; tasks: TaskMeta[]; order?: string[] }
 export interface ModelCapabilities {
   modalities?: string[]
@@ -31,6 +31,8 @@ export interface ModelItem {
   verified?: boolean
   gate_reason?: string | null
   release_date?: string | null
+  region?: string | null
+  regions?: string[]
   context_window?: number | null
   capabilities?: string[] | ModelCapabilities
   pricing?: {
@@ -52,6 +54,8 @@ export interface DiscoveredModelItem {
   description?: string | null
   is_registered: boolean
   is_callable?: boolean | null
+  region?: string | null
+  regions?: string[]
   capabilities: ModelCapabilities
   pricing: {
     input?: number | null
@@ -65,11 +69,34 @@ export interface DiscoveredModelItem {
   status: 'registered' | 'available' | 'callable' | 'unverified' | string
 }
 
+export interface RegionInfo {
+  id: string
+  name: string
+  provider: string
+  is_default?: boolean
+}
+
+export interface RegionsResponse {
+  bedrock: RegionInfo[]
+  vertex_ai: RegionInfo[]
+  active_bedrock_region: string
+  active_vertex_location: string
+}
+
 export interface DiscoverVertexResponse {
   total: number
   has_credentials: boolean
   project?: string | null
   location: string
+  available_locations?: string[]
+  discovered: DiscoveredModelItem[]
+}
+
+export interface DiscoverBedrockResponse {
+  total: number
+  has_credentials: boolean
+  region: string
+  available_regions?: string[]
   discovered: DiscoveredModelItem[]
 }
 
@@ -79,6 +106,8 @@ export interface AddModelPayload {
   provider?: string
   family?: string | null
   access?: string
+  region?: string | null
+  regions?: string[]
   modalities?: string[]
   pdf_native?: boolean
   vision?: boolean

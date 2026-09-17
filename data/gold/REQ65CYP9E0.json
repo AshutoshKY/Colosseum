@@ -242,14 +242,14 @@
         {
           "benefit_id": 1354134,
           "benefit_name": "Annual Health Checkup",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No SOC categories related to general health checkups found"
         },
         {
           "benefit_id": 1354135,
           "benefit_name": "Dental Checkup",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No dental-related SOC categories found"
         },
@@ -258,45 +258,58 @@
           "benefit_name": "Eye Checkup",
           "applicable": true,
           "confidence": 1.0,
-          "reason": "Bank details mismatch in: account holder name. The details in your request do not match the documents submitted. Please verify and resubmit."
+          "reason": "Bill items descriptions 'Carrera Optyl 176' and 'Eyezen Crizal Prevencia 1.56 BCT' strongly suggest vision-related services, making 'Eye Checkup' applicable despite generic 'Others' SOC category."
         },
         {
           "benefit_id": 1354137,
           "benefit_name": "Order Pharmacy",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No pharmacy-related SOC categories found"
         },
         {
           "benefit_id": 1354138,
           "benefit_name": "Book Vaccinations",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No vaccination-related SOC categories found"
         },
         {
           "benefit_id": 1354140,
           "benefit_name": "In-Clinic Consults",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No consultation-related SOC categories found"
         },
         {
           "benefit_id": 1354142,
           "benefit_name": "Prescribed Diagnostic",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No lab/diagnostic/imaging-related SOC categories found"
         },
         {
           "benefit_id": 1354185,
           "benefit_name": "Prescribed Diagnostics",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No lab/diagnostic/imaging-related SOC categories found"
         }
       ],
-      "item_assignments": []
+      "item_assignments": [
+        {
+          "bill_id": "12d44a3d5451",
+          "item_s_no": 1,
+          "benefit_id": 1354136,
+          "benefit_name": "Eye Checkup"
+        },
+        {
+          "bill_id": "12d44a3d5451",
+          "item_s_no": 2,
+          "benefit_id": 1354136,
+          "benefit_name": "Eye Checkup"
+        }
+      ]
     },
     "upstream_bills": {
       "bills": [

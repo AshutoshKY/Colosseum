@@ -21,7 +21,9 @@ export function goldDependencies(tasks: TaskMeta[], selected: string[]): Record<
   const chosen = new Set(selected); const result: Record<string, string[]> = {}
   for (const task of tasks.filter(item => chosen.has(item.name))) {
     const upstream = task.depends_on.filter(dep => !chosen.has(dep))
-    if (upstream.length) result[task.name] = task.gold_feed_keys.length ? task.gold_feed_keys : upstream
+    const required = [...(task.gold_context_keys ?? [])]
+    if (upstream.length) required.push(...(task.gold_feed_keys.length ? task.gold_feed_keys : upstream))
+    if (required.length) result[task.name] = [...new Set(required)]
   }
   return result
 }

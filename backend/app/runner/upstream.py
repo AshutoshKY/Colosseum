@@ -30,8 +30,6 @@ class UpstreamResolver:
         "identity_documents": "identity_document",
         "extract_icd_codes": "icd_codes",
         "icd_codes": "extract_icd_codes",
-        "policy": "policy_extraction",
-        "policy_extraction": "policy",
         "benefit_plan": "benefit_plan_selection",
         "benefit_plan_selection": "benefit_plan",
     }
@@ -98,4 +96,3 @@ class UpstreamResolver:
                 return _patient_summary_transform(sources)
 
         raise MissingUpstreamData(task_name, self.document)
-

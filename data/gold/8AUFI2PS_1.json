@@ -1,6 +1,23 @@
 {
   "document": "data/uploads/8AUFI2PS_1.pdf",
   "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "prescription",
+          "pages": "1"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "2",
+          "is_pharmacy_bill": false
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "3"
+        }
+      ]
+    },
     "itemized_bills": {
       "bills": [
         {
@@ -215,6 +232,29 @@
           "recommendation": "reject"
         }
       ]
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1357868,
+          "benefit_name": "In-Clinic Consults",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    },
+    "policy": {
+      "text": "## Inclusions\n\n1. Doctor consultations including General Physician, Specialist, and Super Specialist consultations.\n\n2. Prescribed diagnostics including pathology, radiology, and other investigations advised by a registered medical practitioner.\n\n3. Prescribed pharmacy expenses for medicines supported by a valid doctor prescription and invoice.\n\n4. WHO-approved vaccinations, if enabled under the employer benefit.\n\n5. Annual health check-up, if enabled under the employer benefit.\n\n6. Dental treatment, if enabled under the employer benefit.\n\n7. Vision care including prescribed lenses, glasses, or frames, if enabled under the employer benefit.\n\n8. Alternative medicines such as Ayurveda or Homeopathy, physiotherapy, dietician/nutritionist consultation, menopause-related treatment, or counselling are covered only if specifically enabled in the employer/insurer policy.\n\n---\n\n## Exclusions\n\n1. Hospitalization, IPD, day-care procedures, pre/post-hospitalization expenses, or expenses covered under group medical/IPD policy are not covered under OPD.\n\n2. Medicines, diagnostics, or investigations taken without a valid doctor prescription are not covered.\n\n3. OTC medicines, food items, dietary supplements, protein powders, vitamins, minerals, and similar products are not covered unless explicitly allowed and medically prescribed as part of treatment.\n\n4. Cosmetic consultations, cosmetic medicines, cosmetic diagnostics, cosmetic procedures, chemical peel, laser hair removal, and other appearance-improvement treatments are not covered unless explicitly included.\n\n5. Maternity, pre-natal/post-natal expenses, infertility, IVF, sterility, contraception, and related treatments are not covered unless explicitly included.\n\n6. Obesity, weight-loss, slimming, hair fall, alopecia, baldness, acne, vitiligo, wigs, toupees, and similar treatments are not covered unless explicitly included.\n\n7. Procedure fees during OP consultation such as dressing, wound cleaning, burn care, saline drips, and minor procedures are not covered unless specifically included.\n\n8. Lasik, cataract surgery, hearing aids, cosmetic lenses, and similar vision/hearing procedures or devices are not covered unless specifically included.\n\n9. Mental health, psychiatric, psychosomatic, developmental disorder-related treatment, counselling, and therapy are not covered unless specifically included.\n\n10. Naturopathy, nature cure, spa, health hydros, experimental/unproven treatments, and non-medical/general advice-only consultations are not covered.\n\n11. Treatment related to alcohol, drug/substance abuse, sexually transmitted diseases, hazardous/adventure sports, or breach of law/criminal intent is not covered.\n\n---\n\n## Minimum Documents Required\n\n| Benefit | Required Documents |\n|---|---|\n| Consultation | Invoice + prescription / OP notes |\n| Diagnostics | Invoice + prescription + test report |\n| Pharmacy | Invoice + prescription |\n| Vaccination | Invoice + prescription / recommendation |\n| Dental | Invoice + prescription / treatment note |\n| Vision | Invoice + prescription |\n| Dermatology | Invoice + prescription |\n\n---"
     }
   }
 }

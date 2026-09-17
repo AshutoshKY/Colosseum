@@ -118,10 +118,18 @@ class ModelCapability(BaseModel):
     )
     notes: str | None = None
 
-    # Optional per-model environment indirection for OpenAI-compatible endpoints.
+    # Optional per-model environment indirection for OpenAI-compatible endpoints and regions.
     base_url_env: str | None = None
     api_key_env: str | None = None
     vertex_location: str | None = None
+    default_region: str | None = Field(
+        default=None,
+        description="Default cloud region (e.g. us-east-1, us-central1, global).",
+    )
+    regions: frozenset[str] = Field(
+        default_factory=frozenset,
+        description="Supported cloud regions for this model (e.g. us-east-1, us-west-2, ap-south-1).",
+    )
 
     # ------------------------------------------------------------------ helpers
     def supports_modality(self, modality: Modality) -> bool:
@@ -141,4 +149,5 @@ class ModelCapability(BaseModel):
         data = self.model_dump(mode="json")
         data["modalities"] = sorted(m.value for m in self.modalities)
         data["image_formats"] = sorted(self.image_formats)
+        data["regions"] = sorted(self.regions)
         return data

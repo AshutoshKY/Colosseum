@@ -270,10 +270,35 @@
           "benefit_name": "Prescribed Diagnostics",
           "applicable": true,
           "confidence": 1.0,
-          "reason": "Allopathic test prescribed by B.A.M.S. doctor Reject"
+          "reason": "SOC categories 'Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry' and 'Imageology' found - diagnostic services provided"
         }
       ],
-      "item_assignments": []
+      "item_assignments": [
+        {
+          "bill_id": "a7d8e5ac2873",
+          "item_s_no": 1,
+          "benefit_id": 1361102,
+          "benefit_name": "Prescribed Diagnostics"
+        },
+        {
+          "bill_id": "a7d8e5ac2873",
+          "item_s_no": 2,
+          "benefit_id": 1361102,
+          "benefit_name": "Prescribed Diagnostics"
+        },
+        {
+          "bill_id": "a7d8e5ac2873",
+          "item_s_no": 3,
+          "benefit_id": 1361102,
+          "benefit_name": "Prescribed Diagnostics"
+        },
+        {
+          "bill_id": "a7d8e5ac2873",
+          "item_s_no": 4,
+          "benefit_id": 1361102,
+          "benefit_name": "Prescribed Diagnostics"
+        }
+      ]
     },
     "identity_document": {},
     "upstream_bills": {

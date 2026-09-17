@@ -287,7 +287,8 @@
           "benefit_id": 1366421,
           "benefit_name": "In-Clinic Consults",
           "applicable": true,
-          "confidence": 1.0
+          "confidence": 1.0,
+          "reason": "SOC category 'Consultation' found - consultation services provided"
         },
         {
           "benefit_id": 1366425,
@@ -299,19 +300,32 @@
         {
           "benefit_id": 1366464,
           "benefit_name": "Dental Checkup",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No dental SOC categories found"
         },
         {
           "benefit_id": 1366465,
           "benefit_name": "Eye Checkup",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No vision/eye-related SOC categories found"
         }
       ],
-      "item_assignments": []
+      "item_assignments": [
+        {
+          "bill_id": "ca661b386458",
+          "item_s_no": 1,
+          "benefit_id": 1366421,
+          "benefit_name": "In-Clinic Consults"
+        },
+        {
+          "bill_id": "c4db6561145d",
+          "item_s_no": 2,
+          "benefit_id": 1366425,
+          "benefit_name": "Prescribed Diagnostics"
+        }
+      ]
     },
     "upstream_bills": {
       "bills": [

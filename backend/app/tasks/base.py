@@ -50,6 +50,8 @@ class Task:
     deterministic: bool = False
     reference_runtime: ReferenceRuntime = ReferenceRuntime()
     gold_feed_keys: tuple[str, ...] = ()
+    # Non-task JSON required from ground truth even when all task dependencies run live.
+    gold_context_keys: tuple[str, ...] = ()
 
     def build_input(self, document_path: str, *, page_ranges: str | None = None) -> TaskInput:
         return TaskInput(
@@ -131,7 +133,11 @@ class TaskPack:
             if missing:
                 raise SubsetError(f"Missing upstream tasks for model mode: {', '.join(missing)}")
 
-        gold_requirements: dict[str, tuple[str, ...]] = {}
+        gold_requirements: dict[str, tuple[str, ...]] = {
+            name: self.tasks[name].gold_context_keys
+            for name in included
+            if self.tasks[name].gold_context_keys
+        }
         if upstream_mode == "gold":
             for name, missing in missing_by_task.items():
                 if missing:
@@ -141,7 +147,9 @@ class TaskPack:
                         keys = tuple(feed_by_dep[dep] for dep in missing)
                     else:
                         keys = task.gold_feed_keys or missing
-                    gold_requirements[name] = tuple(dict.fromkeys(keys))
+                    gold_requirements[name] = tuple(
+                        dict.fromkeys((*gold_requirements.get(name, ()), *keys))
+                    )
 
         order_index = {name: i for i, name in enumerate(self.order)}
         indegree = {name: 0 for name in included}

@@ -134,6 +134,14 @@ export function formatPriceSummary(pricing?: { input?: number | null; output?: n
   return `$${inVal >= 1 ? inVal.toFixed(2) : inVal.toFixed(4)}/M in`
 }
 
+export function getModelRegion(model: { provider?: string; region?: string | null; regions?: string[] }): string {
+  if (model.region) return model.region
+  if (model.regions && model.regions.length > 0) return model.regions[0]
+  if (model.provider === 'vertex_ai' || model.provider === 'vertex_partner') return 'us-central1'
+  if (model.provider === 'bedrock') return 'us-east-1'
+  return 'global'
+}
+
 export interface ModelSpecs {
   hasPdf: boolean
   hasVision: boolean
@@ -141,9 +149,13 @@ export interface ModelSpecs {
   context: string | null
   releaseDate: string | null
   price: string
+  region: string
 }
 
 export function getModelSpecs(model: {
+  provider?: string
+  region?: string | null
+  regions?: string[]
   capabilities?: string[] | Record<string, unknown>
   context_window?: number | null
   release_date?: string | null
@@ -172,8 +184,9 @@ export function getModelSpecs(model: {
   const context = formatContextWindow(ctx)
   const releaseDate = formatReleaseDate(model.release_date)
   const price = formatPriceSummary(model.pricing)
+  const region = getModelRegion(model)
 
-  return { hasPdf, hasVision, isTextOnly, context, releaseDate, price }
+  return { hasPdf, hasVision, isTextOnly, context, releaseDate, price, region }
 }
 
 /** Human-friendly date: "Today, 14:03" or "8 Jul, 09:41". */

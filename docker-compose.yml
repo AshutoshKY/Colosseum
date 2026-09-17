@@ -44,11 +44,11 @@ services:
       - DATABASE_URL=postgresql+psycopg://colosseum:colosseum@postgres:5432/colosseum
       - REDIS_URL=redis://redis:6379/0
       - GOOGLE_APPLICATION_CREDENTIALS=/app/secrets/vertex-sa.json
-      # Bedrock bearer token is short-lived (~12h). Pass it from the host .env so it can be
-      # rotated with just `docker compose up -d backend` (no image rebuild). The real process
-      # env wins over the mounted /app/.env, so this always reflects the latest host .env value.
+      # Bedrock IAM credentials (for continuous SigV4 authentication) and optional bearer token.
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
       - AWS_BEARER_TOKEN_BEDROCK=${AWS_BEARER_TOKEN_BEDROCK:-}
-      - AWS_REGION_NAME=${AWS_REGION_NAME:-ap-south-1}
+      - AWS_REGION_NAME=${AWS_REGION_NAME:-us-east-1}
       # OpenRouter key: mounted /app/.env already carries it; this passthrough lets a
       # host-exported OPENROUTER_API_KEY override without an image rebuild.
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}

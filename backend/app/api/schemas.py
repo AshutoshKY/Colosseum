@@ -191,6 +191,7 @@ class TaskOut(BaseModel):
     is_text_task: bool
     reference_runtime: ReferenceRuntimeOut
     gold_feed_keys: list[str]
+    gold_context_keys: list[str]
 
 
 class PackOut(BaseModel):
@@ -213,6 +214,8 @@ class CatalogModelOut(BaseModel):
     verified: bool
     gate_reason: str | None = None
     release_date: str | None = None
+    region: str | None = None
+    regions: list[str] = Field(default_factory=list)
     capabilities: dict[str, Any]
     pricing: dict[str, float | None]
 
@@ -239,6 +242,8 @@ class DiscoveredModelOut(BaseModel):
     description: str | None = None
     is_registered: bool = False
     is_callable: bool | None = None
+    region: str | None = None
+    regions: list[str] = Field(default_factory=list)
     capabilities: dict[str, Any] = Field(default_factory=dict)
     pricing: dict[str, float | None] = Field(default_factory=dict)
     release_date: str | None = None
@@ -250,7 +255,34 @@ class DiscoverVertexOut(BaseModel):
     has_credentials: bool
     project: str | None = None
     location: str
+    available_locations: list[str] = Field(default_factory=list)
     discovered: list[DiscoveredModelOut]
+
+
+class DiscoverBedrockOut(BaseModel):
+    total: int
+    has_credentials: bool
+    region: str
+    available_regions: list[str] = Field(default_factory=list)
+    discovered: list[DiscoveredModelOut]
+
+
+class RegionInfo(BaseModel):
+    id: str
+    name: str
+    provider: str
+    is_default: bool = False
+
+
+class RegionsOut(BaseModel):
+    bedrock: list[RegionInfo]
+    vertex_ai: list[RegionInfo]
+    active_bedrock_region: str
+    active_vertex_location: str
+
+
+class SetBedrockRegionIn(BaseModel):
+    region: str = Field(min_length=2, max_length=50)
 
 
 class AddModelIn(BaseModel):
@@ -259,6 +291,8 @@ class AddModelIn(BaseModel):
     provider: str = "vertex_ai"
     family: str | None = None
     access: str = "maas"
+    region: str | None = None
+    regions: list[str] = Field(default_factory=list)
     modalities: list[str] = Field(default_factory=lambda: ["text"])
     pdf_native: bool = False
     vision: bool = False

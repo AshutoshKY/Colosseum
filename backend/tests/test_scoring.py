@@ -24,6 +24,33 @@ def test_field_metrics_list_precision_recall():
     assert lists["recall"] == 0.5
 
 
+def test_benefit_lists_align_by_input_identity() -> None:
+    gold = {
+        "plan_applicability": [
+            {"benefit_id": 7, "benefit_name": "Consultation", "applicable": True}
+        ],
+        "item_assignments": [
+            {"bill_id": "B1", "item_s_no": 1, "benefit_id": 7, "benefit_name": "Consultation"}
+        ],
+    }
+    pred = {
+        "plan_applicability": [
+            {"benefit_id": 7, "benefit_name": "Consultation", "applicable": False}
+        ],
+        "item_assignments": [
+            {"bill_id": "B1", "item_s_no": 1, "benefit_id": None, "benefit_name": "Unclassified"}
+        ],
+    }
+
+    metrics = score_against_gold(pred, gold)
+
+    assert metrics.total == 7
+    assert metrics.matched == 4
+    assert "plan_applicability[benefit_id=7].applicable" in {
+        mismatch["path"] for mismatch in metrics.details["mismatches"]
+    }
+
+
 def test_null_prediction_scores_zero():
     m = score_against_gold(None, {"a": 1, "b": 2})
     assert m.accuracy == 0.0

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, asList, dryRun, postJson, putJson, uploadFiles } from './client'
-import type { AddModelPayload, Cell, DiscoverVertexResponse, DocumentItem, DryRun, FieldRow, LeaderboardRow, ModelItem, PackMeta, Prompt, RunDetail, RunItem, RunSpec, SideBySide } from '../types'
+import type { AddModelPayload, Cell, DiscoverBedrockResponse, DiscoverVertexResponse, DocumentItem, DryRun, FieldRow, LeaderboardRow, ModelItem, PackMeta, Prompt, RegionsResponse, RunDetail, RunItem, RunSpec, SideBySide } from '../types'
 
 export const useDocuments = () => useQuery({ queryKey: ['documents'], queryFn: async () => asList<DocumentItem>(await api('/documents'), 'documents') })
 export const usePacks = () => useQuery({ queryKey: ['packs'], queryFn: async () => asList<PackMeta>(await api('/packs'), 'packs') })
@@ -9,9 +9,19 @@ export const useCatalog = () => useQuery({ queryKey: ['catalog'], queryFn: async
   if (Array.isArray(data)) return data
   return data.models ?? Object.values(data.providers ?? {}).flat()
 } })
-export const useDiscoverVertexModels = () => useQuery({
-  queryKey: ['discover-vertex'],
-  queryFn: () => postJson<DiscoverVertexResponse>('/catalog/discover/vertex', {}),
+export const useRegions = () => useQuery({
+  queryKey: ['catalog-regions'],
+  queryFn: () => api<RegionsResponse>('/catalog/regions'),
+  staleTime: 5 * 60 * 1000,
+})
+export const useDiscoverVertexModels = (location?: string) => useQuery({
+  queryKey: ['discover-vertex', location],
+  queryFn: () => postJson<DiscoverVertexResponse>(`/catalog/discover/vertex${location ? `?location=${encodeURIComponent(location)}` : ''}`, {}),
+  staleTime: 60 * 1000,
+})
+export const useDiscoverBedrockModels = (region?: string) => useQuery({
+  queryKey: ['discover-bedrock', region],
+  queryFn: () => postJson<DiscoverBedrockResponse>(`/catalog/discover/bedrock${region ? `?region=${encodeURIComponent(region)}` : ''}`, {}),
   staleTime: 60 * 1000,
 })
 export const useOpenRouterSearch = (query: string) => useQuery({
@@ -43,12 +53,15 @@ export function useActions() {
     saveGold: useMutation({ mutationFn: ({id, tasks}: {id: number; tasks: Record<string, unknown>}) => putJson(`/gold/${id}`, {tasks}), onSuccess: (_, vars) => { client.invalidateQueries({queryKey: ['gold', vars.id]}); client.invalidateQueries({queryKey: ['documents']}) } }),
     importGold: useMutation({ mutationFn: (files: File[]) => uploadFiles('/gold/import', files, 'file'), onSuccess: () => client.invalidateQueries({queryKey: ['documents']}) }),
     verify: useMutation({ mutationFn: (id: string) => postJson<{ok: boolean; error?: string; latency_ms?: number}>(`/catalog/${encodeURIComponent(id)}/verify`), onSuccess: () => client.invalidateQueries({queryKey: ['catalog']}) }),
-    discoverVertex: useMutation({ mutationFn: () => postJson<DiscoverVertexResponse>('/catalog/discover/vertex', {}), onSuccess: () => { client.invalidateQueries({queryKey: ['discover-vertex']}); client.invalidateQueries({queryKey: ['catalog']}) } }),
+    discoverVertex: useMutation({ mutationFn: (location?: string) => postJson<DiscoverVertexResponse>(`/catalog/discover/vertex${location ? `?location=${encodeURIComponent(location)}` : ''}`, {}), onSuccess: () => { client.invalidateQueries({queryKey: ['discover-vertex']}); client.invalidateQueries({queryKey: ['catalog']}) } }),
+    discoverBedrock: useMutation({ mutationFn: (region?: string) => postJson<DiscoverBedrockResponse>(`/catalog/discover/bedrock${region ? `?region=${encodeURIComponent(region)}` : ''}`, {}), onSuccess: () => { client.invalidateQueries({queryKey: ['discover-bedrock']}); client.invalidateQueries({queryKey: ['catalog']}) } }),
+    setBedrockRegion: useMutation({ mutationFn: (region: string) => postJson<{region: string; updated: boolean}>('/catalog/providers/bedrock/region', {region}), onSuccess: () => { client.invalidateQueries({queryKey: ['catalog-regions']}); client.invalidateQueries({queryKey: ['discover-bedrock']}); client.invalidateQueries({queryKey: ['catalog']}) } }),
     addModel: useMutation({
       mutationFn: (payload: AddModelPayload) => postJson<ModelItem>('/catalog/models', payload),
       onSuccess: () => {
         client.invalidateQueries({queryKey: ['catalog']})
         client.invalidateQueries({queryKey: ['discover-vertex']})
+        client.invalidateQueries({queryKey: ['discover-bedrock']})
       },
     }),
     deleteModel: useMutation({
@@ -56,6 +69,7 @@ export function useActions() {
       onSuccess: () => {
         client.invalidateQueries({queryKey: ['catalog']})
         client.invalidateQueries({queryKey: ['discover-vertex']})
+        client.invalidateQueries({queryKey: ['discover-bedrock']})
       },
     }),
     judge: useMutation({ mutationFn: ({id, body}: {id: string; body: unknown}) => postJson(`/runs/${id}/judge`, body), onSuccess: (_, vars) => {

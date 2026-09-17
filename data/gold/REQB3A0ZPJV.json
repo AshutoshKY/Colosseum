@@ -185,14 +185,14 @@
         {
           "benefit_id": 1351910,
           "benefit_name": "Dental Checkup",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No dental-related SOC categories found"
         },
         {
           "benefit_id": 1351913,
           "benefit_name": "Eye Checkup",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No vision-related SOC categories found"
         },
@@ -201,52 +201,59 @@
           "benefit_name": "Order Pharmacy",
           "applicable": true,
           "confidence": 1.0,
-          "reason": "Claim flagged for fraud, waste, or abuse review: FWA_PRICE_VARIANCE"
+          "reason": "SOC category 'Medicines From Shop' found - pharmacy services provided"
         },
         {
           "benefit_id": 1351916,
           "benefit_name": "Book Vaccinations",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No vaccination-related SOC categories found"
         },
         {
           "benefit_id": 1351925,
           "benefit_name": "Prenatal Services",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No prenatal-related SOC categories found"
         },
         {
           "benefit_id": 1351927,
           "benefit_name": "Tobacco Cessation Program",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No tobacco cessation-related SOC categories found"
         },
         {
           "benefit_id": 1351931,
           "benefit_name": "In-Clinic Consults",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No consultation-related SOC categories found"
         },
         {
           "benefit_id": 1351937,
           "benefit_name": "Cancer Screening",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No cancer screening-related SOC categories found"
         },
         {
           "benefit_id": 1366494,
           "benefit_name": "Diagnostics",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No lab/diagnostic/imaging-related SOC categories found"
         }
       ],
-      "item_assignments": []
+      "item_assignments": [
+        {
+          "bill_id": "6dcf0a2677a9",
+          "item_s_no": 1,
+          "benefit_id": 1351915,
+          "benefit_name": "Order Pharmacy"
+        }
+      ]
     },
     "upstream_bills": {
       "bills": [

@@ -26,8 +26,11 @@ import time
 from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Any, TypeVar
-
+import instructor
+import litellm
 from pydantic import BaseModel, ValidationError
+
+litellm.drop_params = True
 
 from app.core.config import get_settings
 from app.core.logging import get_logger
@@ -261,8 +264,7 @@ class ModelGateway:
         schema: type[T],
         config: dict[str, Any],
     ) -> tuple[T, dict[str, Any], Any]:
-        import instructor
-        import litellm
+        litellm.drop_params = True
 
         async def acompletion_wrapper(*args, **kwargs):
             if "mode" in kwargs:
@@ -337,6 +339,8 @@ class ModelGateway:
         }
         if (mot := config.get("max_output_tokens")) is not None:
             kwargs["max_tokens"] = mot
+        if (to := config.get("timeout_s")) is not None:
+            kwargs["timeout"] = float(to)
 
         provider = capability.provider.value
 
@@ -391,16 +395,30 @@ class ModelGateway:
                 kwargs["api_key"] = key
 
         elif provider == "bedrock":
+            access_key = self.settings.aws_access_key_id or os.environ.get(
+                "AWS_ACCESS_KEY_ID"
+            )
+            secret_key = self.settings.aws_secret_access_key or os.environ.get(
+                "AWS_SECRET_ACCESS_KEY"
+            )
             token = self.settings.aws_bearer_token_bedrock or os.environ.get(
                 "AWS_BEARER_TOKEN_BEDROCK"
             )
-            if not token:
+
+            if access_key and secret_key:
+                kwargs["aws_access_key_id"] = access_key
+                kwargs["aws_secret_access_key"] = secret_key
+                # Remove any stale ambient bearer token from os.environ so LiteLLM doesn't
+                # attempt to use an expired static bearer token instead of IAM SigV4 signing.
+                os.environ.pop("AWS_BEARER_TOKEN_BEDROCK", None)
+            elif token:
+                kwargs["api_key"] = token
+            else:
                 raise ProviderAuthError(
-                    "bedrock token missing — set AWS_BEARER_TOKEN_BEDROCK in .env"
+                    "bedrock credentials missing — set AWS_ACCESS_KEY_ID & AWS_SECRET_ACCESS_KEY or AWS_BEARER_TOKEN_BEDROCK in .env"
                 )
-            # LiteLLM reads AWS_BEARER_TOKEN_BEDROCK directly and uses it as the API key.
-            kwargs["api_key"] = token
-            kwargs["aws_region_name"] = self.region or self.settings.aws_region_name
+
+            kwargs["aws_region_name"] = self.region or capability.default_region or self.settings.aws_region_name
             # Bedrock on-demand throughput quotas are low by default; retry 429s/throttling
             # with exponential backoff instead of failing the run immediately.
             kwargs["num_retries"] = config.get("num_retries", 5)
@@ -422,22 +440,27 @@ class ModelGateway:
 
     @staticmethod
     def _raise_provider_auth_error(capability: ModelCapability, exc: Exception) -> None:
-        """Translate an expired Bedrock bearer token without leaking provider details."""
+        """Translate an expired Bedrock bearer token or auth error without leaking provider details."""
         if capability.provider.value != "bedrock":
             return
         message = str(exc).lower()
         status = getattr(exc, "status_code", None)
         if status is None:
             status = getattr(getattr(exc, "response", None), "status_code", None)
-        if "bedrock token missing" in message:
-            raise ProviderAuthError(
-                "bedrock token missing — set AWS_BEARER_TOKEN_BEDROCK in .env"
-            ) from exc
-        if "bedrock token expired" in message or "expiredtoken" in message or (
-            status in {401, 403} and "expired" in message and "token" in message
+        if (
+            "bedrock credentials missing" in message
+            or "bedrock token missing" in message
         ):
             raise ProviderAuthError(
-                "bedrock token expired — refresh AWS_BEARER_TOKEN_BEDROCK in .env"
+                "bedrock credentials missing — set AWS_ACCESS_KEY_ID & AWS_SECRET_ACCESS_KEY or AWS_BEARER_TOKEN_BEDROCK in .env"
+            ) from exc
+        if (
+            "bedrock token expired" in message
+            or "expiredtoken" in message
+            or (status in {401, 403} and "expired" in message and "token" in message)
+        ):
+            raise ProviderAuthError(
+                "bedrock token expired — configure AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in .env for continuous auto-renewal"
             ) from exc
 
 

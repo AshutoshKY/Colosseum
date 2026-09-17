@@ -73,6 +73,25 @@ def resolve_pricing_ref(pricing_ref: str | None, card: dict[str, Any]) -> str | 
     for candidate in sorted(models.keys(), key=len, reverse=True):
         if key == candidate or key.startswith(f"{candidate}-") or key.startswith(f"{candidate}."):
             return candidate
+
+    # Dynamic fallback for OpenRouter models
+    if key.startswith("openrouter/") or key.startswith("openrouter-"):
+        try:
+            from app.providers.openrouter import lookup
+            clean_id = key if key.startswith("openrouter/") else f"openrouter/{key.removeprefix('openrouter-').replace('-', '/', 1)}"
+            live = lookup(clean_id) or lookup(key)
+            if live:
+                dynamic_rates = {
+                    "input_usd_per_million": float(live.input_usd_per_million),
+                    "output_usd_per_million": float(live.output_usd_per_million),
+                }
+                register_dynamic_model(key, dynamic_rates)
+                if "models" in card:
+                    card["models"][key] = dynamic_rates
+                return key
+        except Exception:
+            pass
+
     return None
 
 

@@ -12,6 +12,7 @@ const pack: PackMeta = {name:'OPD',order:['segregation','nme_analysis','audit'],
 describe('Run Builder assembly', () => {
   it('derives unselected dependency gold chips and recursively includes model dependencies', () => {
     expect(goldDependencies(pack.tasks,['segregation','audit'])).toEqual({audit:['segregation','nme_analysis']})
+    expect(goldDependencies([{...pack.tasks[0],gold_context_keys:['policy']}],['segregation'])).toEqual({segregation:['policy']})
     expect(includeDependencies(pack,['audit'])).toEqual(['segregation','nme_analysis','audit'])
   })
   it('assembles the pinned RunSpec shape without extra fields', () => {

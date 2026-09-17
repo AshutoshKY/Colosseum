@@ -181,6 +181,16 @@ async def test_dry_run_missing_gold_and_fake_launch(client, api_engine, tmp_path
     assert dry.json()["layers"] == [["segregation"]]
     assert dry.json()["cost_estimate"]["estimated"] is True
 
+    # Dry run with judge enabled (gemini-3.1-pro)
+    dry_with_judge = await client.post(
+        "/api/runs/dry-run",
+        json=_spec(
+            document_id,
+            judge={"enabled": True, "model_id": "gemini-3.1-pro", "modes": ["gold_grade"]},
+        ).model_dump(mode="json", by_alias=True),
+    )
+    assert dry_with_judge.status_code == 200
+
     missing = _spec(document_id, selected_tasks=["audit"])
     response = await client.post(
         "/api/runs/dry-run", json=missing.model_dump(mode="json", by_alias=True)

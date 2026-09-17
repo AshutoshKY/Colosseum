@@ -395,14 +395,14 @@
         {
           "benefit_id": 1352921,
           "benefit_name": "Dental Checkup",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No dental-related SOC categories found"
         },
         {
           "benefit_id": 1352922,
           "benefit_name": "Eye Checkup",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No vision-related SOC categories found"
         },
@@ -411,33 +411,33 @@
           "benefit_name": "Order Pharmacy",
           "applicable": true,
           "confidence": 1.0,
-          "reason": "Claim flagged for fraud, waste, or abuse review: FWA_PRICE_VARIANCE"
+          "reason": "SOC category 'Medicines Supplied By Hospital' found - pharmacy services provided"
         },
         {
           "benefit_id": 1352924,
           "benefit_name": "Book Vaccinations",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No vaccination-related SOC categories found"
         },
         {
           "benefit_id": 1352926,
           "benefit_name": "In-Clinic Consults",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No consultation-related SOC categories found"
         },
         {
           "benefit_id": 1352948,
           "benefit_name": "Ayurveda",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No Ayurveda-related SOC categories found"
         },
         {
           "benefit_id": 1352955,
           "benefit_name": "Menopausal",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No menopausal-related SOC categories found"
         },
@@ -446,10 +446,59 @@
           "benefit_name": "Prescribed Diagnostics",
           "applicable": true,
           "confidence": 1.0,
-          "reason": "Claim flagged for fraud, waste, or abuse review: FWA_PRICE_VARIANCE"
+          "reason": "SOC categories 'Imageology' and 'Labs/Bio/Micro/Pathology/Immuno/Histo/Cyto chemistry' found - diagnostic services provided"
         }
       ],
-      "item_assignments": []
+      "item_assignments": [
+        {
+          "bill_id": "a06be6b0a9df",
+          "item_s_no": 1,
+          "benefit_id": 1352923,
+          "benefit_name": "Order Pharmacy"
+        },
+        {
+          "bill_id": "a06be6b0a9df",
+          "item_s_no": 2,
+          "benefit_id": 1352923,
+          "benefit_name": "Order Pharmacy"
+        },
+        {
+          "bill_id": "5baf688aec65",
+          "item_s_no": 3,
+          "benefit_id": 1353205,
+          "benefit_name": "Prescribed Diagnostics"
+        },
+        {
+          "bill_id": "9f2636cba9cf",
+          "item_s_no": 4,
+          "benefit_id": 1353205,
+          "benefit_name": "Prescribed Diagnostics"
+        },
+        {
+          "bill_id": "9f2636cba9cf",
+          "item_s_no": 5,
+          "benefit_id": 1353205,
+          "benefit_name": "Prescribed Diagnostics"
+        },
+        {
+          "bill_id": "9f2636cba9cf",
+          "item_s_no": 6,
+          "benefit_id": 1353205,
+          "benefit_name": "Prescribed Diagnostics"
+        },
+        {
+          "bill_id": "9f2636cba9cf",
+          "item_s_no": 7,
+          "benefit_id": 1353205,
+          "benefit_name": "Prescribed Diagnostics"
+        },
+        {
+          "bill_id": "9f2636cba9cf",
+          "item_s_no": 8,
+          "benefit_id": 1353205,
+          "benefit_name": "Prescribed Diagnostics"
+        }
+      ]
     },
     "upstream_bills": {
       "bills": [

@@ -29,6 +29,7 @@ def _task_out(task, *, pack: str) -> TaskOut:
             timeout_s=runtime.timeout_s,
         ),
         gold_feed_keys=list(gold_keys),
+        gold_context_keys=list(task.gold_context_keys),
     )
 
 

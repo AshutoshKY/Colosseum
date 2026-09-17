@@ -1,0 +1,661 @@
+{
+  "document": "data/uploads/REQLKQ79MAV_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "prescription",
+          "pages": "2"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "1",
+          "is_pharmacy_bill": false
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "3",
+          "is_pharmacy_bill": true
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "4"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-08-18",
+            "net_amount": 600.0,
+            "page_number": 1,
+            "invoice_number": "INV5996",
+            "facility_details": {
+              "name": "Amber healthcare"
+            }
+          },
+          "items": [
+            {
+              "quantity": 1.0,
+              "item_name": "Consultation -Dr. Chetak N K",
+              "net_amount": 600.0,
+              "unit_price": 600.0,
+              "is_returned": false,
+              "final_amount": 600.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_date": "2026-08-18",
+            "net_amount": 918.7,
+            "page_number": 3,
+            "invoice_number": "INV3294",
+            "facility_details": {
+              "name": "AMBER PHARMA",
+              "registration_number": "KA-B61-232935"
+            }
+          },
+          "items": [
+            {
+              "quantity": 1.0,
+              "item_name": "Kofcatch D SYP",
+              "net_amount": 89.06,
+              "unit_price": 89.0,
+              "is_returned": false,
+              "final_amount": 89.06
+            },
+            {
+              "quantity": 2.0,
+              "item_name": "Cpink Suspension 200ml",
+              "net_amount": 647.38,
+              "unit_price": 324.0,
+              "is_returned": false,
+              "final_amount": 647.38
+            },
+            {
+              "quantity": 1.0,
+              "item_name": "Averzine Syp",
+              "net_amount": 88.0,
+              "unit_price": 88.0,
+              "is_returned": false,
+              "final_amount": 88.0
+            },
+            {
+              "quantity": 1.0,
+              "item_name": "Nasivion 0.01% Mini",
+              "net_amount": 94.26,
+              "unit_price": 94.0,
+              "is_returned": false,
+              "final_amount": 94.26
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "5cd30482ad40",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Consultation"
+            }
+          ]
+        },
+        {
+          "bill_id": "79ff0a78c5c6",
+          "categorized_items": [
+            {
+              "s.no.": 2,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 3,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 4,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 5,
+              "category": "Medicines From Shop"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "patches": [],
+      "bills_analyzed": 2,
+      "duplicates_found": 0,
+      "discrepancy_amount": 0.0,
+      "bills_with_corrections": 0,
+      "original_total_of_bills": 1518.7,
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [
+        "thermometers",
+        "BP apparatus",
+        "CPAP/Bi-PAP machines",
+        "health, gym, or sports equipment",
+        "soaps",
+        "face wash",
+        "moisturizers",
+        "lotions/creams",
+        "shampoos",
+        "hair lotions",
+        "hair treatment products",
+        "protein powder",
+        "baby food",
+        "Disposable & Routine Consumables",
+        "Injection & Infusion Related Consumables",
+        "Dressing & Wound Care Materials",
+        "Personal Comfort & Hygiene Items",
+        "Miscellaneous Non-Medical / Daily-Use Items"
+      ],
+      "policy_rules": [
+        "Consultancy fees charged by RMP (Allopathy, Homeopathy, Physiotherapy, AYUSH) reimbursable up to reasonable actuals.",
+        "Medicines prescribed by RMP (Allopathy, Homeopathy, Physiotherapy, AYUSH) reimbursable up to reasonable actuals.",
+        "Medical tests prescribed by RMP (Allopathy, Homeopathy, Physiotherapy, AYUSH) reimbursable up to reasonable actuals.",
+        "Non-cosmetic dental treatments (dentures, cavity fillings, non-gold metal caps) prescribed by RMP covered up to reasonable actuals.",
+        "Vision-related expenses (spectacles/contact lens frames and glasses) capped at INR 10,000 per employee/eligible dependent per policy year.",
+        "Hearing aids recommended by RMP reimbursable up to reasonable actuals.",
+        "Pre-Natal outpatient care limit capped at INR 19,900 per dependent or employee per instance (up to 2 instances of childbirth). EDD certificate upload required to unlock benefit.",
+        "Fees for Online Teleconsultations are excluded.",
+        "Cosmetic treatments in any form are excluded.",
+        "Consultations with nutritionists and dieticians are excluded even if prescribed.",
+        "Health foods, dietary supplements, and naturopathy expenses are excluded even if prescribed.",
+        "Membership fees for health/well-being apps and gyms are excluded.",
+        "Weight management expenses are excluded.",
+        "Ambulance charges are excluded.",
+        "Home medical treatments (including peritoneal dialysis) are excluded.",
+        "Caregiver (nurse or otherwise) expenses are excluded.",
+        "Contraceptives are excluded.",
+        "Infertility treatment or management expenses are excluded.",
+        "Services availed outside policy period (01 April 2026 to 31 March 2027) are excluded."
+      ],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "ICICI Bank",
+        "ifsc_code": "ICIC0000551",
+        "account_no": "055101536436",
+        "bank_branch": "ITPL Branch",
+        "account_type": "Savings",
+        "account_holder_name": "MONU KUMAR"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_age": 2,
+        "patient_name": "AAYANSH",
+        "hospital_city": "Bengaluru",
+        "hospital_name": "Amber healthcare",
+        "hospital_address": "224/4, 2nd Floor, Above Ladoos, 080-22584488, Beside Shell Petrol Pump, Gunjur",
+        "hospital_pincode": "560087",
+        "prescribed_items": [
+          {
+            "route": "oral",
+            "duration": "3 days",
+            "frequency": "2 ml - 2 ml",
+            "medicine_name": "syrup LCF Cuf D"
+          },
+          {
+            "route": "nasal",
+            "duration": "3 days",
+            "frequency": "2 drops - 2 drops - 2 drops",
+            "medicine_name": "Nasivion mini drop"
+          },
+          {
+            "route": "oral",
+            "frequency": "3.5 ml x 2 times a day",
+            "medicine_name": "syrup C-Pim 100 / Ferimont"
+          },
+          {
+            "route": "oral",
+            "duration": "5 days",
+            "frequency": "2 ml - 0 - 2 ml",
+            "medicine_name": "syrup Avermect / Avertine"
+          }
+        ],
+        "prescription_date": "2026/08/18",
+        "hospital_phone_number": "9380444691",
+        "name_of_treating_doctor": "Dr.Chetak A.N",
+        "treating_doctor_registration": "KMC 58657"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": []
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "AAYANSH",
+          "patient_bank_name": "ICICI Bank",
+          "patient_bank_ifsc_code": "ICIC0000551",
+          "patient_bank_account_no": "055101536436",
+          "patient_bank_branch_name": "ITPL Branch",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "MONU KUMAR"
+        },
+        "clinical_details": {
+          "hospital_name": "Amber healthcare"
+        },
+        "past_history_details": {
+          "physician_reg_no": "KMC 58657"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1351910,
+          "benefit_name": "Dental Checkup",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No dental services identified in the billed items."
+        },
+        {
+          "benefit_id": 1351913,
+          "benefit_name": "Eye Checkup",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No eye checkup services or vision items found in the bill."
+        },
+        {
+          "benefit_id": 1351915,
+          "benefit_name": "Order Pharmacy",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Bill includes prescribed medicines."
+        },
+        {
+          "benefit_id": 1351916,
+          "benefit_name": "Book Vaccinations",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No vaccination charges present in the bill."
+        },
+        {
+          "benefit_id": 1351925,
+          "benefit_name": "Prenatal Services",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No prenatal services found in billed items."
+        },
+        {
+          "benefit_id": 1351927,
+          "benefit_name": "Tobacco Cessation Program",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No tobacco cessation services present."
+        },
+        {
+          "benefit_id": 1351931,
+          "benefit_name": "In-clinic Consultation – Adult & Pediatric",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Bill contains doctor consultation fee."
+        },
+        {
+          "benefit_id": 1351937,
+          "benefit_name": "Cancer Screening",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No cancer screening services billed."
+        },
+        {
+          "benefit_id": 1366494,
+          "benefit_name": "Diagnostics",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No lab or diagnostic tests present in the bill."
+        }
+      ],
+      "item_assignments": [
+        {
+          "bill_id": "79ff0a78c5c6",
+          "item_s_no": 2,
+          "benefit_id": 1351915,
+          "benefit_name": "Order Pharmacy"
+        },
+        {
+          "bill_id": "79ff0a78c5c6",
+          "item_s_no": 3,
+          "benefit_id": 1351915,
+          "benefit_name": "Order Pharmacy"
+        },
+        {
+          "bill_id": "79ff0a78c5c6",
+          "item_s_no": 4,
+          "benefit_id": 1351915,
+          "benefit_name": "Order Pharmacy"
+        },
+        {
+          "bill_id": "79ff0a78c5c6",
+          "item_s_no": 5,
+          "benefit_id": 1351915,
+          "benefit_name": "Order Pharmacy"
+        },
+        {
+          "bill_id": "5cd30482ad40",
+          "item_s_no": 1,
+          "benefit_id": 1351931,
+          "benefit_name": "In-clinic Consultation – Adult & Pediatric"
+        }
+      ]
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "5cd30482ad40",
+            "bill_date": "2026-08-18",
+            "bill_type": "itemized_bill",
+            "ip_number": null,
+            "net_amount": 600.0,
+            "page_number": 1,
+            "patient_name": "AAYANSH",
+            "invoice_number": "INV5996",
+            "total_discount": null,
+            "facility_details": {
+              "city": "Bengaluru",
+              "name": "Amber healthcare",
+              "state": null,
+              "pincode": "560087",
+              "gst_number": null,
+              "address_line": "224/4, 2nd Floor, Above Ladoos, Beside Shell Petrol Pump, Gunjur",
+              "registration_number": null
+            },
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "category": "Consultation",
+              "discount": null,
+              "quantity": 1.0,
+              "item_name": "Consultation -Dr. Chetak N K",
+              "net_amount": 600.0,
+              "unit_price": 600.0,
+              "is_returned": false,
+              "final_amount": 600.0,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 600.0
+            }
+          ]
+        },
+        {
+          "bill": {
+            "bill_id": "79ff0a78c5c6",
+            "bill_date": "2026-08-18",
+            "bill_type": "itemized_bill",
+            "ip_number": null,
+            "net_amount": 918.7,
+            "page_number": 3,
+            "patient_name": "AAYANSH",
+            "invoice_number": "INV3294",
+            "total_discount": null,
+            "facility_details": {
+              "city": "Bengaluru",
+              "name": "AMBER PHARMA",
+              "state": null,
+              "pincode": "560087",
+              "gst_number": "29AAJPE1931H1ZU",
+              "address_line": "224/4, 2nd Floor, Above Ladoos, Beside Shell Petrol Pump, Gunjur",
+              "registration_number": "KA-B61-232935"
+            },
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 1.0,
+              "item_name": "Kofcatch D SYP",
+              "net_amount": 89.06,
+              "unit_price": 89.0,
+              "is_returned": false,
+              "final_amount": 89.06,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 89.06
+            },
+            {
+              "s.no.": 3,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 2.0,
+              "item_name": "Cpink Suspension 200ml",
+              "net_amount": 647.38,
+              "unit_price": 324.0,
+              "is_returned": false,
+              "final_amount": 647.38,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 647.38
+            },
+            {
+              "s.no.": 4,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 1.0,
+              "item_name": "Averzine Syp",
+              "net_amount": 88.0,
+              "unit_price": 88.0,
+              "is_returned": false,
+              "final_amount": 88.0,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 88.0
+            },
+            {
+              "s.no.": 5,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 1.0,
+              "item_name": "Nasivion 0.01% Mini",
+              "net_amount": 94.26,
+              "unit_price": 94.0,
+              "is_returned": false,
+              "final_amount": 94.26,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 94.26
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1351910,
+          "benefit_name": "Dental Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "x_ray",
+              "requirement_type": "conditional",
+              "condition_description": ""
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351913,
+          "benefit_name": "Eye Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351915,
+          "benefit_name": "Order Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351916,
+          "benefit_name": "Book Vaccinations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "vaccination_card",
+              "requirement_type": "conditional",
+              "condition_description": "Required only if the reimbursement claim is for a child’s vaccination."
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351925,
+          "benefit_name": "Prenatal Services",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351927,
+          "benefit_name": "Tobacco Cessation Program",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351931,
+          "benefit_name": "In-clinic Consultation – Adult & Pediatric",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1351937,
+          "benefit_name": "Cancer Screening",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1366494,
+          "benefit_name": "Diagnostics",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    },
+    "policy": {
+      "text": "Inclusions:?\nThe policy covers only non-hospitalization expenses defined below:\n1 - Consultancy fee charged by a Registered Medical Practitioner [RMP] is eligible for reimbursement up to reasonable actuals. The scope covers for consultancy fee covered under allopathy, homeopathy, physiotherapy, and ayurvedic treatments under AYUSH.\n2 - Expenses incurred on medicines as prescribed by a Registered Medical Practitioner [RMP], are claimable up to reasonable actuals. The scope covers for medicines prescribed under allopathy, homeopathy, physiotherapy, and ayurvedic treatments under AYUSH.\n3 - Expenses related to medical tests, as prescribed by a Registered Medical Practitioner [RMP], are claimable up to reasonable actuals. The scope covers medical tests prescribed under allopathy, homeopathy, physiotherapy, and ayurvedic treatments under AYUSH.\n4 - Dental expenses, covering non-cosmetic dental treatments such as dentures, cavity fillings, or the fitting of non-gold metal caps, as prescribed by an RMP, can be claimed up to reasonable actuals.\n5 - Vision-related expenses, including the cost of spectacles/ contact lens [Frames and Glasses], are eligible for reimbursement, with a maximum limit of INR 10,000 per employee/eligible dependent member per policy year.\n6 - Hearing aids recommended by a Registered Medical Practitioner are reimbursable up to reasonable actuals.\n7 - Vaccination\nVaccines Name\nBrand Vaccine\nBCG\nTUBERVAC\nHepatitis A\nBiovac A\nHepatitis A\nAvaxim\nHepatitis A\nHavrix\nHepatitis B\nBEVAC B Adult\nHepatitis B\nGenevac B Paed\nHepatitis B\nGenevac B Adult\nDTP 6-in-1 combination\nEASY SIX\nDTP 6-in-1 combination\nHexaxim\nDTP 6-in-1 combination\nInfanrix Hexa\nHPV\nGardasil 4\nHPV\nCERVAVAC\nHPV\nGardasil 9\nInfluenza\nNasovac-S\nInfluenza\nINFLUVAC Tetra\nInfluenza\nFluarix Tetra\nInfluenza\nFluQuadri\nInfluenza\nVaxiFlu 4\nMMR\nTRESIVAC\nMMR\nPriorix\nMeningococcal\nMENVEO\nMeningococcal\nMENACTRA\nDTP 5-in-1 combination\nPENTAVAC\nDTP 5-in-1 combination\nPentaxim\nPneumococcal\nPneumosil\nPneumococcal\nPneumovax 23\nPneumococcal\nSYNFLORIX\nPneumococcal\nPREVENAR\nPolio\nPoliovac PFS\nPolio\nPoliomyelitis Oral\nPolio\nBiopolio B1/3\nRabies\nRABIVAX-S\nRotavirus\nROTAVAC\nRotavirus\nRotasiil\nRotavirus\nRotaTeq\nRotavirus\nRotasure Oral Vaccine\nTd\nTD VAC\nTdap\nBoostrix\nTdap\nAdacel\nTyphoid\nEnteroshield\nTyphoid\nTYPBAR TCV\nVaricella\nVARIPED\nVaricella\nNexipox\nVaricella\nVarilrix\nDTP 4-in-1 combination\nTetraxim\nRabies immunoglobulin\nRabishield\nJapanese Encephalitis\nJeev\nTyphoid\nTypbar PFS\nTetanus\nBETT\n8 - Pre-Natal\nUnder Prenatal care, expecting females (employees or dependents) can avail a host of services defined below under outpatient care and purchase of prenatal vitamins. The overall of limit for outpatient care is capped at INR 19,900 per dependent or employee per instance (coverage up to 2 instances of childbirth). Kindly note that in order to unlock this benefit the employee will be asked to upload an EDD certificate (one time activity). EDD refers to an Expected Date of Delivery certificate which is issued by the treating doctor to the expecting female employee/dependent.\nOutpatient care - Up to 10 prenatal outpatient care visits (includes physical exam BP, fundal height, fetal heart tones) - Include nutritional counseling with each visit. - Review personal risk factors such as smoking, alcohol, medications. - Include provisions for women with complex case-management needs. - Vitamin and iron supplements - Recommended vaccines\nTesting\nFirst trimester: - Baseline blood type and Rh - Complete Blood Count, - Pap smear - Urinalysis, - Screening for sexually transmitted diseases (such as syphilis, gonorrhea, and Chlamydia, Hepatitis B, HIV) - Genetic disorder screenings such as: (serum plasma protein screening, human chorionic gonadotropin, and alpha-fetoprotein) - Fetal ultrasound xl-2 (5 maximum total)\nSecond trimester: - Complete Blood count - Screening for gestational diabetes after 24 weeks with Glucose Tolerance Test. - Genetic disorder screenings such as: (serum plasma protein screening, human chorionic gonadotropin, alpha-fetoprotein, amniocentesis, and chorionic villus sampling) - Fetal Ultrasound xl-2 (5 maximum total)\nThird Trimester: - Complete Blood Count - Group B Strep (depending on local guidelines and practices) - Fetal Ultrasound xl-2 (5 maximum total)\nPrenatal Vitamins: - Folic Aid - Iron - Iron infusion (if necessary) - Calcium\n9 - Tobacco Cessation:\nParticular Benefit: Limit Smoking Use and Addiction Screening & Counselling for employee and dependents (adults)\nNicotine Patch 21 mg || 14 Mg || 7 Mg\nNicotine Jelly\nNicotine Gum\n10 - Cancer Screening\nPreventive Screening Proposed State\nCancer Prevention - Cervical Cancer Once a year\nCancer Prevention - Breast Cancer Once in 2 years\nColonoscopy\nFOBT - Colorectal Cancer Once in 3 years\nSigmoidoscopy Skin Cancer Prevention As recommended by a dermatologist\nExclusions:\nAny treatment covered under the Hospitalization category within the Group Medical Insurance policy is not within the scope of coverage for this policy.\nExpenses rejected under the Hospitalization category within the Group Medical Insurance policy are not within the scope of coverage for this policy.\nFees, whether subscription-based or otherwise, paid for Online Teleconsultations with a Registered Medical Practitioner are excluded from the scope of coverage of this policy.\nAny expense incurred for a treatment falling within the Partnership for Prevention scheme is excluded from the scope of coverage of this policy.\nExpense incurred on cosmetic treatments in any form is excluded from the scope of coverage of this policy.\nExpense incurred on consultation with nutritionists and dieticians, even when prescribed, are outside the scope of coverage of this policy.\nExpense related to health foods, dietary supplements, and naturopathy, even when prescribed, is outside the scope of coverage of this policy.\nExpense related to membership fees for health and well-being apps, gym memberships is outside the scope of coverage of this policy.\nExpense for health, gym, or sports equipment, including but not limited to thermometers, BP apparatus, CPAP/Bi-PAP machines, is outside the scope of coverage of this policy.\nExpense related to prenatal and antenatal is outside the scope of coverage of this policy.\nExpenses related to vaccination (preventive or otherwise) are can not be claimed under another benefits other than vaccination benefit.\nExpense incurred on weight management is outside the scope of coverage of this policy.\nExpense incurred on ambulance charges is not covered within the scope of this policy.\nExpenses incurred with medical treatments conducted at home (including but not limited to peritoneal dialysis) are not within the scope of coverage of this policy.\nExpense incurred for Caregiver (Nurse or otherwise) is outside the scope of coverage of this policy.\nExpenses related to the procurement of contraceptives are outside the scope of coverage of this policy.\nExpenses related to the procurement of personal care items, including but not limited to soaps, face wash, moisturizers, lotions/creams, shampoos, hair lotions, and procedures like peeling, are not covered by this policy.\nExpenses related to the procurement of services or products, including but not limited to hair treatment (growth), protein powder, and baby food bills, are not covered under this policy.\n19. Consumables are not covered udner the policy coverage ( Ex: Disposable & Routine Consumables, Injection & Infusion Related Consumables, Dressing & Wound Care Materials, Personal Comfort & Hygiene Items, Miscellaneous (Non-Medical / Daily-Use Items).\n20. Services availed outside the policy period are not covered.(Policy Period: 01 April 2026 to 31 March 2027).\n21. Expense incurred on infertility treatment or management is outside the scope of coverage of this policy."
+    }
+  }
+}

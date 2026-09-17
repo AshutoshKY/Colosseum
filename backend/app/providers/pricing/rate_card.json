@@ -7,6 +7,30 @@
     "regional": 1.1
   },
   "models": {
+    "gemini-3.1-pro": {
+      "input_usd_per_million": 1.25,
+      "output_usd_per_million": 10.0,
+      "cache_read_usd_per_million": 0.13,
+      "thinking_usd_per_million": 10.0
+    },
+    "gemini-3.1-pro-preview": {
+      "input_usd_per_million": 1.25,
+      "output_usd_per_million": 10.0,
+      "cache_read_usd_per_million": 0.13,
+      "thinking_usd_per_million": 10.0
+    },
+    "gemini-3-flash": {
+      "input_usd_per_million": 0.3,
+      "output_usd_per_million": 2.5,
+      "cache_read_usd_per_million": 0.03,
+      "thinking_usd_per_million": 2.5
+    },
+    "gemini-3-flash-preview": {
+      "input_usd_per_million": 0.3,
+      "output_usd_per_million": 2.5,
+      "cache_read_usd_per_million": 0.03,
+      "thinking_usd_per_million": 2.5
+    },
     "gemini-2.5-pro": {
       "input_usd_per_million": 1.25,
       "output_usd_per_million": 10.0,
@@ -238,6 +262,12 @@
       "cache_read_usd_per_million": 0.11,
       "thinking_usd_per_million": 2.2
     },
+    "glm-4.7-flash": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.4,
+      "cache_read_usd_per_million": 0.02,
+      "thinking_usd_per_million": 0.4
+    },
     "glm-4.6": {
       "input_usd_per_million": 0.6,
       "output_usd_per_million": 2.2,
@@ -292,6 +322,16 @@
       "input_usd_per_million": 0.15,
       "output_usd_per_million": 0.15,
       "cache_read_usd_per_million": 0.05
+    },
+    "pixtral-large": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 6.0,
+      "cache_read_usd_per_million": 0.5
+    },
+    "devstral-2": {
+      "input_usd_per_million": 0.4,
+      "output_usd_per_million": 1.2,
+      "cache_read_usd_per_million": 0.1
     },
     "llama-3": {
       "input_usd_per_million": 0.5,
@@ -379,8 +419,8 @@
       "output_usd_per_million": 0.32
     },
     "openrouter-deepseek-chat": {
-      "input_usd_per_million": 0.2,
-      "output_usd_per_million": 0.8
+      "input_usd_per_million": 0.14,
+      "output_usd_per_million": 0.28
     },
     "openrouter-mistral-large": {
       "input_usd_per_million": 2.0,
@@ -389,11 +429,323 @@
     "openrouter-qwen-2.5-72b": {
       "input_usd_per_million": 0.36,
       "output_usd_per_million": 0.4
+    },
+    "openrouter-claude-3.7-sonnet": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0,
+      "thinking_usd_per_million": 15.0
+    },
+    "openrouter-claude-3.5-sonnet": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0
+    },
+    "openrouter-claude-3.5-haiku": {
+      "input_usd_per_million": 0.8,
+      "output_usd_per_million": 4.0
+    },
+    "openrouter-claude-3-opus": {
+      "input_usd_per_million": 15.0,
+      "output_usd_per_million": 75.0
+    },
+    "openrouter-claude-3-haiku": {
+      "input_usd_per_million": 0.25,
+      "output_usd_per_million": 1.25
+    },
+    "openrouter-claude-opus-4": {
+      "input_usd_per_million": 15.0,
+      "output_usd_per_million": 75.0
+    },
+    "openrouter-claude-haiku-4.5": {
+      "input_usd_per_million": 1.0,
+      "output_usd_per_million": 5.0
+    },
+    "openrouter-o1": {
+      "input_usd_per_million": 15.0,
+      "output_usd_per_million": 60.0
+    },
+    "openrouter-o1-mini": {
+      "input_usd_per_million": 1.1,
+      "output_usd_per_million": 4.4
+    },
+    "openrouter-o3-mini": {
+      "input_usd_per_million": 1.1,
+      "output_usd_per_million": 4.4
+    },
+    "openrouter-gpt-4-turbo": {
+      "input_usd_per_million": 10.0,
+      "output_usd_per_million": 30.0
+    },
+    "openrouter-gemini-2.0-flash": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.4
+    },
+    "openrouter-gemini-2.0-flash-lite": {
+      "input_usd_per_million": 0.075,
+      "output_usd_per_million": 0.3
+    },
+    "openrouter-gemini-1.5-flash": {
+      "input_usd_per_million": 0.075,
+      "output_usd_per_million": 0.3
+    },
+    "openrouter-gemini-1.5-pro": {
+      "input_usd_per_million": 1.25,
+      "output_usd_per_million": 5.0
+    },
+    "openrouter-gemma-3-27b": {
+      "input_usd_per_million": 0.08,
+      "output_usd_per_million": 0.45
+    },
+    "openrouter-gemma-3-12b": {
+      "input_usd_per_million": 0.05,
+      "output_usd_per_million": 0.15
+    },
+    "openrouter-gemma-2-27b": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.3
+    },
+    "openrouter-gemma-2-9b": {
+      "input_usd_per_million": 0.05,
+      "output_usd_per_million": 0.1
+    },
+    "openrouter-deepseek-r1": {
+      "input_usd_per_million": 0.55,
+      "output_usd_per_million": 2.19
+    },
+    "openrouter-deepseek-v3": {
+      "input_usd_per_million": 0.14,
+      "output_usd_per_million": 0.28
+    },
+    "openrouter-deepseek-v3.2": {
+      "input_usd_per_million": 0.27,
+      "output_usd_per_million": 1.1
+    },
+    "openrouter-llama-3.2-90b": {
+      "input_usd_per_million": 0.35,
+      "output_usd_per_million": 0.35
+    },
+    "openrouter-llama-3.2-11b": {
+      "input_usd_per_million": 0.06,
+      "output_usd_per_million": 0.06
+    },
+    "openrouter-llama-3.2-3b": {
+      "input_usd_per_million": 0.02,
+      "output_usd_per_million": 0.02
+    },
+    "openrouter-llama-3.2-1b": {
+      "input_usd_per_million": 0.01,
+      "output_usd_per_million": 0.01
+    },
+    "openrouter-llama-3.1-405b": {
+      "input_usd_per_million": 0.8,
+      "output_usd_per_million": 0.8
+    },
+    "openrouter-llama-3.1-70b": {
+      "input_usd_per_million": 0.35,
+      "output_usd_per_million": 0.4
+    },
+    "openrouter-llama-3.1-8b": {
+      "input_usd_per_million": 0.055,
+      "output_usd_per_million": 0.055
+    },
+    "openrouter-llama-4-scout-17b": {
+      "input_usd_per_million": 0.25,
+      "output_usd_per_million": 0.75
+    },
+    "openrouter-llama-4-maverick-17b": {
+      "input_usd_per_million": 0.45,
+      "output_usd_per_million": 1.35
+    },
+    "openrouter-pixtral-large": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 6.0
+    },
+    "openrouter-mistral-small": {
+      "input_usd_per_million": 0.2,
+      "output_usd_per_million": 0.6
+    },
+    "openrouter-codestral": {
+      "input_usd_per_million": 0.3,
+      "output_usd_per_million": 0.9
+    },
+    "openrouter-ministral-8b": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.1
+    },
+    "openrouter-ministral-3b": {
+      "input_usd_per_million": 0.04,
+      "output_usd_per_million": 0.04
+    },
+    "openrouter-qwen-2.5-coder-32b": {
+      "input_usd_per_million": 0.15,
+      "output_usd_per_million": 0.15
+    },
+    "openrouter-qwen-2.5-7b": {
+      "input_usd_per_million": 0.05,
+      "output_usd_per_million": 0.05
+    },
+    "openrouter-qwq-32b": {
+      "input_usd_per_million": 0.15,
+      "output_usd_per_million": 0.6
+    },
+    "openrouter-qwen-2.5-vl-72b": {
+      "input_usd_per_million": 0.4,
+      "output_usd_per_million": 0.4
+    },
+    "openrouter-qwen3-vl-235b": {
+      "input_usd_per_million": 0.55,
+      "output_usd_per_million": 2.2
+    },
+    "openrouter-grok-4": {
+      "input_usd_per_million": 3.0,
+      "output_usd_per_million": 15.0
+    },
+    "openrouter-grok-4.6": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 6.0
+    },
+    "openrouter-grok-3": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 10.0
+    },
+    "openrouter-grok-2": {
+      "input_usd_per_million": 2.0,
+      "output_usd_per_million": 10.0
+    },
+    "openrouter-glm-5": {
+      "input_usd_per_million": 1.0,
+      "output_usd_per_million": 3.2
+    },
+    "openrouter-glm-4.7": {
+      "input_usd_per_million": 0.6,
+      "output_usd_per_million": 2.2
+    },
+    "openrouter-glm-4.7-flash": {
+      "input_usd_per_million": 0.1,
+      "output_usd_per_million": 0.4
+    },
+    "openrouter-glm-4.6": {
+      "input_usd_per_million": 0.6,
+      "output_usd_per_million": 2.2
+    },
+    "openrouter-kimi-k2.5": {
+      "input_usd_per_million": 0.6,
+      "output_usd_per_million": 2.5
+    },
+    "openrouter-kimi-k2": {
+      "input_usd_per_million": 0.6,
+      "output_usd_per_million": 2.5
+    },
+    "openrouter-minimax-m2.5": {
+      "input_usd_per_million": 0.4,
+      "output_usd_per_million": 1.6
+    },
+    "openrouter-minimax-m2": {
+      "input_usd_per_million": 0.4,
+      "output_usd_per_million": 1.6
+    },
+    "openrouter-command-r-plus": {
+      "input_usd_per_million": 2.5,
+      "output_usd_per_million": 10.0
+    },
+    "openrouter-command-r": {
+      "input_usd_per_million": 0.15,
+      "output_usd_per_million": 0.6
+    },
+    "openrouter-nova-pro": {
+      "input_usd_per_million": 0.8,
+      "output_usd_per_million": 3.2
+    },
+    "openrouter-nova-lite": {
+      "input_usd_per_million": 0.06,
+      "output_usd_per_million": 0.24
+    },
+    "openrouter-nova-micro": {
+      "input_usd_per_million": 0.035,
+      "output_usd_per_million": 0.14
+    },
+    "openrouter-nova-2-lite": {
+      "input_usd_per_million": 0.06,
+      "output_usd_per_million": 0.24
     }
   },
   "aliases": {
-    "gemini-3-flash": "gemini-3-flash-preview",
+    "gemini-3.1-pro": "gemini-3.1-pro",
     "gemini-3-pro": "gemini-3.1-pro-preview",
-    "gemini-2.5-flash-preview": "gemini-2.5-flash"
+    "vertex_ai/gemini-3.1-pro": "gemini-3.1-pro",
+    "vertex_ai/gemini-3.1-pro-preview": "gemini-3.1-pro-preview",
+    "gemini-3-flash": "gemini-3-flash-preview",
+    "vertex_ai/gemini-3-flash": "gemini-3-flash-preview",
+    "vertex_ai/gemini-3-flash-preview": "gemini-3-flash-preview",
+    "gemini-2.5-flash-preview": "gemini-2.5-flash",
+    "openrouter/claude-3.7-sonnet": "openrouter-claude-3.7-sonnet",
+    "openrouter/claude-3.5-sonnet": "openrouter-claude-3.5-sonnet",
+    "openrouter/claude-3.5-haiku": "openrouter-claude-3.5-haiku",
+    "openrouter/claude-3-opus": "openrouter-claude-3-opus",
+    "openrouter/claude-3-haiku": "openrouter-claude-3-haiku",
+    "openrouter/claude-sonnet-4": "openrouter-claude-sonnet-4",
+    "openrouter/claude-opus-4": "openrouter-claude-opus-4",
+    "openrouter/claude-haiku-4.5": "openrouter-claude-haiku-4.5",
+    "openrouter/gpt-4o": "openrouter-gpt-4o",
+    "openrouter/gpt-4o-mini": "openrouter-gpt-4o-mini",
+    "openrouter/gpt-4.1": "openrouter-gpt-4.1",
+    "openrouter/gpt-4.1-mini": "openrouter-gpt-4.1-mini",
+    "openrouter/o1": "openrouter-o1",
+    "openrouter/o1-mini": "openrouter-o1-mini",
+    "openrouter/o3-mini": "openrouter-o3-mini",
+    "openrouter/gpt-4-turbo": "openrouter-gpt-4-turbo",
+    "openrouter/gemini-2.5-flash": "openrouter-gemini-2.5-flash",
+    "openrouter/gemini-2.5-pro": "openrouter-gemini-2.5-pro",
+    "openrouter/gemini-2.0-flash": "openrouter-gemini-2.0-flash",
+    "openrouter/gemini-2.0-flash-lite": "openrouter-gemini-2.0-flash-lite",
+    "openrouter/gemini-1.5-flash": "openrouter-gemini-1.5-flash",
+    "openrouter/gemini-1.5-pro": "openrouter-gemini-1.5-pro",
+    "openrouter/gemma-3-27b": "openrouter-gemma-3-27b",
+    "openrouter/gemma-3-12b": "openrouter-gemma-3-12b",
+    "openrouter/gemma-2-27b": "openrouter-gemma-2-27b",
+    "openrouter/gemma-2-9b": "openrouter-gemma-2-9b",
+    "openrouter/deepseek-r1": "openrouter-deepseek-r1",
+    "openrouter/deepseek-chat": "openrouter-deepseek-chat",
+    "openrouter/deepseek-v3": "openrouter-deepseek-v3",
+    "openrouter/deepseek-v3.2": "openrouter-deepseek-v3.2",
+    "openrouter/llama-3.3-70b": "openrouter-llama-3.3-70b",
+    "openrouter/llama-3.2-90b": "openrouter-llama-3.2-90b",
+    "openrouter/llama-3.2-11b": "openrouter-llama-3.2-11b",
+    "openrouter/llama-3.2-3b": "openrouter-llama-3.2-3b",
+    "openrouter/llama-3.2-1b": "openrouter-llama-3.2-1b",
+    "openrouter/llama-3.1-405b": "openrouter-llama-3.1-405b",
+    "openrouter/llama-3.1-70b": "openrouter-llama-3.1-70b",
+    "openrouter/llama-3.1-8b": "openrouter-llama-3.1-8b",
+    "openrouter/llama-4-scout-17b": "openrouter-llama-4-scout-17b",
+    "openrouter/llama-4-maverick-17b": "openrouter-llama-4-maverick-17b",
+    "openrouter/mistral-large": "openrouter-mistral-large",
+    "openrouter/pixtral-large": "openrouter-pixtral-large",
+    "openrouter/mistral-small": "openrouter-mistral-small",
+    "openrouter/codestral": "openrouter-codestral",
+    "openrouter/ministral-8b": "openrouter-ministral-8b",
+    "openrouter/ministral-3b": "openrouter-ministral-3b",
+    "openrouter/qwen-2.5-72b": "openrouter-qwen-2.5-72b",
+    "openrouter/qwen-2.5-coder-32b": "openrouter-qwen-2.5-coder-32b",
+    "openrouter/qwen-2.5-7b": "openrouter-qwen-2.5-7b",
+    "openrouter/qwq-32b": "openrouter-qwq-32b",
+    "openrouter/qwen-2.5-vl-72b": "openrouter-qwen-2.5-vl-72b",
+    "openrouter/qwen3-vl-235b": "openrouter-qwen3-vl-235b",
+    "openrouter/grok-4": "openrouter-grok-4",
+    "openrouter/grok-4.6": "openrouter-grok-4.6",
+    "openrouter/grok-3": "openrouter-grok-3",
+    "openrouter/grok-2": "openrouter-grok-2",
+    "openrouter/glm-5": "openrouter-glm-5",
+    "openrouter/glm-4.7": "openrouter-glm-4.7",
+    "openrouter/glm-4.7-flash": "openrouter-glm-4.7-flash",
+    "openrouter/glm-4.6": "openrouter-glm-4.6",
+    "openrouter/kimi-k2.5": "openrouter-kimi-k2.5",
+    "openrouter/kimi-k2": "openrouter-kimi-k2",
+    "openrouter/minimax-m2.5": "openrouter-minimax-m2.5",
+    "openrouter/minimax-m2": "openrouter-minimax-m2",
+    "openrouter/command-r-plus": "openrouter-command-r-plus",
+    "openrouter/command-r": "openrouter-command-r",
+    "openrouter/nova-pro": "openrouter-nova-pro",
+    "openrouter/nova-lite": "openrouter-nova-lite",
+    "openrouter/nova-micro": "openrouter-nova-micro",
+    "openrouter/nova-2-lite": "openrouter-nova-2-lite"
   }
 }

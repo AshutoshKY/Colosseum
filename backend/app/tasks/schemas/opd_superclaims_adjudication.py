@@ -18,7 +18,7 @@ class BenefitPlanOutput(BaseModel):
 class PatientSummaryOutput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    patient_summary: dict[str, dict[str, str | float | bool | None]]
+    patient_summary: dict[str, Any]
 
 
 class AuditPatch(BaseModel):
@@ -142,4 +142,3 @@ class ValidationOutput(BaseModel):
     recalculated_difference: float
     contains_handwritten_bill: bool
     printed_bills_percentage: float = Field(ge=0.0, le=100.0)
-

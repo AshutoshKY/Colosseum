@@ -62,6 +62,7 @@ _CAPABILITY_FIELDS = {
     "base_url_env",
     "api_key_env",
     "vertex_location",
+    "default_region",
 }
 
 

@@ -38,6 +38,12 @@ groups:
         variant: thinking
         release_date: "2025-10-20"
         pricing_ref: glm-4.7
+      - model_id: vertex_ai/zai-org/glm-4.7-flash-maas
+        display_name: GLM-4.7 Flash (Vertex)
+        version: "4.7-flash"
+        variant: flash
+        release_date: "2025-10-20"
+        pricing_ref: glm-4.7-flash
 
   # ---- External z.ai OpenAI-compatible (no key yet) ----
   - provider: openai_compatible
@@ -66,6 +72,12 @@ groups:
         variant: thinking
         release_date: "2025-10-20"
         pricing_ref: glm-4.7
+      - model_id: openai_compatible/zai/glm-4.7-flash
+        display_name: GLM-4.7 Flash (z.ai)
+        version: "4.7-flash"
+        variant: flash
+        release_date: "2025-10-20"
+        pricing_ref: glm-4.7-flash
       - model_id: openai_compatible/zai/glm-4.6
         display_name: GLM-4.6 (z.ai)
         version: "4.6"

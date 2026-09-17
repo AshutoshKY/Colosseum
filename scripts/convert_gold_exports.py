@@ -141,14 +141,22 @@ def _format_page_ranges(ranges: Any) -> str | None:
 
 
 def _gold_segregation(row: dict[str, Any]) -> dict[str, Any] | None:
-    raw_segs = row.get("segments")
+    raw_segs = (
+        row.get("segments")
+        or row.get("segregation")
+        or row.get("aggregated_segments")
+    )
     if not raw_segs and isinstance(row.get("extracted"), dict):
         raw_segs = row.get("extracted", {}).get("segregation") or row.get("extracted", {}).get("document_segregator")
     if not raw_segs:
         reviews = row.get("review") or []
         latest = reviews[0] if reviews else {}
         edited = latest.get("edited_payload") or latest.get("original_payload") or {}
-        raw_segs = edited.get("segments") or edited.get("segregation")
+        raw_segs = (
+            edited.get("segments")
+            or edited.get("segregation")
+            or (edited.get("data") or {}).get("output", {}).get("segregation")
+        )
 
     if isinstance(raw_segs, str):
         try:
@@ -315,17 +323,39 @@ def _split_numbered(text: str | None) -> list[str]:
     return out
 
 
-def _gold_policy(row: dict[str, Any]) -> dict[str, Any] | None:
-    raw = row.get("policy_extraction")
+def _gold_policy(row: dict[str, Any], edited: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    raw = (
+        (edited or {}).get("policy_extraction")
+        or row.get("policy_extraction")
+    )
     if not raw:
         return None
     try:
         payload = json.loads(raw) if isinstance(raw, str) else raw
     except json.JSONDecodeError:
         return None
+    if not isinstance(payload, dict):
+        return None
+
+    nme_items = payload.get("nme_items") or []
+    if isinstance(nme_items, str):
+        nme_items = _split_numbered(nme_items)
+    elif isinstance(nme_items, list):
+        nme_items = [str(x).strip() for x in nme_items if str(x).strip()]
+    else:
+        nme_items = []
+
+    policy_rules = payload.get("policy_rules") or []
+    if isinstance(policy_rules, str):
+        policy_rules = _split_numbered(policy_rules)
+    elif isinstance(policy_rules, list):
+        policy_rules = [str(x).strip() for x in policy_rules if str(x).strip()]
+    else:
+        policy_rules = []
+
     return {
-        "nme_items": _split_numbered(payload.get("nme_items")),
-        "policy_rules": _split_numbered(payload.get("policy_rules")),
+        "nme_items": nme_items,
+        "policy_rules": policy_rules,
         "extraction_ok": bool(payload.get("extraction_ok", True)),
     }
 
@@ -335,7 +365,17 @@ def _gold_benefits(source: dict[str, Any] | None) -> dict[str, Any] | None:
     for the benefit_plan task, NOT scored gold."""
     if not source or not isinstance(source, dict):
         return None
-    breakdown = source.get("benefit_plan_breakdown") or source.get("benefits") or []
+    client_payload = (
+        source.get("original_client_payload")
+        if isinstance(source.get("original_client_payload"), dict)
+        else {}
+    )
+    breakdown = (
+        client_payload.get("benefits")
+        or source.get("benefit_plan_breakdown")
+        or source.get("benefits")
+        or []
+    )
     benefits = [
         _drop_nulls(
             {
@@ -348,6 +388,14 @@ def _gold_benefits(source: dict[str, Any] | None) -> dict[str, Any] | None:
         if isinstance(b, dict) and (b.get("benefit_id") or b.get("benefit_name"))
     ]
     return {"benefits": benefits} if benefits else None
+
+
+def _policy_context(edited: dict[str, Any], doc_details: dict[str, Any]) -> dict[str, Any] | None:
+    client_payload = edited.get("original_client_payload") or {}
+    raw = client_payload.get("policy") or doc_details.get("policy_text") or doc_details.get("policy")
+    if isinstance(raw, str) and raw.strip():
+        return {"text": raw.strip()}
+    return raw if isinstance(raw, dict) and raw else None
 
 
 def _gold_cheque_bank(
@@ -413,8 +461,51 @@ def _gold_patient_summary(
     return _drop_nulls({"patient_summary": raw})
 
 
+def _canonical_benefit_item(
+    item: dict[str, Any], upstream_bills: dict[str, Any] | None
+) -> tuple[str | None, int | None]:
+    """Map reviewed benefit items back to the exact bill identity sent to the model."""
+    candidates = []
+    for entry in (upstream_bills or {}).get("bills", []) or []:
+        bill = entry.get("bill") or {}
+        for upstream_item in entry.get("items", []) or []:
+            candidates.append(
+                {
+                    "bill_id": bill.get("bill_id") or bill.get("invoice_number"),
+                    "invoice_number": bill.get("invoice_number"),
+                    "item_id": upstream_item.get("item_id"),
+                    "item_s_no": _item_sno(upstream_item),
+                }
+            )
+
+    bill_id = item.get("bill_id")
+    invoice = item.get("invoice_number") or item.get("Bill_Number")
+    scoped = [
+        row
+        for row in candidates
+        if (bill_id is not None and str(row["bill_id"]) == str(bill_id))
+        or (bill_id is None and invoice is not None and str(row["invoice_number"]) == str(invoice))
+    ]
+    item_id = item.get("item_id")
+    by_item_id = [row for row in scoped if item_id is not None and str(row["item_id"]) == str(item_id)]
+    if len(by_item_id) == 1:
+        scoped = by_item_id
+    else:
+        raw_s_no = item.get("item_s_no")
+        raw_s_no = _item_sno(item) if raw_s_no is None else raw_s_no
+        by_s_no = [row for row in scoped if row["item_s_no"] == raw_s_no]
+        if len(by_s_no) == 1:
+            scoped = by_s_no
+    if len(scoped) == 1:
+        return str(scoped[0]["bill_id"]), scoped[0]["item_s_no"]
+    raw_s_no = item.get("item_s_no")
+    return (str(bill_id) if bill_id is not None else None, _item_sno(item) if raw_s_no is None else raw_s_no)
+
+
 def _gold_benefit_plan(
-    extracted_map: dict[str, Any], edited: dict[str, Any]
+    extracted_map: dict[str, Any],
+    edited: dict[str, Any],
+    upstream_bills: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     raw = (
         extracted_map.get("benefit_plan")
@@ -423,7 +514,7 @@ def _gold_benefit_plan(
     )
     if isinstance(raw, dict) and "plan_applicability" in raw:
         return _drop_nulls(raw)
-    # If we have edited benefit_plan_breakdown, map it to BenefitPlanSelectionOutput shape
+    # Map the human-reviewed production breakdown to the model's structured output.
     breakdown = edited.get("benefit_plan_breakdown")
     if isinstance(breakdown, list) and breakdown:
         plans = []
@@ -431,27 +522,63 @@ def _gold_benefit_plan(
         for b in breakdown:
             if not isinstance(b, dict):
                 continue
+            status = str(b.get("status") or "").upper()
+            applicable = status != "NOT_APPLICABLE" if status else bool(b.get("applicable", True))
             plans.append(
                 {
                     "benefit_id": b.get("benefit_id"),
                     "benefit_name": b.get("benefit_name") or "",
-                    "applicable": bool(b.get("applicable", True)),
+                    "applicable": applicable,
                     "confidence": 1.0,
-                    "reason": b.get("reason"),
+                    "reason": b.get("applicability_reason") or b.get("reason"),
                 }
             )
-            for it in b.get("items") or b.get("assigned_items") or []:
+            candidates = []
+            for entry in (upstream_bills or {}).get("bills", []) or []:
+                bill = entry.get("bill") or {}
+                b_id = bill.get("bill_id") or bill.get("invoice_number")
+                for u_item in entry.get("items", []) or []:
+                    s_no = _item_sno(u_item)
+                    if b_id is not None and s_no is not None:
+                        candidates.append((str(b_id), int(s_no)))
+            valid_keys = set(candidates)
+
+            reviewed_items = b.get("bill_items") or b.get("items") or b.get("assigned_items") or []
+            for it in reviewed_items if applicable else []:
                 if isinstance(it, dict):
-                    items.append(
-                        {
-                            "bill_id": it.get("bill_id"),
-                            "item_s_no": it.get("item_s_no") or it.get("s_no") or it.get("s.no."),
-                            "benefit_id": b.get("benefit_id"),
-                            "benefit_name": b.get("benefit_name"),
-                        }
-                    )
+                    bill_id, item_s_no = _canonical_benefit_item(it, upstream_bills)
+                    if (str(bill_id), int(item_s_no) if item_s_no is not None else -1) in valid_keys:
+                        items.append(
+                            {
+                                "bill_id": str(bill_id),
+                                "item_s_no": int(item_s_no),
+                                "benefit_id": b.get("benefit_id"),
+                                "benefit_name": b.get("benefit_name"),
+                            }
+                        )
         if plans:
-            return _drop_nulls({"plan_applicability": plans, "item_assignments": items})
+            # Ensure every item in upstream_bills is represented in item_assignments
+            assigned_keys = {
+                (str(it["bill_id"]), int(it["item_s_no"]))
+                for it in items
+                if it.get("bill_id") is not None and it.get("item_s_no") is not None
+            }
+            for entry in (upstream_bills or {}).get("bills", []) or []:
+                bill = entry.get("bill") or {}
+                b_id = bill.get("bill_id") or bill.get("invoice_number")
+                for u_item in entry.get("items", []) or []:
+                    s_no = _item_sno(u_item)
+                    if b_id is not None and s_no is not None and (str(b_id), int(s_no)) not in assigned_keys:
+                        items.append(
+                            {
+                                "bill_id": str(b_id),
+                                "item_s_no": int(s_no),
+                                "benefit_id": None,
+                                "benefit_name": None,
+                            }
+                        )
+                        assigned_keys.add((str(b_id), int(s_no)))
+            return {"plan_applicability": _drop_nulls(plans), "item_assignments": items}
     return None
 
 
@@ -495,7 +622,17 @@ def convert_row(row: dict[str, Any]) -> dict[str, Any] | None:
 
     reviews = row.get("review") or []
     latest = reviews[0] if reviews else {}
-    edited = latest.get("edited_payload") or latest.get("original_payload") or {}
+    raw_edited = latest.get("edited_payload") or latest.get("original_payload") or {}
+    output_payload = (
+        (raw_edited.get("data") or {}).get("output")
+        if isinstance(raw_edited.get("data"), dict)
+        else {}
+    )
+    if not isinstance(output_payload, dict):
+        output_payload = {}
+    edited = {**raw_edited, **output_payload}
+    if "original_client_payload" in raw_edited and isinstance(raw_edited["original_client_payload"], dict):
+        edited["original_client_payload"] = raw_edited["original_client_payload"]
 
     tasks: dict[str, Any] = {}
     if (gold := _gold_segregation(row)) is not None:
@@ -508,7 +645,7 @@ def convert_row(row: dict[str, Any]) -> dict[str, Any] | None:
         tasks["nme_analysis"] = gold
     if (gold := _gold_audit(edited.get("audit_analysis"), extracted_map.get("audit_analysis"))) is not None:
         tasks["audit"] = gold
-    if (gold := _gold_policy(row)) is not None:
+    if (gold := _gold_policy(row, edited)) is not None:
         tasks["policy_extraction"] = gold
     if (gold := _gold_cheque_bank(extracted_map, edited, doc_details)) is not None:
         tasks["cheque_bank"] = gold
@@ -518,7 +655,8 @@ def convert_row(row: dict[str, Any]) -> dict[str, Any] | None:
         tasks["extract_icd_codes"] = gold
     if (gold := _gold_patient_summary(extracted_map, edited)) is not None:
         tasks["patient_summary"] = gold
-    if (gold := _gold_benefit_plan(extracted_map, edited)) is not None:
+    upstream = extracted_map.get("nme_analysis") or edited.get("nme_analysis")
+    if (gold := _gold_benefit_plan(extracted_map, edited, upstream)) is not None:
         tasks["benefit_plan"] = gold
     if (gold := _gold_claim_form(extracted_map, edited)) is not None:
         tasks["claim_form"] = gold
@@ -530,11 +668,12 @@ def convert_row(row: dict[str, Any]) -> dict[str, Any] | None:
         tasks["validation"] = _drop_nulls(payload)
 
     # Context (not scored): merged categorised bills + benefit catalog for feeding dependent tasks.
-    upstream = extracted_map.get("nme_analysis") or edited.get("nme_analysis")
     if upstream and upstream.get("bills"):
         tasks["upstream_bills"] = upstream
     if (benefits := _gold_benefits(edited) or _gold_benefits(doc_details)) is not None:
         tasks["upstream_benefits"] = benefits
+    if (policy := _policy_context(edited, doc_details)) is not None:
+        tasks["policy"] = policy
 
     if not tasks:
         return None

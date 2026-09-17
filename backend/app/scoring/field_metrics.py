@@ -116,6 +116,10 @@ def _record_field(m: FieldMetrics, path: str, ok: bool) -> None:
 def _list_key(item: Any) -> str:
     """A stable key for set-based list precision/recall (uses the most identifying scalar fields)."""
     if isinstance(item, dict):
+        if item.get("bill_id") is not None and item.get("item_s_no") is not None:
+            return f"bill_id={_norm_scalar(item['bill_id'])};item_s_no={_norm_scalar(item['item_s_no'])}"
+        if item.get("benefit_id") is not None:
+            return f"benefit_id={_norm_scalar(item['benefit_id'])}"
         for k in ("item_name", "description", "code", "rule_name", "document_type", "name", "s.no."):
             if k in item and item[k] is not None:
                 return f"{k}={_norm_scalar(item[k])}"

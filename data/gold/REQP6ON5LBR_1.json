@@ -1,0 +1,512 @@
+{
+  "document": "data/uploads/REQP6ON5LBR_1.pdf",
+  "tasks": {
+    "segregation": {
+      "segments": [
+        {
+          "document_type": "other",
+          "pages": "16"
+        },
+        {
+          "document_type": "prescription",
+          "pages": "18"
+        },
+        {
+          "document_type": "itemized_bill",
+          "pages": "17",
+          "is_pharmacy_bill": true
+        },
+        {
+          "document_type": "investigation_report",
+          "pages": "1-15"
+        },
+        {
+          "document_type": "cheque_or_bank_details",
+          "pages": "19"
+        }
+      ]
+    },
+    "itemized_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_date": "2026-08-13",
+            "net_amount": 537.0,
+            "page_number": 17,
+            "invoice_number": "16093",
+            "facility_details": {
+              "name": "SHREE NEW KOHINOOR CHEMIST",
+              "registration_number": "20-558223"
+            }
+          },
+          "items": [
+            {
+              "quantity": 20.0,
+              "item_name": "MEGANEURON OD PLUS 20xCAP",
+              "net_amount": 358.0,
+              "unit_price": 17.9,
+              "is_returned": false,
+              "final_amount": 358.0
+            },
+            {
+              "quantity": 10.0,
+              "item_name": "MEGANEURON OD PLUS 10xCAP",
+              "net_amount": 179.0,
+              "unit_price": 17.9,
+              "is_returned": false,
+              "final_amount": 179.0
+            }
+          ]
+        }
+      ]
+    },
+    "items_categorisation": {
+      "bill_item_categories": [
+        {
+          "bill_id": "40c78d90d818",
+          "categorized_items": [
+            {
+              "s.no.": 1,
+              "category": "Medicines From Shop"
+            },
+            {
+              "s.no.": 2,
+              "category": "Medicines From Shop"
+            }
+          ]
+        }
+      ]
+    },
+    "nme_analysis": {
+      "nme_list": []
+    },
+    "audit": {
+      "patches": [],
+      "bills_analyzed": 1,
+      "duplicates_found": 0,
+      "discrepancy_amount": 0.0,
+      "bills_with_corrections": 0,
+      "original_total_of_bills": 537.0,
+      "icd_codes": [],
+      "policy_violations": [],
+      "medical_legibility": {}
+    },
+    "policy_extraction": {
+      "nme_items": [],
+      "policy_rules": [
+        "Consultation fees per-family limit: SI 10,000 - Up to 5,000 | SI 20,000 - 15,000 | SI 30,000 - 25,000 (Cashless & Reimb).",
+        "Prescribed Diagnostics (Radiology, Pathology, Microbiology, Biochemistry) limit: SI 10,000 - Up to 5,000 | SI 20,000 - 10,000 | SI 30,000 - 15,000 (Cashless & Reimb).",
+        "Tele-consultation with Physician is unlimited across all SI options (Cashless only).",
+        "Pharmacy Expenses limit: SI 10,000 - Up to 2,500 | SI 20,000 - Up to 5,000 | SI 30,000 - Up to 7,500 (Cashless & Reimb).",
+        "AYUSH (Ayurvedic & Homeopathy consults + pharmacy) limit: SI 10,000 - Up to 5,000 | SI 20,000 - 15,000 | SI 30,000 - 25,000 (Cashless & Reimb).",
+        "Physiotherapy limit: SI 10,000 - Up to 5,000 | SI 20,000 - 10,000 | SI 30,000 - 15,000 (Cashless & Reimb).",
+        "Infertility treatments (consultations + pharmacy) limit: SI 10,000 - Up to 5,000 | SI 20,000 - 10,000 | SI 30,000 - 15,000 (Cashless & Reimb).",
+        "Platinum HCK for Self & Spouse: Cashless HCK worth INR 8,000 (5,000 within SI + 3,000 deducted from OPD wallet). Reimbursement HCK cases capped at INR 4,000 per HCK.",
+        "Prescribed Dental limit: SI 10,000 - Not Covered | SI 20,000 - 3,000 | SI 30,000 - 5,000 (Cashless & Reimb).",
+        "Prescribed Vision limit: SI 10,000 - Not Covered | SI 20,000 - 3,000 | SI 30,000 - 5,000 (Cashless & Reimb).",
+        "Prescribed Vaccination/Immunizations/COVID booster limit: SI 10,000 - Not Covered | SI 20,000 - 3,000 | SI 30,000 - 5,000 (Cashless & Reimb).",
+        "Treatment that is cosmetic in nature is NOT covered.",
+        "Dental cosmetic surgery and routine dental care are NOT covered.",
+        "Benefits are limited to the Care Cashless OPD network only.",
+        "Claims must be submitted within 60 days of expense; in the last quarter of the policy, within 45 days. A 15-day post-expiry window is allowed for claim submission.",
+        "Requires main Group Health Insurance (GHI) policy details where OPD is opted as an optional extension.",
+        "No premium refund is made for any insured member who has incurred a claim during the policy period.",
+        "Addition/deletion window open for 60 days; mid-term inclusion allowed only for a child by birth or spouse after marriage."
+      ],
+      "extraction_ok": true
+    },
+    "cheque_bank": {
+      "bank_details": {
+        "bank_name": "ICICI Bank",
+        "ifsc_code": "ICIC0001878",
+        "account_no": "055801620576",
+        "bank_branch": "PUNE - AUNDH NAGRAS RD Branch",
+        "account_type": "Savings",
+        "account_holder_name": "SANDHYA SINGH PATEL"
+      }
+    },
+    "prescription": {
+      "claims_digitization_details": {
+        "patient_age": 33,
+        "patient_name": "Mr. Ravinder Kumar",
+        "hospital_city": "Aundh",
+        "hospital_name": "Apollo Clinic - Aundh",
+        "hospital_address": "Centriole building above star bucks, Plot #90, Survey #129, 130/1+2, ITI Road, Aundh",
+        "hospital_pincode": "411007",
+        "prescribed_items": [
+          {
+            "route": "Oral",
+            "dosage": "60K",
+            "duration": "x 8 weeks + 4 months (once a month)",
+            "frequency": "once a week",
+            "instructions": "after breakfast",
+            "medicine_name": "Cap. Uprise D3 60K"
+          },
+          {
+            "route": "Oral",
+            "duration": "x 1 month",
+            "frequency": "0 - 1 - 0",
+            "instructions": "after lunch",
+            "medicine_name": "Cap. Meganeuron OD+"
+          }
+        ],
+        "prescription_date": "2026/01/18",
+        "hospital_phone_number": "(020) 2588 7961 - 4",
+        "name_of_treating_doctor": "Dr. PRAJAKTA CHAUDHARI",
+        "treating_doctor_registration": "04031662",
+        "treating_doctor_qualification": "MBBS (Physiology) Family Physician & Wellness Consultant"
+      }
+    },
+    "extract_icd_codes": {
+      "icd_codes": []
+    },
+    "patient_summary": {
+      "patient_summary": {
+        "patient_details": {
+          "patient_name": "Mr. Ravinder Kumar",
+          "patient_bank_name": "ICICI Bank",
+          "patient_bank_ifsc_code": "ICIC0001878",
+          "patient_bank_account_no": "055801620576",
+          "patient_bank_branch_name": "PUNE - AUNDH NAGRAS RD Branch",
+          "patient_bank_account_type": "Savings",
+          "patient_bank_account_holder_name": "SANDHYA SINGH PATEL"
+        },
+        "clinical_details": {
+          "hospital_name": "Apollo Clinic - Aundh"
+        },
+        "past_history_details": {
+          "physician_reg_no": "04031662"
+        },
+        "hospitalization_details": {
+          "patient_paid_amount": 0
+        }
+      }
+    },
+    "benefit_plan": {
+      "plan_applicability": [
+        {
+          "benefit_id": 1363192,
+          "benefit_name": "Eye Checkup",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No eye checkup or optical items found in the bill."
+        },
+        {
+          "benefit_id": 1363193,
+          "benefit_name": "Infertility",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No infertility-related services or treatments present in the bill."
+        },
+        {
+          "benefit_id": 1363195,
+          "benefit_name": "In-Clinic Consults",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No consultation fees found in the billed items."
+        },
+        {
+          "benefit_id": 1363196,
+          "benefit_name": "Order Pharmacy",
+          "applicable": true,
+          "confidence": 1.0,
+          "reason": "Bill contains pharmacy/medicine items (MEGANEURON OD PLUS)."
+        },
+        {
+          "benefit_id": 1363197,
+          "benefit_name": "Online Consults",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No online consultation charges present."
+        },
+        {
+          "benefit_id": 1363198,
+          "benefit_name": "Book Vaccinations",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No vaccination services or vaccines billed."
+        },
+        {
+          "benefit_id": 1363199,
+          "benefit_name": "Dental Checkup",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No dental procedures or checkup items present."
+        },
+        {
+          "benefit_id": 1363200,
+          "benefit_name": "Annual Health Checkup",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No health checkup packages billed."
+        },
+        {
+          "benefit_id": 1363217,
+          "benefit_name": "Prescribed Diagnostics",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No diagnostic or lab test items billed."
+        },
+        {
+          "benefit_id": 1363218,
+          "benefit_name": "Physiotherapy",
+          "applicable": false,
+          "confidence": 1.0,
+          "reason": "No physiotherapy services present in the bill."
+        }
+      ],
+      "item_assignments": [
+        {
+          "bill_id": "40c78d90d818",
+          "item_s_no": 1,
+          "benefit_id": 1363196,
+          "benefit_name": "Order Pharmacy"
+        },
+        {
+          "bill_id": "40c78d90d818",
+          "item_s_no": 2,
+          "benefit_id": 1363196,
+          "benefit_name": "Order Pharmacy"
+        }
+      ]
+    },
+    "upstream_bills": {
+      "bills": [
+        {
+          "bill": {
+            "bill_id": "40c78d90d818",
+            "bill_date": "2026-08-13",
+            "bill_type": "itemized_bill",
+            "ip_number": null,
+            "net_amount": 537.0,
+            "page_number": 17,
+            "patient_name": "RAVINDER KUMAR",
+            "invoice_number": "16093",
+            "total_discount": null,
+            "facility_details": {
+              "city": "PUNE",
+              "name": "SHREE NEW KOHINOOR CHEMIST",
+              "state": "MAHARASHTRA",
+              "pincode": "411061",
+              "gst_number": "27AXTPC2072B1ZU",
+              "address_line": "SHOP NO. 3 GR FLR AISHWARYA CORNER KATEPURAM CHOWK PIMPLE GURAV",
+              "registration_number": "20-558223"
+            },
+            "discount_allocated": true,
+            "applied_total_discount": 0.0
+          },
+          "items": [
+            {
+              "s.no.": 1,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 20.0,
+              "item_name": "MEGANEURON OD PLUS 20xCAP",
+              "net_amount": 358.0,
+              "unit_price": 17.9,
+              "is_returned": false,
+              "final_amount": 358.0,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 358.0
+            },
+            {
+              "s.no.": 2,
+              "is_nme": false,
+              "category": "Medicines From Shop",
+              "discount": null,
+              "quantity": 10.0,
+              "item_name": "MEGANEURON OD PLUS 10xCAP",
+              "net_amount": 179.0,
+              "unit_price": 17.9,
+              "is_returned": false,
+              "final_amount": 179.0,
+              "allocated_discount": 0.0,
+              "categorization_source": "llm",
+              "gross_before_discount": 179.0
+            }
+          ]
+        }
+      ],
+      "policy_violations": []
+    },
+    "upstream_benefits": {
+      "benefits": [
+        {
+          "benefit_id": 1363192,
+          "benefit_name": "Eye Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1363193,
+          "benefit_name": "Infertility",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1363195,
+          "benefit_name": "In-Clinic Consults",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1363196,
+          "benefit_name": "Order Pharmacy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1363197,
+          "benefit_name": "Online Consults",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1363198,
+          "benefit_name": "Book Vaccinations",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "vaccination_card",
+              "requirement_type": "conditional",
+              "condition_description": "Required only if the reimbursement claim is for a child’s vaccination."
+            }
+          ]
+        },
+        {
+          "benefit_id": 1363199,
+          "benefit_name": "Dental Checkup",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            },
+            {
+              "document_name": "x_ray",
+              "requirement_type": "conditional",
+              "condition_description": ""
+            }
+          ]
+        },
+        {
+          "benefit_id": 1363200,
+          "benefit_name": "Annual Health Checkup",
+          "required_documents": [
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1363217,
+          "benefit_name": "Prescribed Diagnostics",
+          "required_documents": [
+            {
+              "document_name": "lab_report",
+              "requirement_type": "required",
+              "condition_description": "Lab / diagnostic center letterhead Patient name, date, report ID Test results with reference ranges Authorized signatory or lab stamp"
+            },
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        },
+        {
+          "benefit_id": 1363218,
+          "benefit_name": "Physiotherapy",
+          "required_documents": [
+            {
+              "document_name": "prescription",
+              "requirement_type": "required",
+              "condition_description": "Clinic / hospital letterhead Patient name, date, doctor's name Doctor's signature Doctor's stamp with registration no."
+            },
+            {
+              "document_name": "invoice",
+              "requirement_type": "required",
+              "condition_description": "Hospital / pharmacy / lab letterhead Invoice number and invoice date Patient name and billed items Total amount and payment status"
+            }
+          ]
+        }
+      ]
+    },
+    "policy": {
+      "text": "INCLUSION CRITERIA CELL ===\nINCLUSIONS (COVERED BENEFITS)\nThe following OPD benefits are covered, with per-family limits shown for each Sum Insured option:\n1. Consultations - fees across all specialties: SI 10,000 - Up to 5,000 | SI 20,000 - 15,000 | SI 30,000 - 25,000 | Settlement: Cashless & Reimb.\n2. Prescribed Diagnostics (Radiology, Pathology, Microbiology, Biochemistry): SI 10,000 - Up to 5,000 | SI 20,000 - 10,000 | SI 30,000 - 15,000 | Settlement: Cashless & Reimb.\n3. Tele-consultation with Physician: SI 10,000 - Unlimited | SI 20,000 - Unlimited | SI 30,000 - Unlimited | Settlement: Cashless\n4. Pharmacy Expenses (within OPD SI): SI 10,000 - Up to 2,500 | SI 20,000 - Up to 5,000 | SI 30,000 - Up to 7,500 | Settlement: Cashless & Reimb.\n5. AYUSH (Ayurvedic & Homeopathy consults + pharmacy): SI 10,000 - Up to 5,000 | SI 20,000 - 15,000 | SI 30,000 - 25,000 | Settlement: Cashless & Reimb.\n6. Physiotherapy: SI 10,000 - Up to 5,000 | SI 20,000 - 10,000 | SI 30,000 - 15,000 | Settlement: Cashless & Reimb.\n7. Infertility treatments (consultations + pharmacy): SI 10,000 - Up to 5,000 | SI 20,000 - 10,000 | SI 30,000 - 15,000 | Settlement: Cashless & Reimb.\n8. 1 Platinum HCK each for Self & Spouse: SI 10,000 - HCK 8,000* | SI 20,000 - HCK 8,000* | SI 30,000 - HCK 8,000* | Settlement: Cashless & Reimb.\n9. Prescribed Dental (exams, consult, fillings, crowns, extractions, X-ray, root canal): SI 10,000 - NA | SI 20,000 - 3,000 | SI 30,000 - 5,000 | Settlement: Cashless & Reimb.\n10. Prescribed Vision (consults, tests, medicines, spectacles/contact lens): SI 10,000 - NA | SI 20,000 - 3,000 | SI 30,000 - 5,000 | Settlement: Cashless & Reimb.\n11. Prescribed Vaccination (incl. COVID), Immunizations, COVID booster: SI 10,000 - NA | SI 20,000 - 3,000 | SI 30,000 - 5,000 | Settlement: Cashless & Reimb.\n* Platinum HCK: cashless HCK worth INR 8,000 (5,000 within SI + 3,000 deducted from OPD wallet). Reimbursement HCK cases capped at INR 4,000 per HCK; self and spouse both eligible.\n=== EXCLUSION CRITERIA CELL ===\nEXCLUSIONS & KEY CONDITIONS\n1. Any treatment that is cosmetic in nature shall NOT be covered.\n2. Dental: Cosmetic surgery is NOT covered, and routine dental care is NOT covered.\n3. At the INR 10,000 Sum Insured option, Dental, Vision and Vaccination benefits are NOT available (marked NA).\n4. Benefits are limited to the Care Cashless OPD network only.\n5. Claims must be submitted within 60 days of expense; in the last quarter of the policy, within 45 days. A 15-day post-expiry window is allowed for claim submission.\n6. Requires the main Group Health Insurance (GHI) policy details where OPD is opted as an optional extension.\n7. No premium refund is made for any insured member who has incurred a claim during the policy period.\n8. Addition/deletion window is open for 60 days; mid-term inclusion allowed only for a child by birth or spouse after marriage.\nSummary prepared from Policy Certificate A1553528 (Care Health Insurance Ltd). This is an indicative summary; the master policy wording governs in case of any discrepancy."
+    }
+  }
+}

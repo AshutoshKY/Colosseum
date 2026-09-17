@@ -342,35 +342,35 @@
         {
           "benefit_id": 1366527,
           "benefit_name": "Dermatology Consultations & Treatment",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No dermatology-related SOC categories found"
         },
         {
           "benefit_id": 1366528,
           "benefit_name": "WHO Approved Vaccinations",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No vaccination-related SOC categories found"
         },
         {
           "benefit_id": 1366531,
           "benefit_name": "Dental",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No dental SOC categories found"
         },
         {
           "benefit_id": 1366534,
           "benefit_name": "Prescribed Pharmacy",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No pharmacy-related SOC categories found"
         },
         {
           "benefit_id": 1366543,
           "benefit_name": "Inclinic consultations",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No consultation-related SOC categories found"
         },
@@ -379,17 +379,48 @@
           "benefit_name": "Vision",
           "applicable": true,
           "confidence": 1.0,
-          "reason": "Carry bag is a non-medical administrative charge. Reject"
+          "reason": "Bill items describe eyeglasses and lens packages, indicating vision-related services, even if the SOC category is 'Others'."
         },
         {
           "benefit_id": 1366556,
           "benefit_name": "Prescribed Lab Tests",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No lab test-related SOC categories found"
         }
       ],
-      "item_assignments": []
+      "item_assignments": [
+        {
+          "bill_id": "2d712b5d5491",
+          "item_s_no": 1,
+          "benefit_id": 1366553,
+          "benefit_name": "Vision"
+        },
+        {
+          "bill_id": "02e8d614316f",
+          "item_s_no": 2,
+          "benefit_id": 1366553,
+          "benefit_name": "Vision"
+        },
+        {
+          "bill_id": "02e8d614316f",
+          "item_s_no": 3,
+          "benefit_id": 1366553,
+          "benefit_name": "Vision"
+        },
+        {
+          "bill_id": "0b8abb6e41b8",
+          "item_s_no": 4,
+          "benefit_id": 1366553,
+          "benefit_name": "Vision"
+        },
+        {
+          "bill_id": "0b8abb6e41b8",
+          "item_s_no": 5,
+          "benefit_id": 1366553,
+          "benefit_name": "Vision"
+        }
+      ]
     },
     "upstream_bills": {
       "bills": [

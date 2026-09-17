@@ -1,4 +1,5 @@
 import asyncio
+import json
 from dataclasses import replace
 from decimal import Decimal
 
@@ -9,7 +10,7 @@ from app.providers.gateway import GatewayResult
 from app.providers.pricing import EstimatedCost
 from app.providers.registry import get_capability, list_models
 from app.providers.usage import NormalizedUsage
-from app.runner.engine import _opd_instruction, execute_run
+from app.runner.engine import _empty_opd_output, _opd_audit_system, _opd_instruction, execute_run
 from app.runner.spec import ConcurrencySpec, RunSpec
 from sqlmodel import Session, SQLModel, create_engine, select
 
@@ -167,7 +168,9 @@ async def test_missing_gold_fails_cell_without_gateway_call(tmp_path, monkeypatc
 
 
 @pytest.mark.asyncio
-async def test_deterministic_opd_merge_completes_without_gateway_call(tmp_path, monkeypatch) -> None:
+async def test_deterministic_opd_merge_completes_without_gateway_call(
+    tmp_path, monkeypatch
+) -> None:
     db, run_id, document_ids = _setup(tmp_path)
     monkeypatch.setattr(engine_module, "get_engine", lambda: db)
     spec = RunSpec(
@@ -232,7 +235,9 @@ async def test_cancel_marks_unfinished_cells_skipped(tmp_path, monkeypatch) -> N
 
 
 @pytest.mark.asyncio
-async def test_cheque_bank_succeeds_with_empty_when_no_matching_segment(tmp_path, monkeypatch) -> None:
+async def test_cheque_bank_succeeds_with_empty_when_no_matching_segment(
+    tmp_path, monkeypatch
+) -> None:
     db, run_id, document_ids = _setup(tmp_path, 1)
     monkeypatch.setattr(engine_module, "get_engine", lambda: db)
     model_id = _model()
@@ -271,7 +276,11 @@ def test_extract_icd_codes_opd_instruction_builds_context() -> None:
     class Resolver:
         def get(self, name):
             if name in {"merge_bills", "upstream_bills"}:
-                return {"bills": [{"bill": {"bill_id": "INV-1"}, "items": [{"item_name": "Paracetamol"}]}]}
+                return {
+                    "bills": [
+                        {"bill": {"bill_id": "INV-1"}, "items": [{"item_name": "Paracetamol"}]}
+                    ]
+                }
             if name == "prescription":
                 return {"claims_digitization_details": {"diagnosis": "Acute Bronchitis"}}
             raise engine_module.MissingUpstreamData(name, DocumentSample(path="x", sha256="x"))
@@ -281,3 +290,97 @@ def test_extract_icd_codes_opd_instruction_builds_context() -> None:
     assert "Paracetamol" in rendered
     assert "INV-1" in rendered
 
+
+def test_every_opd_runtime_payload_and_empty_output_matches_its_contract() -> None:
+    from app.tasks.opd import (
+        BENEFIT_PLAN,
+        EXTRACT_ICD_CODES,
+        ITEMS_CATEGORISATION,
+        NME_ANALYSIS,
+        OPD_TASKS,
+        POLICY_EXTRACTION,
+    )
+
+    values = {
+        "merge_bills": {
+            "bills": [
+                {
+                    "bill": {
+                        "bill_id": "B1",
+                        "invoice_number": "INV-1",
+                        "facility_details": {"name": "Clinic"},
+                    },
+                    "items": [{"s.no.": 1, "item_name": "Registration", "final_amount": 50}],
+                }
+            ]
+        },
+        "items_categorisation": {
+            "bill_item_categories": [
+                {
+                    "bill_id": "B1",
+                    "categorized_items": [{"s.no.": 1, "category": "Registration"}],
+                }
+            ]
+        },
+        "policy": {"text": "Registration fees are excluded."},
+        "policy_extraction": {
+            "nme_items": [],
+            "policy_rules": ["Registration fees are excluded"],
+            "extraction_ok": True,
+            "source": "payload_text",
+        },
+        "benefits": {"benefits": [{"benefit_id": 7, "benefit_name": "Consultation"}]},
+        "prescription": {
+            "claims_digitization_details": {
+                "diagnosis": "Fever",
+                "presenting_complaint": "Headache",
+                "prescribed_items": [],
+            }
+        },
+    }
+
+    class Resolver:
+        def get(self, name):
+            if name in values:
+                return values[name]
+            raise engine_module.MissingUpstreamData(name, DocumentSample(path="x", sha256="x"))
+
+    resolver = Resolver()
+
+    def payload(task):
+        return json.loads(_opd_instruction(task, resolver).split("\n", 1)[1])
+
+    assert payload(POLICY_EXTRACTION) == values["policy"]
+    categorisation = payload(ITEMS_CATEGORISATION)
+    assert categorisation["bills"][0]["bill"]["bill_id"] == "B1"
+    assert categorisation["bills"][0]["items"][0] == {
+        "s.no.": 1,
+        "item_name": "Registration",
+    }
+    nme = payload(NME_ANALYSIS)
+    assert nme["bills"][0]["items"][0]["category"] == "Registration"
+    assert nme["policy_context"] == values["policy_extraction"]
+    benefit = payload(BENEFIT_PLAN)
+    assert benefit["benefits"] == values["benefits"]["benefits"]
+    assert benefit["policy_context"] == values["policy_extraction"]
+    assert benefit["clinical_context"]["diagnosis"] == "Fever"
+    icd = payload(EXTRACT_ICD_CODES)
+    assert icd["diagnosis"] == "Fever"
+    assert icd["bill_items"] == [{"bill_id": "B1", "item_name": "Registration"}]
+
+    for name in (
+        "claim_form",
+        "identity_document",
+        "prescription",
+        "cheque_bank",
+        "itemized_bills",
+        "consolidated_bills",
+    ):
+        task = OPD_TASKS[name]
+        assert task.schema.model_validate(_empty_opd_output(task))
+
+    audit_system = "Rules only"
+    audit_instruction = "Total {{CALCULATED_TOTAL}} JSON {{JSON_OUTPUT}}"
+    assert _opd_audit_system(audit_system, resolver) == audit_system
+    rendered_audit = _opd_audit_system(audit_instruction, resolver)
+    assert "50.0" in rendered_audit and "INV-1" in rendered_audit

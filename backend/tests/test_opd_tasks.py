@@ -87,6 +87,22 @@ def test_merge_bills_assigns_serial_numbers():
     assert merged["bills"][1]["items"][1]["s.no."] == 2
     assert merged["bills"][0]["bill"]["bill_id"] == "B"
     assert merged["bills"][1]["bill"]["bill_id"] == "A"
+    assert OPD_TASKS["merge_bills"].schema.model_validate(merged)
+
+
+def test_patient_summary_transform_unwraps_claim_form_and_matches_schema():
+    task = OPD_TASKS["patient_summary"]
+    output = task.run_transform(
+        {
+            "claim_form": {"claim_form": {"part_a": {"full_name": "A Patient"}, "part_b": None}},
+            "prescription": {"claims_digitization_details": {"diagnosis": "Fever"}},
+            "merge_bills": {"bills": []},
+            "cheque_bank": {"bank_details": None},
+            "identity_document": {"pan_card_number": None, "aadhar_card_number": None},
+        }
+    )
+    assert output["patient_summary"]["patient_details"] == {"full_name": "A Patient"}
+    assert task.schema.model_validate(output)
 
 
 # ---- Phase 2.5: full healthpay prompts vendored + faithful schemas ----
@@ -150,13 +166,56 @@ def test_text_pipe_wiring_consumes_upstream():
 
     itemized = {"bills": [{"bill": {"invoice_number": "RX1"}, "items": [{"item_name": "Tab A", "final_amount": 50}]}]}
     categorised = {"bill_item_categories": [{"bill_id": "RX1", "categorized_items": [{"s.no.": 1, "category": "Medicines From Shop"}]}]}
-    inputs = build_text_inputs(itemized=itemized, consolidated=None, categorised=categorised)
+    inputs = build_text_inputs(
+        itemized=itemized,
+        consolidated=None,
+        categorised=categorised,
+        policy_context={"policy_rules": ["No registration fees"]},
+        clinical_context={"diagnosis": "Fever"},
+    )
     # nme input is keyed off the categorised bills (category propagated onto the item).
     assert "Medicines From Shop" in inputs["nme_analysis"]
+    assert "No registration fees" in inputs["nme_analysis"]
     # items_categorisation input carries the slim bill payload.
     assert "RX1" in inputs["items_categorisation"]
     # benefit_plan input carries the assembled bills + (empty) benefits.
     assert "benefits" in inputs["benefit_plan"]
+    assert "Fever" in inputs["benefit_plan"]
+
+
+def test_opd_dependencies_cover_each_runtime_input():
+    assert OPD_TASKS["merge_bills"].depends_on == ("itemized_bills", "consolidated_bills")
+    assert OPD_TASKS["nme_analysis"].depends_on == (
+        "merge_bills",
+        "items_categorisation",
+    )
+    assert OPD_TASKS["extract_icd_codes"].depends_on == ("prescription", "merge_bills")
+    assert OPD_TASKS["benefit_plan"].depends_on == (
+        "merge_bills",
+        "items_categorisation",
+        "policy_extraction",
+    )
+    assert OPD_TASKS["benefit_plan"].gold_context_keys == ("upstream_benefits",)
+    assert OPD_TASKS["policy_extraction"].gold_context_keys == ("policy",)
+    assert "{benefit_context}" not in OPD_TASKS["benefit_plan"].system_prompt
+    assert "{benefit_context}" in OPD_TASKS["benefit_plan"].instruction
+
+
+def test_external_json_context_is_required_in_gold_and_model_modes():
+    pack = get_task_pack("OPD")
+    gold_plan = pack.resolve_subset(["benefit_plan"], "gold")
+    assert gold_plan.gold_requirements["benefit_plan"] == (
+        "upstream_benefits",
+        "upstream_bills",
+        "items_categorisation",
+        "policy_extraction",
+    )
+
+    model_plan = pack.resolve_subset(list(pack.tasks), "model")
+    assert model_plan.gold_requirements == {
+        "policy_extraction": ("policy",),
+        "benefit_plan": ("upstream_benefits",),
+    }
 
 
 # ---- claim-type layer ----

@@ -47,7 +47,7 @@ from app.tasks.prompts.opd_ekincare_reference import (
     EKINCARE_POLICY_EXTRACTION_SYSTEM_PROMPT,
 )
 from app.tasks.prompts.opd_icd_reference import EXTRACT_ICD_CODES_SYSTEM_PROMPT
-from app.tasks.prompts.opd_nme_reference import NME_ANALYSIS_SYSTEM_PROMPT
+from app.tasks.prompts.opd_nme_reference import get_nme_system_prompt
 from app.tasks.prompts.opd_segregation_reference import DOCS_SEGREGATOR_SYSTEM_PROMPT
 from app.tasks.prompts.opd_superclaims import DOCUMENT_INSTRUCTION, ICD_INSTRUCTION
 from app.tasks.schemas.opd_superclaims_adjudication import BillAuditOutput, PatientSummaryOutput
@@ -56,6 +56,7 @@ from app.tasks.schemas.opd_superclaims_bills import (
     ConsolidatedBillsOutput,
     ItemizedBillsOutput,
     ItemsCategorisationOutput,
+    MergedBillsOutput,
     NmeAnalysisOutput,
 )
 from app.tasks.schemas.opd_superclaims_claim_form import ClaimFormOutput
@@ -140,14 +141,14 @@ ITEMS_CATEGORISATION = Task(
 
 NME_ANALYSIS = Task(
     name="nme_analysis",
-    system_prompt=NME_ANALYSIS_SYSTEM_PROMPT,
+    system_prompt=get_nme_system_prompt(include_policy_violations=True),
     instruction="Bill data:\n{bills_json}",
     schema=NmeAnalysisOutput,
     requires_documents=False,
     is_text_task=True,
-    depends_on=("items_categorisation",),
+    depends_on=("merge_bills", "items_categorisation"),
     reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=8000),
-    gold_feed_keys=("items_categorisation",),
+    gold_feed_keys=("upstream_bills", "items_categorisation"),
 )
 
 POLICY_EXTRACTION = Task(
@@ -158,19 +159,20 @@ POLICY_EXTRACTION = Task(
     requires_documents=False,
     is_text_task=True,
     reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=0),
-    gold_feed_keys=("policy",),
+    gold_context_keys=("policy",),
 )
 
 BENEFIT_PLAN = Task(
     name="benefit_plan",
     system_prompt=EKINCARE_BENEFIT_PLAN_SYSTEM_PROMPT,
-    instruction="Benefit-plan input:\n{benefit_context}",
+    instruction="Input JSON (bills, benefits, policy_context, clinical_context):\n{benefit_context}",
     schema=BenefitPlanSelectionOutput,
     requires_documents=False,
     is_text_task=True,
-    depends_on=("items_categorisation",),
+    depends_on=("merge_bills", "items_categorisation", "policy_extraction"),
     reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=2048),
-    gold_feed_keys=("items_categorisation",),
+    gold_feed_keys=("upstream_bills", "items_categorisation", "policy_extraction"),
+    gold_context_keys=("upstream_benefits",),
 )
 
 CLAIM_FORM = Task(
@@ -224,9 +226,9 @@ EXTRACT_ICD_CODES = Task(
     schema=ExtractIcdCodesOutput,
     requires_documents=False,
     is_text_task=True,
-    depends_on=("merge_bills",),
+    depends_on=("prescription", "merge_bills"),
     reference_runtime=ReferenceRuntime(model_id="gemini-2.5-flash", thinking_budget=0),
-    gold_feed_keys=("merge_bills",),
+    gold_feed_keys=("prescription", "upstream_bills"),
 )
 
 
@@ -358,6 +360,7 @@ def build_text_inputs(
     categorised: dict[str, Any] | None = None,
     policy_context: dict[str, Any] | None = None,
     benefits: list[dict[str, Any]] | None = None,
+    clinical_context: dict[str, Any] | None = None,
     claimed_amount: float | int = 0,
 ) -> dict[str, str]:
     """Build the rendered instruction for each text task, wiring the upstream structured output.
@@ -375,12 +378,13 @@ def build_text_inputs(
     # NME / benefit_plan prefer the categorised bills (s.no. + category + final_amount).
     nme_source = apply_categories(merged, categorised) if categorised else merged
     nme_input = prepare_nme_input(nme_source)
+    nme_input["policy_context"] = policy_context
 
     benefit_context = {
         "bills": nme_source["bills"],
         "benefits": benefits or [],
         "policy_context": policy_context,
-        "clinical_context": {},
+        "clinical_context": clinical_context or {},
     }
 
     return {
@@ -397,14 +401,15 @@ def _merge_transform(upstream: dict[str, Any]) -> dict[str, Any]:
 
 def _patient_summary_transform(upstream: dict[str, Any]) -> dict[str, Any]:
     claim = upstream.get("claim_form") or {}
+    claim = claim.get("claim_form", claim) if isinstance(claim, dict) else {}
     clinical = upstream.get("prescription") or {}
     bank = upstream.get("cheque_bank") or {}
     identity = upstream.get("identity_document") or {}
     bills = upstream.get("merge_bills") or {}
     return {
         "patient_summary": {
-            "patient_details": claim.get("part_a", claim) if isinstance(claim, dict) else {},
-            "hospitalization_details": claim.get("part_b", {}) if isinstance(claim, dict) else {},
+            "patient_details": claim.get("part_a") or {},
+            "hospitalization_details": claim.get("part_b") or {},
             "clinical_details": clinical.get("claims_digitization_details", clinical) if isinstance(clinical, dict) else {},
             "past_history_details": {},
             "bills": bills if isinstance(bills, dict) else {},
@@ -418,11 +423,11 @@ MERGE_BILLS = TransformTask(
     name="merge_bills",
     system_prompt="",
     instruction="",
-    schema=ItemizedBillsOutput,
+    schema=MergedBillsOutput,
     requires_documents=False,
     deterministic=True,
-    depends_on=("itemized_bills",),
-    gold_feed_keys=("itemized_bills",),
+    depends_on=("itemized_bills", "consolidated_bills"),
+    gold_feed_keys=("itemized_bills", "consolidated_bills"),
     transform=_merge_transform,
 )
 
@@ -511,4 +516,3 @@ OPD_TEXT_TASKS: list[str] = [
     "patient_summary",
     "benefit_plan",
 ]
-

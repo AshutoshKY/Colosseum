@@ -1,7 +1,7 @@
 # Source: superclaims-ai@test-ekincare-v2 backend/app/lang_graph/schemas/bills.py
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -129,6 +129,12 @@ class ConsolidatedBillsOutput(BaseModel):
     bills: list[ConsolidatedBillGroup]
 
 
+class MergedBillsOutput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    bills: list[dict[str, Any]]
+
+
 class CategorisedBillItem(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -206,4 +212,3 @@ class NmeAnalysisOutput(BaseModel):
     # Populated only for the ekincare OPD flow (policy-rule context provided).
     # Empty for every other project/claim type.
     policy_violations: list[NmePolicyViolation]
-

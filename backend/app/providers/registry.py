@@ -44,6 +44,19 @@ def get_capability(model_id: str) -> ModelCapability:
     if cap is not None:
         return cap
 
+    # Alias / prefix resolution
+    if f"vertex_ai/{model_id}" in registry:
+        return registry[f"vertex_ai/{model_id}"]
+
+    if model_id.startswith("vertex_ai/"):
+        short_id = model_id.removeprefix("vertex_ai/")
+        if short_id in registry:
+            return registry[short_id]
+
+    for registered_cap in registry.values():
+        if registered_cap.litellm_model in (model_id, f"vertex_ai/{model_id}"):
+            return registered_cap
+
     if model_id.startswith("openrouter/"):
         from app.providers.openrouter import synthesize_capability
 
@@ -65,7 +78,11 @@ def get_capability(model_id: str) -> ModelCapability:
 
 
 def is_registered(model_id: str) -> bool:
-    return model_id in registry
+    try:
+        get_capability(model_id)
+        return True
+    except KeyError:
+        return False
 
 
 def list_models(

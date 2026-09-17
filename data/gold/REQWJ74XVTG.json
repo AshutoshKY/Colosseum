@@ -229,24 +229,31 @@
           "benefit_name": "Order Pharmacy",
           "applicable": true,
           "confidence": 1.0,
-          "reason": "The medicine billed (Sompraz IT) is a standard treatment for the symptoms described (abdominal bloating/discomfort), but the provided prescription page does not list any medications in the advice section, only 'follow up'."
+          "reason": "SOC category 'Medicines From Shop' found - pharmacy services provided"
         },
         {
           "benefit_id": 1353027,
           "benefit_name": "Prescribed Diagnostics",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No lab/diagnostic/imaging-related SOC categories found"
         },
         {
           "benefit_id": 1353028,
           "benefit_name": "In-Clinic Consults",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No consultation-related SOC categories found"
         }
       ],
-      "item_assignments": []
+      "item_assignments": [
+        {
+          "bill_id": "bbf9064afc8f",
+          "item_s_no": 1,
+          "benefit_id": 1353025,
+          "benefit_name": "Order Pharmacy"
+        }
+      ]
     },
     "upstream_bills": {
       "bills": [

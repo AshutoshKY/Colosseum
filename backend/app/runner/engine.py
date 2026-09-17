@@ -34,6 +34,7 @@ logger = get_logger(__name__)
 # spurious TimeoutErrors even when the endpoint is healthy. Floor, not a cap — an explicit
 # task/run override above this value still wins.
 SELF_DEPLOY_MIN_TIMEOUT_S = 1800.0
+DEFAULT_CALL_TIMEOUT_S = 300.0
 
 OPD_DEPENDS: dict[str, tuple[str, ...]] = {
     "segregation": (),
@@ -200,6 +201,27 @@ def _page_ranges(task: Task, resolver: UpstreamResolver) -> str | None:
     return "__NONE__"
 
 
+def _empty_opd_output(task: Task) -> dict[str, Any] | None:
+    output: dict[str, Any] | None = {
+        "cheque_bank": {"bank_details": None},
+        "identity_document": {"pan_card_number": None, "aadhar_card_number": None},
+        "claim_form": {"claim_form": {"part_a": None, "part_b": None}},
+        "itemized_bills": {"bills": []},
+        "consolidated_bills": {"bills": []},
+    }.get(task.name)
+    if task.name == "prescription":
+        details_model = task.schema.model_fields["claims_digitization_details"].annotation
+        output = {
+            "claims_digitization_details": {
+                name: [] if name == "prescribed_items" else None
+                for name in details_model.model_fields
+            }
+        }
+    if output is None:
+        return None
+    return task.schema.model_validate(output).model_dump(mode="json", by_alias=True)
+
+
 def _opd_instruction(task: Task, resolver: UpstreamResolver) -> str:
     from app.tasks.opd import (
         apply_categories,
@@ -219,28 +241,34 @@ def _opd_instruction(task: Task, resolver: UpstreamResolver) -> str:
     consolidated = optional("consolidated_bills")
     if upstream_bills is not None:
         itemized, consolidated = upstream_bills, None
-    benefits = optional("benefits", {})
-    if isinstance(benefits, dict):
-        benefits = benefits.get("benefits", [])
     merged = upstream_bills or merge_bills(itemized, consolidated)
     categorised = optional("items_categorisation")
     policy_context = optional("policy_extraction", {})
     if task.name == "items_categorisation":
-        return task.render_instruction(
-            bills_json=json.dumps(prepare_categorisation_input(merged))
-        )
+        return task.render_instruction(bills_json=json.dumps(prepare_categorisation_input(merged)))
     if task.name == "nme_analysis":
         source = apply_categories(merged, categorised) if categorised else merged
-        return task.render_instruction(bills_json=json.dumps(prepare_nme_input(source)))
+        payload = prepare_nme_input(source)
+        payload["policy_context"] = policy_context
+        return task.render_instruction(bills_json=json.dumps(payload))
     if task.name == "policy_extraction":
-        return task.render_instruction(policy_context=json.dumps(policy_context))
+        return task.render_instruction(policy_context=json.dumps(resolver.get("policy")))
     if task.name == "benefit_plan":
+        benefits = resolver.get("benefits")
+        if isinstance(benefits, dict):
+            benefits = benefits.get("benefits", [])
         source = apply_categories(merged, categorised) if categorised else merged
+        prescription = optional("prescription", {})
+        clinical_context = (
+            prescription.get("claims_digitization_details", prescription)
+            if isinstance(prescription, dict)
+            else {}
+        )
         context = {
             "bills": source.get("bills", []),
             "benefits": benefits,
             "policy_context": policy_context,
-            "clinical_context": optional("prescription", {}),
+            "clinical_context": clinical_context,
         }
         return task.render_instruction(benefit_context=json.dumps(context))
     if task.name == "extract_icd_codes":
@@ -248,7 +276,11 @@ def _opd_instruction(task: Task, resolver: UpstreamResolver) -> str:
         clinical_details = rx.get("claims_digitization_details", rx) if isinstance(rx, dict) else {}
         bill_items = []
         for entry in (merged or {}).get("bills", []) or []:
-            bid = (entry.get("bill") or {}).get("bill_id") or (entry.get("bill") or {}).get("invoice_number") or entry.get("bill_id")
+            bid = (
+                (entry.get("bill") or {}).get("bill_id")
+                or (entry.get("bill") or {}).get("invoice_number")
+                or entry.get("bill_id")
+            )
             for it in entry.get("items", []) or []:
                 iname = it.get("item_name") or it.get("description")
                 if bid and iname:
@@ -275,9 +307,7 @@ def _opd_audit_system(template: str, resolver: UpstreamResolver) -> str:
         try:
             merged = resolver.get("nme_analysis")
         except MissingUpstreamData:
-            merged = merge_bills(
-                resolver.get("itemized_bills"), resolver.get("consolidated_bills")
-            )
+            merged = merge_bills(resolver.get("itemized_bills"), resolver.get("consolidated_bills"))
     try:
         audit_gold = resolver.get("audit")
     except MissingUpstreamData:
@@ -290,7 +320,6 @@ def _opd_audit_system(template: str, resolver: UpstreamResolver) -> str:
     for key, value in replacements.items():
         template = template.replace(key, value)
     return template
-
 
 
 def _failure(
@@ -324,7 +353,9 @@ def _deterministic(
     task: Task,
     upstream: dict[str, Any],
 ) -> dict[str, Any]:
-    output = task.run_transform(upstream)
+    output = task.schema.model_validate(task.run_transform(upstream)).model_dump(
+        mode="json", by_alias=True
+    )
     cell.status = RunStatus.succeeded
     session.add(cell)
     session.flush()
@@ -354,7 +385,7 @@ async def _gateway_call(
 ) -> GatewayResult:
     for attempt in range(4):
         try:
-            timeout = config.get("timeout_s")
+            timeout = config.get("timeout_s") or DEFAULT_CALL_TIMEOUT_S
             call = gateway.structured(
                 model_id=model_id,
                 system=system,
@@ -364,10 +395,8 @@ async def _gateway_call(
                 config=config,
                 prompt_version=prompt_version,
             )
-            if timeout:
-                async with asyncio.timeout(timeout):
-                    return await call
-            return await call
+            async with asyncio.timeout(timeout):
+                return await call
         except Exception as exc:
             if attempt == 3 or "429" not in str(exc):
                 raise
@@ -448,9 +477,15 @@ async def execute_run(
             # A process restart loses in-memory upstream outputs. Restore successful
             # outputs from durable results so only unfinished cells are run again.
             for cell in cell_rows:
-                status = cell.status.value if isinstance(cell.status, RunStatus) else str(cell.status)
+                status = (
+                    cell.status.value if isinstance(cell.status, RunStatus) else str(cell.status)
+                )
                 result = results_by_cell.get(cell.id)
-                if status == RunStatus.succeeded.value and result and result.parsed_output is not None:
+                if (
+                    status == RunStatus.succeeded.value
+                    and result
+                    and result.parsed_output is not None
+                ):
                     live_outputs[cell.task] = result.parsed_output
                 elif status in {RunStatus.failed.value, RunStatus.skipped.value}:
                     live_errors[cell.task] = cell.skip_reason or f"previous_{status}:{cell.task}"
@@ -478,8 +513,16 @@ async def execute_run(
                     else:
                         cell = session.get(RunCell, cell_id)
                     assert cell is not None
-                    status = cell.status.value if isinstance(cell.status, RunStatus) else str(cell.status)
-                    if status in {RunStatus.succeeded.value, RunStatus.failed.value, RunStatus.skipped.value}:
+                    status = (
+                        cell.status.value
+                        if isinstance(cell.status, RunStatus)
+                        else str(cell.status)
+                    )
+                    if status in {
+                        RunStatus.succeeded.value,
+                        RunStatus.failed.value,
+                        RunStatus.skipped.value,
+                    }:
                         return
                     cell.status = RunStatus.running
                     session.add(cell)
@@ -494,7 +537,12 @@ async def execute_run(
                         document = DocumentSample.model_validate(document_data)
                         resolver = UpstreamResolver(session, document, gold, live_outputs)
                         failed_dependency = next(
-                            (dep for dep in task.depends_on if dep in live_errors and dep not in OPTIONAL_OPD_TASKS), None
+                            (
+                                dep
+                                for dep in task.depends_on
+                                if dep in live_errors and dep not in OPTIONAL_OPD_TASKS
+                            ),
+                            None,
                         )
                         if failed_dependency:
                             raise _UpstreamCellFailed(live_errors[failed_dependency])
@@ -518,15 +566,7 @@ async def execute_run(
                         else:
                             ranges = _page_ranges(task, resolver)
                             if ranges == "__NONE__":
-                                empty_output: dict[str, Any] | None = None
-                                if task_name == "cheque_bank":
-                                    empty_output = {"bank_details": None}
-                                elif task_name == "identity_document":
-                                    empty_output = {"aadhaar": None, "pan": None}
-                                elif task_name == "claim_form":
-                                    empty_output = {"part_a": None, "part_b": None}
-                                elif task_name in {"itemized_bills", "consolidated_bills"}:
-                                    empty_output = {"bills": []}
+                                empty_output = _empty_opd_output(task)
 
                                 if empty_output is not None:
                                     cell.status = RunStatus.succeeded
@@ -543,7 +583,9 @@ async def execute_run(
                                     )
                                     session.flush()
                                     live_outputs[task_name] = empty_output
-                                    event = _cell_event(run_id, document, cell, latency_ms=0, cost_usd=0.0)
+                                    event = _cell_event(
+                                        run_id, document, cell, latency_ms=0, cost_usd=0.0
+                                    )
                                     await _emit(events, event)
                                     return
 
@@ -567,6 +609,7 @@ async def execute_run(
                                 )
                             if spec.pack == "OPD" and task_name == "audit":
                                 system = _opd_audit_system(system, resolver)
+                                instruction = _opd_audit_system(instruction, resolver)
                             documents = (
                                 rendered_task.build_input(
                                     document.path,
@@ -657,7 +700,12 @@ async def execute_run(
                 except _UpstreamCellFailed as exc:
                     error = str(exc)
                     live_errors[task_name] = error
-                    logger.error("run %s task %s skipped after upstream failure: %s", run_id, task_name, error)
+                    logger.error(
+                        "run %s task %s skipped after upstream failure: %s",
+                        run_id,
+                        task_name,
+                        error,
+                    )
                     with session_scope(engine) as session:
                         document = DocumentSample.model_validate(document_data)
                         cell = session.get(RunCell, cells[task_name])

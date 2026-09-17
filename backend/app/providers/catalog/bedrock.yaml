@@ -1,23 +1,16 @@
-# AWS Bedrock (ap-south-1) via short-lived bearer token (AWS_BEARER_TOKEN_BEDROCK).
+# AWS Bedrock (us-east-1) via short-lived bearer token (AWS_BEARER_TOKEN_BEDROCK) or IAM credentials.
 #
-# GROUND TRUTH: entries below were live-probed against this account's Bedrock runtime
-# (bedrock-runtime.ap-south-1.amazonaws.com /model/<id>/converse) on 2026-07-13. Every model
-# here returned either 200 or 429 ("too many tokens per day" = authenticated + model id valid,
-# just quota-limited) — i.e. it is CALLABLE. Models that returned 400 "invalid id",
-# 403 "not available for this account", or that lack an on-demand inference profile are NOT
-# listed (see the DISABLED block at the bottom for the notable exclusions and why).
+# GROUND TRUTH: entries below reflect AWS Bedrock foundation models and cross-region inference profiles
+# available in us-east-1.
 #
 # INVOCATION MODES (why some ids carry a region prefix):
 #   * Most open-weight / partner models (Qwen, Gemma, GPT-OSS, Mistral, DeepSeek, GLM, MiniMax,
-#     Nemotron, Kimi, Llama3, legacy Claude 3) are on-demand callable by their BARE model id.
-#   * Amazon Nova (v1) and legacy Anthropic Claude (3.5 / 3.7 / Sonnet-4) are on-demand ONLY via
-#     an "apac." cross-region inference profile — the bare id returns
-#     "on-demand throughput isn't supported. Retry with an inference profile".
-#   * Newest models (Nova 2, Claude Opus 4.5) are callable ONLY via a "global." profile.
-#   The account's 13 inference profiles were enumerated from /inference-profiles; the transport
-#   id below uses whichever prefix the account actually exposes.
+#     Nemotron, Kimi, Llama, legacy Claude 3 Haiku) are on-demand callable by their BARE model id.
+#   * Amazon Nova and Anthropic Claude models in US regions use "us." cross-region inference profiles —
+#     bare model IDs return "on-demand throughput isn't supported. Retry with an inference profile".
+#   * Newest models (Nova 2, Claude Opus 4.5) are callable via "global." or "us." inference profiles.
 #
-# TRANSPORT: LiteLLM `bedrock/<id>` with api_key=AWS_BEARER_TOKEN_BEDROCK, aws_region_name.
+# TRANSPORT: LiteLLM `bedrock/<id>` with api_key=AWS_BEARER_TOKEN_BEDROCK, aws_region_name=us-east-1.
 # The Converse route is used (LiteLLM picks it); vision models take images, PDFs are rasterized.
 # Token is a short-lived STS-backed bearer (~12 h); verify_bedrock.py is the liveness probe.
 
@@ -36,7 +29,7 @@ defaults:
   enabled: true
   verified: true
   reason: null
-  notes: "Live-probed callable in ap-south-1 on 2026-07-13; PDFs are rasterized to images; bearer token expires ~12h (refresh AWS_BEARER_TOKEN_BEDROCK)."
+  notes: "Bedrock us-east-1; PDFs are rasterized to images; bearer token expires ~12h (refresh AWS_BEARER_TOKEN_BEDROCK)."
 
 models:
   # ---------------------------------------------------------------- Qwen (Alibaba)
@@ -49,7 +42,7 @@ models:
     vision: true
     release_date: "2025-07-20"
     pricing_ref: qwen3
-    notes: "Vision-language MoE; the model the original request targeted. Correct id is qwen.qwen3-vl-235b-a22b (no -instruct suffix). Callable by bare id via Converse."
+    notes: "Vision-language MoE; callable by bare id via Converse in us-east-1."
 
   - model_id: bedrock-qwen3-235b-instruct
     litellm_model: bedrock/qwen.qwen3-235b-a22b-2507-v1:0
@@ -66,6 +59,14 @@ models:
     variant: instruct
     release_date: "2025-07-20"
     pricing_ref: qwen3
+
+  - model_id: bedrock-qwen3-coder-next
+    litellm_model: bedrock/qwen.qwen3-coder-next
+    display_name: Qwen3 Coder Next (Bedrock)
+    version: "3-coder-next"
+    variant: instruct
+    release_date: "2025-09-15"
+    pricing_ref: qwen3-coder
 
   - model_id: bedrock-qwen3-coder-480b
     litellm_model: bedrock/qwen.qwen3-coder-480b-a35b-v1:0
@@ -91,7 +92,7 @@ models:
     release_date: "2025-07-20"
     pricing_ref: qwen3
 
-  # ---------------------------------------------------------------- Amazon Nova (apac./global. profile)
+  # ---------------------------------------------------------------- Amazon Nova (us./global. profile)
   - model_id: bedrock-nova-2-lite
     litellm_model: bedrock/global.amazon.nova-2-lite-v1:0
     display_name: Amazon Nova 2 Lite (Bedrock)
@@ -101,10 +102,10 @@ models:
     vision: true
     release_date: "2025-11-30"
     pricing_ref: bedrock_nova_lite
-    notes: "Nova 2 generation; on-demand only via the global. inference profile. Text+image+video in."
+    notes: "Nova 2 generation; on-demand via the global. inference profile. Text+image+video in."
 
   - model_id: bedrock-nova-pro
-    litellm_model: bedrock/apac.amazon.nova-pro-v1:0
+    litellm_model: bedrock/us.amazon.nova-pro-v1:0
     display_name: Amazon Nova Pro (Bedrock)
     version: "1-pro"
     variant: pro
@@ -112,10 +113,10 @@ models:
     vision: true
     release_date: "2024-12-03"
     pricing_ref: bedrock_nova_pro
-    notes: "On-demand only via the apac. cross-region inference profile."
+    notes: "On-demand via the us. cross-region inference profile."
 
   - model_id: bedrock-nova-lite
-    litellm_model: bedrock/apac.amazon.nova-lite-v1:0
+    litellm_model: bedrock/us.amazon.nova-lite-v1:0
     display_name: Amazon Nova Lite (Bedrock)
     version: "1-lite"
     variant: lite
@@ -123,10 +124,10 @@ models:
     vision: true
     release_date: "2024-12-03"
     pricing_ref: bedrock_nova_lite
-    notes: "On-demand only via the apac. cross-region inference profile."
+    notes: "On-demand via the us. cross-region inference profile."
 
   - model_id: bedrock-nova-micro
-    litellm_model: bedrock/apac.amazon.nova-micro-v1:0
+    litellm_model: bedrock/us.amazon.nova-micro-v1:0
     display_name: Amazon Nova Micro (Bedrock)
     version: "1-micro"
     variant: micro
@@ -134,9 +135,69 @@ models:
     vision: false
     release_date: "2024-12-03"
     pricing_ref: bedrock_nova_micro
-    notes: "Text-only; on-demand only via the apac. cross-region inference profile."
+    notes: "Text-only; on-demand via the us. cross-region inference profile."
 
-  # ---------------------------------------------------------------- Anthropic Claude (profile-gated)
+  # ---------------------------------------------------------------- Anthropic Claude (us./global. profile)
+  - model_id: bedrock-claude-fable-5-1
+    litellm_model: bedrock/us.anthropic.claude-fable-5-1
+    display_name: Claude Fable 5.1 (Bedrock)
+    version: "fable-5-1"
+    variant: fable
+    modalities: [text, image]
+    vision: true
+    structured_method: tools
+    needs_repair_fallback: false
+    thinking: budget
+    caching: true
+    release_date: "2026-09-01"
+    pricing_ref: claude-opus-4-6
+    notes: "Claude Fable 5.1 in us-east-1 via us. inference profile."
+
+  - model_id: bedrock-claude-fable-5
+    litellm_model: bedrock/us.anthropic.claude-fable-5
+    display_name: Claude Fable 5 (Bedrock)
+    version: "fable-5"
+    variant: fable
+    modalities: [text, image]
+    vision: true
+    structured_method: tools
+    needs_repair_fallback: false
+    thinking: budget
+    caching: true
+    release_date: "2026-08-01"
+    pricing_ref: claude-opus-4-6
+    notes: "Claude Fable 5 in us-east-1 via us. inference profile."
+
+  - model_id: bedrock-claude-opus-5
+    litellm_model: bedrock/us.anthropic.claude-opus-5
+    display_name: Claude Opus 5 (Bedrock)
+    version: "opus-5"
+    variant: opus
+    modalities: [text, image]
+    vision: true
+    structured_method: tools
+    needs_repair_fallback: false
+    thinking: budget
+    caching: true
+    release_date: "2026-07-24"
+    pricing_ref: claude-opus-4-6
+    notes: "Claude Opus 5 in us-east-1 via us. inference profile."
+
+  - model_id: bedrock-claude-sonnet-5
+    litellm_model: bedrock/us.anthropic.claude-sonnet-5
+    display_name: Claude Sonnet 5 (Bedrock)
+    version: "sonnet-5"
+    variant: sonnet
+    modalities: [text, image]
+    vision: true
+    structured_method: tools
+    needs_repair_fallback: false
+    thinking: budget
+    caching: true
+    release_date: "2026-06-30"
+    pricing_ref: claude-sonnet-4-6
+    notes: "Claude Sonnet 5 in us-east-1 via us. inference profile."
+
   - model_id: bedrock-claude-opus-4-5
     litellm_model: bedrock/global.anthropic.claude-opus-4-5-20251101-v1:0
     display_name: Claude Opus 4.5 (Bedrock)
@@ -150,10 +211,40 @@ models:
     caching: true
     release_date: "2025-11-01"
     pricing_ref: claude-opus-4-5
-    notes: "Newest on-demand-callable Claude in this account; global. inference profile only. Sonnet 4.5/4.6 and Opus 4.6 have NO on-demand profile here (see DISABLED block)."
+    notes: "Claude Opus 4.5 in us-east-1 via global. inference profile."
+
+  - model_id: bedrock-claude-opus-4-6
+    litellm_model: bedrock/us.anthropic.claude-opus-4-6-v1
+    display_name: Claude Opus 4.6 (Bedrock)
+    version: "opus-4-6"
+    variant: opus
+    modalities: [text, image]
+    vision: true
+    structured_method: tools
+    needs_repair_fallback: false
+    thinking: budget
+    caching: true
+    release_date: "2026-02-15"
+    pricing_ref: claude-opus-4-6
+    notes: "Claude Opus 4.6 in us-east-1 via us. inference profile."
+
+  - model_id: bedrock-claude-sonnet-4-6
+    litellm_model: bedrock/us.anthropic.claude-sonnet-4-6
+    display_name: Claude Sonnet 4.6 (Bedrock)
+    version: "sonnet-4-6"
+    variant: sonnet
+    modalities: [text, image]
+    vision: true
+    structured_method: tools
+    needs_repair_fallback: false
+    thinking: budget
+    caching: true
+    release_date: "2026-02-15"
+    pricing_ref: claude-sonnet-4-6
+    notes: "Claude Sonnet 4.6 in us-east-1 via us. inference profile."
 
   - model_id: bedrock-claude-sonnet-4
-    litellm_model: bedrock/apac.anthropic.claude-sonnet-4-20250514-v1:0
+    litellm_model: bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0
     display_name: Claude Sonnet 4 (Bedrock)
     version: "sonnet-4"
     variant: sonnet
@@ -165,10 +256,10 @@ models:
     caching: true
     release_date: "2025-05-14"
     pricing_ref: claude-sonnet-4
-    notes: "apac. cross-region inference profile."
+    notes: "us. cross-region inference profile in us-east-1."
 
   - model_id: bedrock-claude-3-7-sonnet
-    litellm_model: bedrock/apac.anthropic.claude-3-7-sonnet-20250219-v1:0
+    litellm_model: bedrock/us.anthropic.claude-3-7-sonnet-20250219-v1:0
     display_name: Claude 3.7 Sonnet (Bedrock)
     version: "3-7-sonnet"
     variant: sonnet
@@ -180,10 +271,10 @@ models:
     caching: true
     release_date: "2025-02-19"
     pricing_ref: claude-3-7-sonnet
-    notes: "apac. cross-region inference profile."
+    notes: "us. cross-region inference profile in us-east-1."
 
   - model_id: bedrock-claude-3-5-sonnet-v2
-    litellm_model: bedrock/apac.anthropic.claude-3-5-sonnet-20241022-v2:0
+    litellm_model: bedrock/us.anthropic.claude-3-5-sonnet-20241022-v2:0
     display_name: Claude 3.5 Sonnet v2 (Bedrock)
     version: "3-5-sonnet-v2"
     variant: sonnet
@@ -194,7 +285,20 @@ models:
     caching: true
     release_date: "2024-10-22"
     pricing_ref: claude-3-5-sonnet
-    notes: "apac. cross-region inference profile."
+    notes: "us. cross-region inference profile in us-east-1."
+
+  - model_id: bedrock-claude-3-5-haiku
+    litellm_model: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
+    display_name: Claude 3.5 Haiku (Bedrock)
+    version: "3-5-haiku"
+    variant: haiku
+    modalities: [text, image]
+    vision: true
+    structured_method: tools
+    needs_repair_fallback: false
+    release_date: "2024-10-22"
+    pricing_ref: claude-3-5-haiku
+    notes: "us. cross-region inference profile in us-east-1."
 
   - model_id: bedrock-claude-3-haiku
     litellm_model: bedrock/anthropic.claude-3-haiku-20240307-v1:0
@@ -206,7 +310,7 @@ models:
     structured_method: tools
     needs_repair_fallback: false
     release_date: "2024-03-07"
-    pricing_ref: claude-3-5-haiku
+    pricing_ref: claude-3-haiku
     notes: "Legacy; callable by bare id (on-demand)."
 
   # ---------------------------------------------------------------- Google Gemma
@@ -230,7 +334,54 @@ models:
     release_date: "2025-02-15"
     pricing_ref: gemma
 
-  # ---------------------------------------------------------------- OpenAI GPT-OSS
+  # ---------------------------------------------------------------- OpenAI GPT-OSS & Frontier (Luna, Terra, Sol, Astra)
+  - model_id: bedrock-gpt-5-6-luna
+    litellm_model: bedrock/us.openai.gpt-5.6-luna
+    display_name: GPT-5.6 Luna (Bedrock)
+    version: "5-6-luna"
+    variant: instruct
+    modalities: [text, image]
+    vision: true
+    release_date: "2026-07-15"
+    pricing_ref: gpt-oss-120b
+    notes: "OpenAI GPT-5.6 Luna via Bedrock."
+
+  - model_id: bedrock-gpt-5-6-terra
+    litellm_model: bedrock/us.openai.gpt-5.6-terra
+    display_name: GPT-5.6 Terra (Bedrock)
+    version: "5-6-terra"
+    variant: instruct
+    modalities: [text, image]
+    vision: true
+    thinking: budget
+    release_date: "2026-07-15"
+    pricing_ref: gpt-oss-120b
+    notes: "OpenAI GPT-5.6 Terra via Bedrock."
+
+  - model_id: bedrock-gpt-5-6-sol
+    litellm_model: bedrock/us.openai.gpt-5.6-sol
+    display_name: GPT-5.6 Sol (Bedrock)
+    version: "5-6-sol"
+    variant: instruct
+    modalities: [text, image]
+    vision: true
+    thinking: budget
+    release_date: "2026-07-15"
+    pricing_ref: gpt-oss-120b
+    notes: "OpenAI GPT-5.6 Sol via Bedrock."
+
+  - model_id: bedrock-gpt-6-astra
+    litellm_model: bedrock/us.openai.gpt-6-astra
+    display_name: GPT-6 Astra (Bedrock)
+    version: "6-astra"
+    variant: instruct
+    modalities: [text, image]
+    vision: true
+    thinking: budget
+    release_date: "2026-09-01"
+    pricing_ref: gpt-oss-120b
+    notes: "OpenAI GPT-6 Astra via Bedrock."
+
   - model_id: bedrock-gpt-oss-120b
     litellm_model: bedrock/openai.gpt-oss-120b-1:0
     display_name: GPT-OSS 120B (Bedrock)
@@ -260,6 +411,16 @@ models:
     release_date: "2025-06-10"
     pricing_ref: mistral-large
 
+  - model_id: bedrock-devstral-2
+    litellm_model: bedrock/mistral.devstral-2-123b
+    display_name: Devstral 2 123B (Bedrock)
+    version: "devstral-2"
+    variant: instruct
+    modalities: [text, image]
+    vision: true
+    release_date: "2025-10-15"
+    pricing_ref: devstral-2
+
   - model_id: bedrock-magistral-small
     litellm_model: bedrock/mistral.magistral-small-2509
     display_name: Magistral Small 2509 (Bedrock)
@@ -281,6 +442,26 @@ models:
     release_date: "2024-10-15"
     pricing_ref: mistral-small
 
+  - model_id: bedrock-ministral-3-14b
+    litellm_model: bedrock/mistral.ministral-3-14b-instruct
+    display_name: Ministral 3 14B (Bedrock)
+    version: "ministral-3-14b"
+    variant: instruct
+    modalities: [text, image]
+    vision: true
+    release_date: "2024-10-15"
+    pricing_ref: mistral-small
+
+  - model_id: bedrock-pixtral-large
+    litellm_model: bedrock/mistral.pixtral-large-2502-v1:0
+    display_name: Pixtral Large 2502 (Bedrock)
+    version: "pixtral-large"
+    variant: vision
+    modalities: [text, image]
+    vision: true
+    release_date: "2025-02-15"
+    pricing_ref: pixtral-large
+
   # ---------------------------------------------------------------- DeepSeek
   - model_id: bedrock-deepseek-v3-2
     litellm_model: bedrock/deepseek.v3.2
@@ -290,6 +471,15 @@ models:
     thinking: budget
     release_date: "2025-09-10"
     pricing_ref: deepseek-v3
+
+  - model_id: bedrock-deepseek-r1
+    litellm_model: bedrock/deepseek.r1-v1:0
+    display_name: DeepSeek R1 (Bedrock)
+    version: "r1"
+    variant: instruct
+    thinking: budget
+    release_date: "2025-01-20"
+    pricing_ref: deepseek-r1
 
   # ---------------------------------------------------------------- Z.ai GLM
   - model_id: bedrock-glm-5
@@ -309,6 +499,16 @@ models:
     thinking: budget
     release_date: "2025-10-20"
     pricing_ref: glm-4.7
+
+  - model_id: bedrock-glm-4-7-flash
+    litellm_model: bedrock/zai.glm-4.7-flash
+    display_name: GLM-4.7 Flash (Bedrock)
+    version: "glm-4.7-flash"
+    variant: flash
+    thinking: budget
+    release_date: "2025-10-20"
+    pricing_ref: glm-4.7-flash
+    notes: "GLM-4.7 Flash lightweight reasoning model on AWS Bedrock via Z.AI."
 
   # ---------------------------------------------------------------- MiniMax
   - model_id: bedrock-minimax-m2-5
@@ -342,7 +542,7 @@ models:
     release_date: "2025-05-15"
     pricing_ref: gpt-oss-20b
 
-  # ---------------------------------------------------------------- Meta Llama (legacy, bare id)
+  # ---------------------------------------------------------------- Meta Llama
   - model_id: bedrock-llama3-70b
     litellm_model: bedrock/meta.llama3-70b-instruct-v1:0
     display_name: Llama 3 70B Instruct (Bedrock)
@@ -351,16 +551,30 @@ models:
     release_date: "2024-04-18"
     pricing_ref: llama-3
 
-# ---------------------------------------------------------------------------------------------
-# NOT LISTED (probed, not on-demand callable in this account on 2026-07-13):
-#   * anthropic.claude-opus-4-8 / 4-7, claude-sonnet-5, claude-fable-5
-#       -> 403 "not available for this account" (model access not granted).
-#   * anthropic.claude-sonnet-4-5-20250929, claude-sonnet-4-6, claude-opus-4-6-v1,
-#     claude-haiku-4-5-20251001, amazon.nova-2-lite (bare)
-#       -> require an inference profile that the account does NOT expose -> not on-demand.
-#         (Add them here once a matching apac./global. profile appears in /inference-profiles.)
-#   * cohere.embed-*, amazon.titan-embed-* -> EMBEDDING output, not chat.
-#   * mistral.voxtral-* -> SPEECH input; twelvelabs.pegasus, some Nova -> VIDEO; out of scope
-#     for the document/vision tasks here.
-# The original request's id "qwen.qwen3-vl-235b-a22b-instruct" is INVALID — the -instruct
-# suffix does not exist; use qwen.qwen3-vl-235b-a22b (see bedrock-qwen3-vl-235b above).
+  - model_id: bedrock-llama-3-3-70b
+    litellm_model: bedrock/meta.llama3-3-70b-instruct-v1:0
+    display_name: Llama 3.3 70B Instruct (Bedrock)
+    version: "3-3-70b"
+    variant: instruct
+    release_date: "2024-12-06"
+    pricing_ref: llama-3.3-70b
+
+  - model_id: bedrock-llama4-scout-17b
+    litellm_model: bedrock/meta.llama4-scout-17b-instruct-v1:0
+    display_name: Llama 4 Scout 17B (Bedrock)
+    version: "4-scout"
+    variant: instruct
+    modalities: [text, image]
+    vision: true
+    release_date: "2025-04-15"
+    pricing_ref: llama-4-scout
+
+  - model_id: bedrock-llama4-maverick-17b
+    litellm_model: bedrock/meta.llama4-maverick-17b-instruct-v1:0
+    display_name: Llama 4 Maverick 17B (Bedrock)
+    version: "4-maverick"
+    variant: instruct
+    modalities: [text, image]
+    vision: true
+    release_date: "2025-04-15"
+    pricing_ref: llama-4-maverick

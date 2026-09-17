@@ -251,7 +251,7 @@
         {
           "benefit_id": 1357867,
           "benefit_name": "Prescribed Diagnostics",
-          "applicable": true,
+          "applicable": false,
           "confidence": 1.0,
           "reason": "No lab, imaging, or diagnostic-related SOC categories found"
         },
@@ -263,7 +263,14 @@
           "reason": "No consultation-related SOC categories found"
         }
       ],
-      "item_assignments": []
+      "item_assignments": [
+        {
+          "bill_id": "fc853d92057a",
+          "item_s_no": 1,
+          "benefit_id": 1357868,
+          "benefit_name": "In-Clinic Consults"
+        }
+      ]
     },
     "upstream_bills": {
       "bills": [
